@@ -73,3 +73,11 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+
+databases/
+files/
+Sample.jsx
+Sample.html
+*.apk
+google-services.json

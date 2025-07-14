@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/arafat.ttf",
+      "sha1": "47b1891f7f30bebd96f7dadfb328dda880c0f23b"
+    },
+    {
+      "path": "src/assets/fonts/kalpurush.ttf",
+      "sha1": "98692f880494e6d4538cdb7e8cc3d9e5935588a8"
+    },
+    {
+      "path": "src/assets/fonts/sho.ttf",
+      "sha1": "6421c265b351e176f122276010ddebee083047d1"
+    },
+    {
+      "path": "src/assets/fonts/stencil.ttf",
+      "sha1": "fc26c1a979c1318a461acc73625c5551cd7ed4e9"
+    },
+    {
+      "path": "src/assets/fonts/times.ttf",
+      "sha1": "2fd7802771ae710a66b221338130855252ce74f7"
+    },
+    {
+      "path": "src/assets/fonts/timesbd.ttf",
+      "sha1": "12eaecaabfbaa5d5e4af58414d11aa83d7dfb9d4"
+    }
+  ]
+}
