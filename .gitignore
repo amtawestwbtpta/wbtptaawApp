@@ -81,3 +81,5 @@ Sample.jsx
 Sample.html
 *.apk
 google-services.json
+constants.js
+encryption.js
