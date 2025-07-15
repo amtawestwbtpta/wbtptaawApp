@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>West Bengal Board Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .calculator-selector {
+            text-align: center; /* Keeps the buttons group centered */
+            margin-bottom: 30px;
+            display: flex; /* Enables Flexbox for the container */
+            justify-content: center; /* Centers the buttons horizontally */
+            flex-wrap: wrap; /* Allows buttons to wrap to the next line on smaller screens */
+            gap: 15px; /* Creates a 15px gap between buttons */
+        }
+        .calculator-selector button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .calculator-selector button:hover {
+            background-color: #2980b9;
+        }
+        .calculator-section {
+            display: none; /* Hidden by default, JavaScript will show/hide */
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .calculator-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .calculator-section input[type="number"],
+        .calculator-section select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .calculator-section button {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .calculator-section button:hover {
+            background-color: #219d53;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #34495e;
+            text-align: center;
+        }
+        .note, .disclaimer {
+            margin-top: 25px;
+            padding: 15px;
+            border-left: 5px solid #f39c12;
+            background-color: #fff9ed;
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+        }
+        .disclaimer {
+            border-color: #e74c3c;
+            background-color: #fdf3f2;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+            margin: 40px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>West Bengal Madhyamik & HS Percentage and GPA Calculator</h1>
+    <p>Please select the calculator you wish to use:</p>
+
+    <div class="calculator-selector">
+        <button onclick="showCalculator('madhyamik')">Madhyamik Percentage Calculator</button>
+        <button onclick="showCalculator('hs')">HS Percentage Calculator</button>
+        <button onclick="showCalculator('gpa')">West Bengal GPA Calculator</button>
+    </div>
+
+    <hr>
+
+    <div id="madhyamikCalculator" class="calculator-section">
+        <h2>Madhyamik Percentage Calculator</h2>
+        <p>Enter the marks you obtained in each of your eight compulsory subjects. The total marks for Madhyamik are generally 800 (100 marks per subject).</p>
+        <label for="madhyamik_lang1">First Language Marks (out of 100):</label>
+        <input type="number" id="madhyamik_lang1" min="0" max="100" value="0">
+
+        <label for="madhyamik_lang2">Second Language Marks (out of 100):</label>
+        <input type="number" id="madhyamik_lang2" min="0" max="100" value="0">
+
+        <label for="madhyamik_eng">English Marks (out of 100):</label>
+        <input type="number" id="madhyamik_eng" min="0" max="100" value="0">
+
+        <label for="madhyamik_math">Mathematics Marks (out of 100):</label>
+        <input type="number" id="madhyamik_math" min="0" max="100" value="0">
+
+        <label for="madhyamik_phy_sci">Physical Science Marks (out of 100):</label>
+        <input type="number" id="madhyamik_phy_sci" min="0" max="100" value="0">
+
+        <label for="madhyamik_life_sci">Life Science Marks (out of 100):</label>
+        <input type="number" id="madhyamik_life_sci" min="0" max="100" value="0">
+
+        <label for="madhyamik_history">History Marks (out of 100):</label>
+        <input type="number" id="madhyamik_history" min="0" max="100" value="0">
+
+        <label for="madhyamik_geo">Geography Marks (out of 100):</label>
+        <input type="number" id="madhyamik_geo" min="0" max="100" value="0">
+
+        <button onclick="calculateMadhyamikPercentage()">Calculate Percentage</button>
+        <div id="madhyamikResult" class="result"></div>
+        <div class="note">
+            <p><strong>Note:</strong> For subjects with practical exams, the theory paper is often for 90 marks, and the practical for 10 marks. However, for overall percentage calculation, the total is still considered out of 100 for each subject. To pass the Madhyamik exam, a student typically needs to score at least 34% overall.</p>
+        </div>
+    </div>
+
+    <div id="hsCalculator" class="calculator-section">
+        <h2>HS Percentage Calculator</h2>
+        <p>Enter the marks you obtained in your subjects. As per West Bengal Council of Higher Secondary Education (WBCHSE) guidelines, the Grand Total for HS is typically calculated out of 500 marks, considering marks awarded in two language subjects and three compulsory elective subjects.</p>
+
+        <label for="hs_sub1">Subject 1 Marks (e.g., First Language, out of 100):</label>
+        <input type="number" id="hs_sub1" min="0" max="100" value="0">
+
+        <label for="hs_sub2">Subject 2 Marks (e.g., Second Language, out of 100):</label>
+        <input type="number" id="hs_sub2" min="0" max="100" value="0">
+
+        <label for="hs_sub3">Subject 3 Marks (e.g., Compulsory Elective 1, out of 100):</label>
+        <input type="number" id="hs_sub3" min="0" max="100" value="0">
+
+        <label for="hs_sub4">Subject 4 Marks (e.g., Compulsory Elective 2, out of 100):</label>
+        <input type="number" id="hs_sub4" min="0" max="100" value="0">
+
+        <label for="hs_sub5">Subject 5 Marks (e.g., Compulsory Elective 3, out of 100):</label>
+        <input type="number" id="hs_sub5" min="0" max="100" value="0">
+
+        <button onclick="calculateHSPercentage()">Calculate Percentage</button>
+        <div id="hsResult" class="result"></div>
+        <div class="note">
+            <p><strong>Note:</strong> The WBCHSE has introduced a percentile system in 2025 for HS results. While this calculator provides your percentage based on total marks, the official marksheets may also include an overall percentile along with subject-wise percentiles. Passing criteria usually require at least 30% marks in both written and practical papers individually (if applicable) and an overall 'C' grade or more.</p>
+        </div>
+    </div>
+
+    <div id="gpaCalculator" class="calculator-section">
+        <h2>West Bengal GPA Calculator</h2>
+        <p>While West Bengal boards (WBBSE and WBCHSE) primarily use a percentage and grading system, if you need to convert your percentage to a GPA (Grade Point Average) for applications to universities that use a GPA system (commonly 4.0, 5.0, or 10.0 scales), you can use this calculator.</p>
+
+        <label for="gpa_percentage">Your Percentage:</label>
+        <input type="number" id="gpa_percentage" min="0" max="100" value="0">
+
+        <label for="gpa_scale">Select GPA Scale:</label>
+        <select id="gpa_scale">
+            <option value="4.0">4.0 Scale (Common in USA/Canada)</option>
+            <option value="5.0">5.0 Scale</option>
+            <option value="10.0">10.0 Scale (Common in some Indian universities)</option>
+        </select>
+
+        <button onclick="calculateGPA()">Calculate GPA</button>
+        <div id="gpaResult" class="result"></div>
+        <div class="note">
+            <p><strong>Note:</strong></p>
+            <ul>
+                <li><strong>For 4.0 Scale:</strong> $GPA = (\text{Percentage} / 100) \times 4.0$</li>
+                <li><strong>For 5.0 Scale:</strong> $GPA = (\text{Percentage} / 100) \times 5.0$</li>
+                <li><strong>For 10.0 Scale (commonly used in India for converting percentage to CGPA):</strong> $GPA = \text{Percentage} / 9.5$ (This is a commonly observed approximation, though some universities might use slightly different formulas).</li>
+            </ul>
+            <p><strong>Important:</strong> The West Bengal boards directly provide marks and grades, not GPA. This calculator is for converting your percentage to a GPA scale for external purposes (e.g., international university applications). Always verify the specific GPA conversion methodology required by the institution you are applying to, as formulas can vary.</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="note">
+        <h3>General Note for all Calculators:</h3>
+        <p>These calculators provide an estimated percentage or GPA based on standard formulas. The official marks and grading will be as issued by the West Bengal Board of Secondary Education (WBBSE) for Madhyamik and the West Bengal Council of Higher Secondary Education (WBCHSE) for HS.</p>
+    </div>
+
+    <div class="disclaimer">
+        <h3>Disclaimer:</h3>
+        <p>This tool is for informational purposes only and should not be considered an official calculation of your West Bengal Board results. The calculations are based on general formulas. For official results, please refer to your original mark sheet provided by the West Bengal Board of Secondary Education (WBBSE) or the West Bengal Council of Higher Secondary Education (WBCHSE). We do not guarantee the accuracy of conversions for specific institutional requirements, as grading and GPA scales can vary. Always confirm the required conversion method with the respective institution.</p>
+    </div>
+</div>
+
+<script>
+    // Function to show the selected calculator and hide others
+    function showCalculator(calculatorId) {
+        document.getElementById('madhyamikCalculator').style.display = 'none';
+        document.getElementById('hsCalculator').style.display = 'none';
+        document.getElementById('gpaCalculator').style.display = 'none';
+        document.getElementById(calculatorId + 'Calculator').style.display = 'block';
+    }
+
+    // --- Madhyamik Percentage Calculator Logic ---
+    function calculateMadhyamikPercentage() {
+        let lang1 = parseFloat(document.getElementById('madhyamik_lang1').value);
+        let lang2 = parseFloat(document.getElementById('madhyamik_lang2').value);
+        let eng = parseFloat(document.getElementById('madhyamik_eng').value);
+        let math = parseFloat(document.getElementById('madhyamik_math').value);
+        let phySci = parseFloat(document.getElementById('madhyamik_phy_sci').value);
+        let lifeSci = parseFloat(document.getElementById('madhyamik_life_sci').value);
+        let history = parseFloat(document.getElementById('madhyamik_history').value);
+        let geo = parseFloat(document.getElementById('madhyamik_geo').value);
+
+        // Input validation: Ensure marks are within the valid range [0, 100]
+        if ([lang1, lang2, eng, math, phySci, lifeSci, history, geo].some(isNaN) ||
+            [lang1, lang2, eng, math, phySci, lifeSci, history, geo].some(mark => mark < 0 || mark > 100)) {
+            document.getElementById('madhyamikResult').innerText = `Please enter valid marks (0-100) for all subjects.`;
+            return;
+        }
+
+        let totalMarks = lang1 + lang2 + eng + math + phySci + lifeSci + history + geo;
+        let percentage = (totalMarks / 800) * 100; // Madhyamik is out of 800 for 8 subjects
+
+        document.getElementById('madhyamikResult').innerText = `Your Madhyamik Percentage: ${percentage.toFixed(2)}%`;
+    }
+
+    // --- HS Percentage Calculator Logic ---
+    function calculateHSPercentage() {
+        let sub1 = parseFloat(document.getElementById('hs_sub1').value);
+        let sub2 = parseFloat(document.getElementById('hs_sub2').value);
+        let sub3 = parseFloat(document.getElementById('hs_sub3').value);
+        let sub4 = parseFloat(document.getElementById('hs_sub4').value);
+        let sub5 = parseFloat(document.getElementById('hs_sub5').value);
+
+        // Input validation: Ensure marks are within the valid range [0, 100]
+        if ([sub1, sub2, sub3, sub4, sub5].some(isNaN) ||
+            [sub1, sub2, sub3, sub4, sub5].some(mark => mark < 0 || mark > 100)) {
+            document.getElementById('hsResult').innerText = `Please enter valid marks (0-100) for all subjects.`;
+            return;
+        }
+
+        let totalMarks = sub1 + sub2 + sub3 + sub4 + sub5;
+        let percentage = (totalMarks / 500) * 100; // HS is typically out of 500 for 5 subjects
+
+        document.getElementById('hsResult').innerText = `Your HS Percentage: ${percentage.toFixed(2)}%`;
+    }
+
+    // --- GPA Calculator Logic ---
+    function calculateGPA() {
+        let percentage = parseFloat(document.getElementById('gpa_percentage').value);
+        let scale = parseFloat(document.getElementById('gpa_scale').value);
+        let gpa;
+
+        // Input validation: Ensure percentage is within the valid range [0, 100]
+        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+            document.getElementById('gpaResult').innerText = `Please enter a valid percentage (0-100).`;
+            return;
+        }
+
+        if (scale === 10.0) {
+            gpa = percentage / 9.5; // Common conversion for 10.0 scale in India
+        } else {
+            gpa = (percentage / 100) * scale;
+        }
+
+        document.getElementById('gpaResult').innerText = `Your GPA: ${gpa.toFixed(2)} (on a ${scale} scale)`;
+    }
+
+    // Initialize by showing the Madhyamik calculator by default
+    showCalculator('madhyamik');
+</script>
+</body>
+</html>

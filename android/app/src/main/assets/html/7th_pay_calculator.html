@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WB 7th Pay Commission Salary Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to override or enhance Tailwind, if necessary */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Hide number input arrows for a cleaner look */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* Define the fadeInSlideUp animation */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Apply the animation to the container */
+        .animate-fadeInSlideUp {
+            animation: fadeInSlideUp 0.8s forwards ease-out;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gradient-to-br from-blue-100 to-cyan-100 min-h-screen flex items-center justify-center p-4">
+<div class="container bg-white p-6 sm:p-8 md:p-10 rounded-xl shadow-2xl max-w-lg w-full transform transition-all duration-500 ease-out border border-blue-200 animate-fadeInSlideUp">
+    <h2 class="text-center text-3xl sm:text-4xl font-extrabold text-blue-700 mb-8 leading-tight">
+        WB 7th Pay Commission Salary Calculator
+        <span class="block text-xl sm:text-2xl font-semibold text-blue-500 mt-2">(for WB Employee-Teachers under ROPA-2029)</span>
+    </h2>
+
+    <!-- Pay Level Selection -->
+    <div class="mb-6">
+        <label for="payLevel" class="block text-gray-700 text-lg font-semibold mb-3">Select your WB 6th Pay Commission Pay Level:</label>
+        <select id="payLevel" onchange="populateBasicPayOptions()"
+                class="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+            <option value="">-- Select Pay Level --</option>
+            <!-- Options will be populated by JavaScript -->
+        </select>
+    </div>
+
+    <!-- Basic Pay Selection -->
+    <div class="mb-6">
+        <label for="basicPay6thCPC" class="block text-gray-700 text-lg font-semibold mb-3">Select your WB 6th Pay Commission Basic Pay:</label>
+        <select id="basicPay6thCPC" disabled
+                class="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+            <option value="">-- Select Basic Pay --</option>
+        </select>
+    </div>
+
+    <!-- Date of Calculation Dropdowns -->
+    <div class="mb-6">
+        <label class="block text-gray-700 text-lg font-semibold mb-3">Date of Calculation (e.g., your last increment date):</label>
+        <div class="flex flex-wrap justify-between gap-2"> <!-- Added flex-wrap and gap-2 -->
+            <select id="daySelect" class="flex-1 min-w-[calc(33%-8px)] px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+                <option value="">Day</option>
+            </select>
+            <select id="monthSelect" class="flex-1 min-w-[calc(33%-8px)] px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+                <option value="">Month</option>
+            </select>
+            <select id="yearSelect" class="flex-1 min-w-[calc(33%-8px)] px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+                <option value="">Year</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Old DA Input -->
+    <div class="mb-6">
+        <label for="oldDaInput" class="block text-gray-700 text-lg font-semibold mb-3">WB 6th Pay Commission Dearness Allowance:</label>
+        <input type="number" id="oldDaInput" value="50" min="0" step="0.01"
+               class="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+    </div>
+
+    <!-- Old HRA Input -->
+    <div class="mb-6">
+        <label for="oldHraInput" class="block text-gray-700 text-lg font-semibold mb-3">WB 6th Pay Commission House Rent Allowance:</label>
+        <input type="number" id="oldHraInput" value="12" min="0" step="0.01"
+               class="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+    </div>
+
+    <!-- New DA Input -->
+    <div class="mb-6">
+        <label for="daInput" class="block text-gray-700 text-lg font-semibold mb-3">WB 7th Pay Commission Dearness Allowance:</label>
+        <input type="number" id="daInput" value="0" min="0" step="0.01"
+               class="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+    </div>
+
+    <!-- New HRA Input -->
+    <div class="mb-6">
+        <label for="hraInput" class="block text-gray-700 text-lg font-semibold mb-3">WB 7th Pay Commission House Rent Allowance:</label>
+        <input type="number" id="hraInput" value="12" min="0" step="0.01"
+               class="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+    </div>
+
+    <!-- Fitment Factor Selection -->
+    <div class="mb-8">
+        <label for="fitmentFactorInput" class="block text-gray-700 text-lg font-semibold mb-3">Select Fitment Factor:</label>
+        <select id="fitmentFactorInput"
+                class="w-full px-4 py-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg bg-gray-50 transition duration-300 ease-in-out hover:border-blue-300">
+            <option value="1.56">1.56</option>
+            <option value="1.87">1.87</option>
+            <option value="2.10">2.10</option>
+            <option value="2.28">2.28</option>
+            <option value="2.57">2.57</option>
+            <option value="2.87">2.87</option>
+        </select>
+    </div>
+
+    <!-- Calculate Button -->
+    <button onclick="calculateSalary()"
+            class="w-full bg-blue-600 text-white py-4 rounded-xl text-xl font-bold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 active:shadow-md">
+        Calculate WB 7th Pay Commission Salary
+    </button>
+
+    <!-- Result Area -->
+    <div id="resultArea" class="mt-10 pt-8 border-t-2 border-green-300 bg-green-50 rounded-xl p-6 shadow-md border border-green-200 hidden">
+        <h3 class="text-green-700 text-2xl font-bold mb-6 border-b border-green-200 pb-3">WB 6th Pay Commission Details (Estimated)</h3>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">Initial WB 6th PC Basic Pay:</strong> <span class="text-gray-700 font-medium">₹ <span id="initialBasicPay6thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">Incremented Benefit (as of 01/01/2030):</strong> <span class="text-gray-700 font-medium">₹ <span id="incrementedBasicPay6thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">Estimated WB 6th PC DA:</strong> <span class="text-gray-700 font-medium">₹ <span id="estimatedDA6thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">Estimated WB 6th PC HRA:</strong> <span class="text-gray-700 font-medium">₹ <span id="estimatedHRA6thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">WB 6th PC Gross Salary (Estimated):</strong> <span class="text-gray-700 font-medium">₹ <span id="grossSalary6thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">WB 6th PC Professional Tax (PTax):</strong> <span class="text-gray-700 font-medium">₹ <span id="pTax6thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">WB 6th PC Net Salary (Estimated):</strong> <span class="text-gray-700 font-medium">₹ <span id="netSalary6thCPC">0</span></span>
+        </p>
+
+        <h3 class="text-green-700 text-2xl font-bold mt-8 mb-6 border-b border-green-200 pb-3">WB 7th PC Details (Estimated)</h3>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">WB 7th PC Basic Pay:</strong> <span class="text-gray-700 font-medium">₹ <span id="basicPay7thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">Estimated WB 7th PC DA:</strong> <span class="text-gray-700 font-medium">₹ <span id="estimatedDA7thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">Estimated WB 7th PC HRA:</strong> <span class="text-gray-700 font-medium">₹ <span id="estimatedHRA7thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">Medical Allowance:</strong> <span class="text-gray-700 font-medium">₹ <span id="medicalAllowance">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">WB 7th PC Gross Salary (Estimated):</strong> <span class="text-gray-700 font-medium">₹ <span id="grossSalary7thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">WB 7th PC Professional Tax (PTax):</strong> <span class="text-gray-700 font-medium">₹ <span id="pTax7thCPC">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-lg mb-3 py-3 border-b border-green-100">
+            <strong class="text-gray-800">WB 7th PC Net Salary (Estimated):</strong> <span class="text-gray-700 font-medium">₹ <span id="netSalary7thCPC">0</span></span>
+        </p>
+
+        <p class="flex justify-between items-center text-2xl font-extrabold text-green-800 mt-6 pt-6 border-t-2 border-green-400">
+            <strong>Estimated Salary Hike:</strong> <span>₹ <span id="salaryHike">0</span></span>
+        </p>
+        <p class="flex justify-between items-center text-2xl font-extrabold text-green-800 mt-2">
+            <strong>Estimated Salary Hike (%):</strong> <span><span id="salaryHikePercentage">0</span>%</span>
+        </p>
+    </div>
+
+    <!-- Important Notes -->
+    <div class="note mt-16 text-base text-gray-700 text-center leading-relaxed bg-blue-50 p-6 rounded-xl border-l-8 border-blue-400 shadow-md">
+        <strong class="block text-blue-700 mb-2 text-lg">Important Notes (ROPA-2029 assumed):</strong>
+        <ul class="list-disc list-inside text-left mx-auto max-w-md">
+            <li>This calculator provides an <em class="font-bold">estimation</em>.</li>
+            <li>The assumed WB 7th Pay Commission effective date for fixation is <strong class="text-blue-600">January 1, 2030</strong>.</li>
+            <li>You can adjust the <strong class="text-blue-600">Dearness Allowance (DA) %</strong> and <strong class="text-blue-600">House Rent Allowance (HRA) %</strong> for both WB 6th Pay Commission and WB 7th Pay Commission, and the <strong class="text-blue-600">Fitment Factor</strong> using the input fields above.</li>
+            <li>Annual increment logic assumes increments occur on <strong class="text-blue-600">July 1st</strong> each year. If your increment date is different (e.g., January 1st), adjust the 'Date of Calculation' to reflect the start of your increment cycle.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Pay matrix data from the Excel file (for entryBasicPay based on level)
+    const payMatrix = [
+        { level: '1', gradePay: 1700, entryBasicPay: 17000 },
+        { level: '2', gradePay: 1800, entryBasicPay: 17600 },
+        { level: '3', gradePay: 1900, entryBasicPay: 18800 },
+        { level: '4', gradePay: 2100, entryBasicPay: 19700 },
+        { level: '5', gradePay: 2300, entryBasicPay: 21000 },
+        { level: '6', gradePay: 2600, entryBasicPay: 22700 },
+        { level: '7', gradePay: 2900, entryBasicPay: 27000 },
+        { level: '8', gradePay: 3200, entryBasicPay: 28900 },
+        { level: '9', gradePay: 3600, entryBasicPay: 31800 },
+        { level: '10', gradePay: 3900, entryBasicPay: 33000 },
+        { level: '11', gradePay: 4100, entryBasicPay: 33400 },
+        { level: '12', gradePay: 4400, entryBasicPay: 35800 },
+        { level: '13', gradePay: 4600, entryBasicPay: 37100 },
+        { level: '14', gradePay: 4700, entryBasicPay: 39900 },
+        { level: '15', gradePay: 4800, entryBasicPay: 42600 },
+        { level: '15A', gradePay: 5200, entryBasicPay: 52200 },
+        { level: '16', gradePay: 5400, entryBasicPay: 56100 },
+        { level: '17', gradePay: 6600, entryBasicPay: 67300 },
+        { level: '18', gradePay: 7000, entryBasicPay: 68400 },
+        { level: '19', gradePay: 7600, entryBasicPay: 95100 },
+        { level: '20', gradePay: 8000, entryBasicPay: 96100 },
+        { level: '21', grade: 8700, entryBasicPay: 123100 },
+        { level: '22', gradePay: 8900, entryBasicPay: 123600 },
+        { level: '23', gradePay: 9500, entryBasicPay: 125200 },
+        { level: '24', gradePay: 10000, entryBasicPay: 128900 }
+    ];
+
+    // Pay matrix levels for basic pay selection and increments
+    const levelPayScales = {
+        '1': [17000, 17500, 18000, 18500, 19100, 19700, 20300, 20900, 21500, 22100, 22800, 23500, 24200, 24900, 25600, 26400, 27200, 28000, 28800, 29700, 30600, 31500, 32400, 33400, 34400, 35400, 36500, 37600, 38700, 39900, 41100, 42300, 43600],
+        '2': [17600, 18100, 18600, 19200, 19800, 20400, 21000, 21600, 22200, 22900, 23600, 24300, 25000, 25800, 26600, 27400, 28200, 29000, 29900, 30800, 31700, 32700, 33700, 34700, 35700, 36800, 37900, 39000, 40200, 41400, 42600, 43900, 45200],
+        '3': [18800, 19400, 20000, 20600, 21200, 21800, 22500, 23200, 23900, 24600, 25300, 26100, 26900, 27700, 28500, 29400, 30300, 31200, 32100, 33100, 34100, 35100, 36200, 37300, 38400, 39600, 40800, 42000, 43300, 44600, 45900, 47300, 48700],
+        '4': [19700, 20300, 20900, 21500, 22100, 22800, 23500, 24200, 24900, 25600, 26400, 27200, 28000, 28800, 29700, 30600, 31500, 32400, 33400, 34400, 35400, 36500, 37600, 38700, 39900, 41100, 42300, 43600, 44900, 46200, 47600, 49000, 50500],
+        '5': [21000, 21600, 22200, 22900, 23600, 24300, 25000, 25800, 26600, 27400, 28200, 29000, 29900, 30800, 31700, 32700, 33700, 34700, 35700, 36800, 37900, 39000, 40200, 41400, 42600, 43900, 45200, 46600, 48000, 49400, 50900, 52400, 54000],
+        '6': [22700, 23400, 24100, 24800, 25500, 26300, 27100, 27900, 28700, 29600, 30500, 31400, 32300, 33300, 34300, 35300, 36400, 37500, 38600, 39800, 41000, 42200, 43500, 44800, 46100, 47500, 48900, 50400, 51900, 53500, 55100, 56800, 58500],
+        '7': [24700, 25400, 26200, 27000, 27800, 28600, 29500, 30400, 31300, 32200, 33200, 34200, 35200, 36300, 37400, 38500, 39700, 40900, 42100, 43400, 44700, 46000, 47400, 48800, 50300, 51800, 53400, 55000, 56700, 58400, 60200, 62000, 63900],
+        '8': [27000, 27800, 28600, 29500, 30400, 31300, 32200, 33200, 34200, 35200, 36300, 37400, 38500, 39700, 40900, 42100, 43400, 44700, 46000, 47400, 48800, 50300, 51800, 53400, 55000, 56700, 58400, 60200, 62000, 63900, 65800, 67800, 69800],
+        '9': [28900, 29800, 30700, 31600, 32500, 33500, 34500, 35500, 36600, 37700, 38800, 40000, 41200, 42400, 43700, 45000, 46400, 47800, 49200, 50700, 52200, 53800, 55400, 57100, 58800, 60600, 62400, 64300, 66200, 68200, 70200, 72300, 74500],
+        '10': [32100, 33100, 34100, 35100, 36200, 37300, 38400, 39600, 40800, 42000, 43300, 44600, 45900, 47300, 48700, 50200, 51700, 53300, 54900, 56500, 58200, 59900, 61700, 63600, 65500, 67500, 69500, 71600, 73700, 75900, 78200, 80500, 82900],
+        '11': [33400, 34400, 35400, 36500, 37600, 38700, 39900, 41100, 42300, 43600, 44900, 46200, 47600, 49000, 50500, 52000, 53600, 55200, 56900, 58600, 60400, 62200, 64100, 66000, 68000, 70000, 72100, 74300, 76500, 78800, 81200, 83600, 86100],
+        '12': [35800, 36900, 38000, 39100, 40300, 41500, 42700, 44000, 45300, 46700, 48100, 49500, 51000, 52500, 54100, 55700, 57400, 59100, 60900, 62700, 64600, 66500, 68500, 70600, 72700, 74900, 77100, 79400, 81800, 84300, 86800, 89400, 92100],
+        '13': [37100, 38200, 39300, 40500, 41700, 43000, 44300, 45600, 47000, 48400, 49900, 51400, 52900, 54500, 56100, 57800, 59500, 61300, 63100, 65000, 67000, 69000, 71100, 73200, 75400, 77700, 80000, 82400, 84900, 87400, 90000, 92700, 95500],
+        '14': [39900, 41100, 42300, 43600, 44900, 46200, 47600, 49000, 50500, 52000, 53600, 55200, 56900, 58600, 60400, 62200, 64100, 66000, 68000, 70000, 72100, 74300, 76500, 78800, 81200, 83600, 86100, 88700, 91400, 94100, 96900, 99800, 102800],
+        '15': [42600, 43900, 45200, 46600, 48000, 49400, 50900, 52400, 54000, 55600, 57300, 59000, 60800, 62600, 64500, 66400, 68400, 70500, 72600, 74800, 77000, 79300, 81700, 84200, 86700, 89300, 92000, 94800, 97600, 100500, 103500, 106600, 109800],
+        '15A': [52200, 53800, 55400, 57100, 58800, 60600, 62400, 64300, 66200, 68200, 70200, 72300, 74500, 76700, 79000, 81400, 83800, 86300, 88900, 91600, 94300, 97100, 100000, 103000, 106100, 109300, 112600, 116000, 119500, 123100, 126800, 130600, 134500],
+        '16': [56100, 57800, 59500, 61300, 63100, 65000, 67000, 69000, 71100, 73200, 75400, 77700, 80000, 82400, 84900, 87400, 90000, 92700, 95500, 98400, 101400, 104400, 107500, 110700, 114000, 117400, 120900, 124500, 128200, 132000, 136000, 140100, 144300],
+        '17': [67300, 69300, 71400, 73500, 75700, 78000, 80300, 82700, 85200, 87800, 90400, 93100, 95900, 98800, 101800, 104900, 108000, 111200, 114500, 117900, 121400, 125000, 128800, 132700, 136700, 140800, 145000, 149400, 153900, 158500, 163300, 168200, 173200],
+        '18': [68400, 70500, 72600, 74800, 77000, 79300, 81700, 84200, 86700, 89300, 92000, 94800, 97600, 100500, 103500, 106600, 109800, 113100, 116500, 120000, 123600, 127300, 131100, 135000, 139100, 143300, 147600, 152000, 156600, 161300, 166100, 171100, 176200],
+        '19': [95100, 98000, 100900, 103900, 107000, 110200, 113500, 116900, 120400, 124000, 127700, 131500, 135400, 139500, 143700, 148000, 152400, 157000, 161700, 166600, 171600, 176700, 182000, 187600, 193200, 199000, 204900, 211000, 217300, 223800, 230500, 237400, 244500],
+        '20': [96100, 99000, 102000, 105100, 108300, 111500, 114800, 118200, 121700, 125400, 129200, 133100, 137100, 141200, 145400, 149800, 154300, 158900, 163700, 168600, 173700, 178900, 184300, 189800, 195500, 201400, 207400, 213600, 220000, 226600, 233400, 240400, 247600],
+        '21': [123100, 126800, 130600, 134500, 138500, 142700, 147000, 151400, 155900, 160600, 165400, 170400, 175500, 180800, 186200, 191800, 197600, 203500, 209600, 215900, 222400, 229100, 236000, 243100, 250400, 257900, 265600, 273600, 281800, 290300, 299000, 307900, 317100],
+        '22': [123600, 127300, 131100, 135000, 139100, 143300, 147600, 152000, 156600, 161300, 166100, 171100, 176200, 181500, 186900, 192500, 198300, 204200, 210300, 216600, 223100, 229800, 236700, 243800, 251100, 258600, 266400, 274400, 282600, 291100, 299800, 308800, 318100],
+        '23': [125200, 129000, 132900, 136900, 141000, 145200, 149600, 154100, 158700, 163500, 168400, 173500, 178700, 184100, 189600, 195300, 201200, 207200, 213400, 219800, 226400, 233200, 240200, 247400, 254800, 262400, 270300, 278400, 286800, 295200, 304100, 313200, 322600],
+        '24': [128900, 132800, 136800, 140900, 145100, 149500, 154000, 158600, 163400, 168300, 173300, 178500, 183900, 189400, 195100, 201000, 207000, 213200, 219600, 226200, 232900, 239900, 247100, 254500, 262100, 270000, 278100, 286400, 295000, 303900, 313000, 322400, 332100]
+    };
+
+    // Populate Pay Level dropdown on page load
+    window.onload = function() {
+        const payLevelSelect = document.getElementById('payLevel');
+        // Dynamically add levels from 1 to 24, including 15A
+        for (let i = 1; i <= 24; i++) {
+            const level = String(i);
+            if (levelPayScales[level]) {
+                const option = document.createElement('option');
+                option.value = level;
+                option.textContent = `Level ${level}`;
+                payLevelSelect.appendChild(option);
+            }
+            // Add 15A specifically
+            if (i === 15 && levelPayScales['15A']) {
+                const option = document.createElement('option');
+                option.value = '15A';
+                option.textContent = `Level 15A`;
+                payLevelSelect.appendChild(option);
+            }
+        }
+
+        // Populate Day, Month, Year dropdowns
+        populateDateDropdowns();
+    };
+
+    function populateDateDropdowns() {
+        const daySelect = document.getElementById('daySelect');
+        const monthSelect = document.getElementById('monthSelect');
+        const yearSelect = document.getElementById('yearSelect');
+
+        // Populate Days (1-31)
+        for (let i = 1; i <= 31; i++) {
+            const option = document.createElement('option');
+            option.value = String(i).padStart(2, '0');
+            option.textContent = String(i).padStart(2, '0');
+            daySelect.appendChild(option);
+        }
+
+        // Populate Months (Jan-Dec)
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        months.forEach((month, index) => {
+            const option = document.createElement('option');
+            option.value = String(index + 1).padStart(2, '0');
+            option.textContent = month;
+            monthSelect.appendChild(option);
+        });
+
+        // Populate Years (e.g., last 20 years to next 5 years)
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear - 20; i <= currentYear + 5; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            yearSelect.appendChild(option);
+        }
+
+        // Set default date for dateOfCalculation to today's date
+        const today = new Date();
+        daySelect.value = String(today.getDate()).padStart(2, '0');
+        monthSelect.value = String(today.getMonth() + 1).padStart(2, '0');
+        yearSelect.value = today.getFullYear();
+    }
+
+    // Function to populate Basic Pay options based on selected Pay Level
+    function populateBasicPayOptions() {
+        const payLevel = document.getElementById('payLevel').value;
+        const basicPaySelect = document.getElementById('basicPay6thCPC');
+        basicPaySelect.innerHTML = '<option value="">-- Select Basic Pay --</option>'; // Clear existing options
+
+        if (payLevel && levelPayScales[payLevel]) {
+            const payScale = levelPayScales[payLevel];
+            payScale.forEach(pay => {
+                const option = document.createElement('option');
+                option.value = pay;
+                option.textContent = pay;
+                basicPaySelect.appendChild(option);
+            });
+            basicPaySelect.disabled = false; // Enable basic pay selection
+        } else {
+            basicPaySelect.disabled = true; // Disable if no level selected
+        }
+    }
+
+    // Function to round to nearest 100
+    const roundToNearestHundred = (value) => {
+        return Math.round(value / 100) * 100;
+    };
+
+    // Calculate Professional Tax based on West Bengal 6th Pay Commission slab rates
+    const calculatePTax6thCPC = (grossSalary) => {
+        if (grossSalary <= 10000) return 0;
+        if (grossSalary >= 10001 && grossSalary <= 15000) return 110;
+        if (grossSalary >= 15001 && grossSalary <= 25000) return 130;
+        if (grossSalary >= 25001 && grossSalary <= 40000) return 150;
+        return 200; // Above ₹40,000
+    };
+
+    // Calculate Professional Tax based on West Bengal 7th Pay Commission slab rates
+    const calculatePTax7thCPC = (grossSalary) => {
+        if (grossSalary <= 20000) return 0;
+        if (grossSalary >= 20001 && grossSalary <= 35000) return 200;
+        if (grossSalary >= 35001 && grossSalary <= 45000) return 300;
+        if (grossSalary >= 45001 && grossSalary <= 55000) return 400;
+        return 500; // For grossSalary > 55000 (as per user's specific instruction)
+    };
+
+    function calculateSalary() {
+        // Show the result area
+        document.getElementById('resultArea').classList.remove('hidden');
+
+        const payLevel = document.getElementById('payLevel').value;
+        const initialBasicPay6thCPC = parseFloat(document.getElementById('basicPay6thCPC').value);
+
+        // Get date from dropdowns
+        const day = document.getElementById('daySelect').value;
+        const month = document.getElementById('monthSelect').value;
+        const year = document.getElementById('yearSelect').value;
+
+        const oldDaPercentageInput = parseFloat(document.getElementById('oldDaInput').value);
+        const oldHraPercentageInput = parseFloat(document.getElementById('oldHraInput').value);
+
+        const daPercentageInput = parseFloat(document.getElementById('daInput').value);
+        const hraPercentageInput = parseFloat(document.getElementById('hraInput').value);
+        const fitmentFactorInput = parseFloat(document.getElementById('fitmentFactorInput').value);
+
+        // Input validation
+        if (!payLevel) {
+            alert("Please select your WB 6th Pay Commission Pay Level.");
+            return;
+        }
+        if (isNaN(initialBasicPay6thCPC) || initialBasicPay6thCPC <= 0) {
+            alert("Please select a valid WB 6th Pay Commission Basic Pay.");
+            return;
+        }
+        if (!day || !month || !year) {
+            alert("Please select a valid Date of Calculation (Day, Month, and Year).");
+            return;
+        }
+        if (isNaN(oldDaPercentageInput) || oldDaPercentageInput < 0) {
+            alert("Please enter a valid WB 6th Pay Commission DA percentage (0 or greater).");
+            return;
+        }
+        if (isNaN(oldHraPercentageInput) || oldHraPercentageInput < 0) {
+            alert("Please enter a valid WB 6th Pay Commission HRA percentage (0 or greater).");
+            return;
+        }
+        if (isNaN(daPercentageInput) || daPercentageInput < 0) {
+            alert("Please enter a valid WB 7th Pay Commission DA percentage (0 or greater).");
+            return;
+        }
+        if (isNaN(hraPercentageInput) || hraPercentageInput < 0) {
+            alert("Please enter a valid WB 7th Pay Commission HRA percentage (0 or greater).");
+            return;
+        }
+        if (isNaN(fitmentFactorInput) || fitmentFactorInput <= 0) {
+            alert("Please select a valid Fitment Factor.");
+            return;
+        }
+
+        // Construct date from dropdowns
+        const dateOfCalculation = new Date(`${year}-${month}-${day}`);
+        // Assumed 7th Pay Commission effective date
+        const effectDate7thCPC = new Date('2030-01-01');
+
+        // --- Annual Increment Calculation (for 6th CPC basic pay before fixation) ---
+        let currentBasicPay6thCPC = initialBasicPay6thCPC;
+        const currentPayScale = levelPayScales[payLevel];
+        let currentPayIndex = currentPayScale.indexOf(initialBasicPay6thCPC);
+
+        if (currentPayIndex === -1) {
+            alert("The selected Basic Pay does not exist in the chosen Pay Level's scale.");
+            return;
+        }
+
+        // Determine the first increment date after dateOfCalculation
+        let nextIncrementYear = dateOfCalculation.getFullYear();
+
+        // Increment date is fixed as July 1st
+        let incrementMonth = 6; // July (0-indexed)
+        let incrementDay = 1;
+
+        let firstIncrementDate = new Date(nextIncrementYear, incrementMonth, incrementDay);
+        if (dateOfCalculation >= firstIncrementDate) {
+            nextIncrementYear++;
+        }
+
+        // Loop and apply increments until the effect date (Jan 1, 2030)
+        while (true) {
+            let potentialIncrementDate = new Date(nextIncrementYear, incrementMonth, incrementDay);
+
+            // Stop if the next increment date is on or after the effect date
+            if (potentialIncrementDate >= effectDate7thCPC) {
+                break;
+            }
+
+            // Check if there's a next step in the pay scale
+            if (currentPayIndex + 1 < currentPayScale.length) {
+                currentBasicPay6thCPC = currentPayScale[currentPayIndex + 1];
+                currentPayIndex++;
+            } else {
+                console.log(`Reached maximum pay in Level ${payLevel}. No more increments before 7th CPC fixation.`);
+                break;
+            }
+            nextIncrementYear++;
+        }
+
+        const incrementedBasicPay6thCPC = currentBasicPay6thCPC;
+
+        // --- WB 6th Pay Commission Gross and Net Salary Calculation ---
+        const medicalAllowanceFixed = 1000;
+
+        const estimatedDA6thCPC = roundToNearestHundred(incrementedBasicPay6thCPC * (oldDaPercentageInput / 100));
+        const estimatedHRA6thCPC = roundToNearestHundred(incrementedBasicPay6thCPC * (oldHraPercentageInput / 100));
+
+        const grossSalary6thCPC = incrementedBasicPay6thCPC + estimatedDA6thCPC + estimatedHRA6thCPC + medicalAllowanceFixed;
+        const pTax6thCPC = calculatePTax6thCPC(grossSalary6thCPC); // Using 6th CPC PTax calculation
+        const netSalary6thCPC = grossSalary6thCPC - pTax6thCPC;
+
+
+        // --- WB 7th Pay Commission Fixation ---
+        let basicPay7thCPC = incrementedBasicPay6thCPC * fitmentFactorInput;
+        basicPay7thCPC = roundToNearestHundred(basicPay7thCPC);
+
+        // --- WB 7th Pay Commission Allowances ---
+        const estimatedDA7thCPC = roundToNearestHundred(basicPay7thCPC * (daPercentageInput / 100));
+        const estimatedHRA7thCPC = roundToNearestHundred(basicPay7thCPC * (hraPercentageInput / 100));
+
+        const grossSalary7thCPC = basicPay7thCPC + estimatedDA7thCPC + estimatedHRA7thCPC + medicalAllowanceFixed;
+        const pTax7thCPC = calculatePTax7thCPC(grossSalary7thCPC); // Using 7th CPC PTax calculation
+        const netSalary7thCPC = grossSalary7thCPC - pTax7thCPC;
+
+        // Calculate salary hike
+        const salaryHike = netSalary7thCPC - netSalary6thCPC;
+        const salaryHikePercentage = netSalary6thCPC > 0 ? ((salaryHike / netSalary6thCPC) * 100).toFixed(2) : 0;
+
+
+        // Display Results for WB 6th Pay Commission
+        document.getElementById('initialBasicPay6thCPC').textContent = initialBasicPay6thCPC.toFixed(0);
+        document.getElementById('incrementedBasicPay6thCPC').textContent = incrementedBasicPay6thCPC.toFixed(0);
+        document.getElementById('estimatedDA6thCPC').textContent = estimatedDA6thCPC.toFixed(0);
+        document.getElementById('estimatedHRA6thCPC').textContent = estimatedHRA6thCPC.toFixed(0);
+        document.getElementById('grossSalary6thCPC').textContent = grossSalary6thCPC.toFixed(0);
+        document.getElementById('pTax6thCPC').textContent = pTax6thCPC.toFixed(0);
+        document.getElementById('netSalary6thCPC').textContent = netSalary6thCPC.toFixed(0);
+
+        // Display Results for WB 7th Pay Commission
+        document.getElementById('basicPay7thCPC').textContent = basicPay7thCPC.toFixed(0);
+        document.getElementById('estimatedDA7thCPC').textContent = estimatedDA7thCPC.toFixed(0);
+        document.getElementById('estimatedHRA7thCPC').textContent = estimatedHRA7thCPC.toFixed(0);
+        document.getElementById('medicalAllowance').textContent = medicalAllowanceFixed.toFixed(0);
+        document.getElementById('grossSalary7thCPC').textContent = grossSalary7thCPC.toFixed(0);
+        document.getElementById('pTax7thCPC').textContent = pTax7thCPC.toFixed(0);
+        document.getElementById('netSalary7thCPC').textContent = netSalary7thCPC.toFixed(0);
+
+        document.getElementById('salaryHike').textContent = salaryHike.toFixed(0);
+        document.getElementById('salaryHikePercentage').textContent = salaryHikePercentage;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>West Bengal Employee/Teachers Application Tool</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-area, #print-area * {
+                visibility: visible;
+            }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20mm; /* Add some margin for printing */
+                box-sizing: border-box;
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+            #print-area pre {
+                white-space: pre-wrap; /* Ensure text wraps */
+                word-wrap: break-word;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+<div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl sm:max-w-3xl transition-all duration-300">
+    <h1 class="text-2xl sm:text-3xl font-bold text-center text-blue-700 mb-4 rounded-md p-2 bg-blue-50">
+        West Bengal Govt. Employee Application Tool
+    </h1>
+
+    <!-- Search Application Type -->
+    <div class="mb-4">
+        <label for="app-search" class="block text-lg sm:text-xl font-semibold text-gray-800 mb-2" id="search-heading">Search Application:</label>
+        <input
+                type="text"
+                id="app-search"
+                placeholder="Type to search application types..."
+                class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+        />
+    </div>
+
+    <!-- Application Type Selection -->
+    <div class="mb-4">
+        <h2 class="text-lg sm:text-xl font-semibold text-gray-800 mb-3" id="application-type-heading">Select Application Type:</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 transition-all duration-300" id="application-type-radios">
+            <!-- Radio buttons will be dynamically inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Sample Selection Dropdown -->
+    <div id="sample-selection-container" class="mb-4 p-3 sm:p-4 border border-blue-200 rounded-lg bg-blue-50 transition-all duration-300">
+        <h2 class="text-lg sm:text-xl font-semibold text-blue-800 mb-3 sm:mb-4" id="sample-selection-heading">Select Sample Template:</h2>
+        <select id="sample-select" class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+            <!-- Sample options will be dynamically inserted here -->
+        </select>
+    </div>
+
+    <!-- Generated Application Text -->
+    <div class="mb-4">
+        <h2 class="text-lg sm:text-xl font-semibold text-gray-800 mb-3" id="generated-application-heading">Generated Application:</h2>
+        <textarea
+                id="application-text"
+                class="w-full p-3 sm:p-4 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 text-sm sm:text-base resize-y min-h-[200px] sm:min-h-[250px] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                readonly
+                rows="10"
+        ></textarea>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <button
+                id="copy-button"
+                class="px-5 py-2 sm:px-6 sm:py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 w-full sm:w-auto"
+        >
+            Copy Application
+        </button>
+        <button
+                id="print-button"
+                class="px-5 py-2 sm:px-6 sm:py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-full sm:w-auto"
+        >
+            Print Application
+        </button>
+        <p id="copy-message" class="mt-2 sm:mt-0 text-xs sm:text-sm text-green-700 font-medium"></p>
+    </div>
+</div>
+
+<script>
+    // Get references to DOM elements
+    const appSearchInput = document.getElementById('app-search');
+    const applicationTypeRadiosContainer = document.getElementById('application-type-radios');
+    const sampleSelectionContainer = document.getElementById('sample-selection-container');
+    const sampleSelect = document.getElementById('sample-select');
+    const applicationTextarea = document.getElementById('application-text');
+    const copyButton = document.getElementById('copy-button');
+    const printButton = document.getElementById('print-button');
+    const copyMessage = document.getElementById('copy-message');
+
+    const searchHeading = document.getElementById('search-heading');
+    const applicationTypeHeading = document.getElementById('application-type-heading');
+    const sampleSelectionHeading = document.getElementById('sample-selection-heading');
+    const generatedApplicationHeading = document.getElementById('generated-application-heading');
+
+    // State variables
+    let selectedApplicationType = 'casualLeave'; // Default selected type
+    let selectedSampleIndex = 0; // Default to the first sample
+
+    // Define application types with their names and sample texts
+    const applicationTypes = [
+        {
+            id: 'casualLeave',
+            name: 'Casual Leave (CL)',
+            samples: [
+                `To,
+The Headmaster,
+ABC High School,
+123 School Road,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Casual Leave for 2 Day(s)
+
+Respected Sir/Madam,
+
+I am writing to request casual leave for 2 day(s) from 05/07/2025 to 06/07/2025. The reason for my leave is an urgent personal matter. I have completed all my urgent tasks and made necessary arrangements for my absence to ensure that the office work is not hampered. I will resume my duties on 07/07/2025.
+
+I kindly request you to grant me the aforementioned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+XYZ College,
+456 College Avenue,
+Howrah, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Casual Leave for 3 Day(s)
+
+Respected Sir/Madam,
+
+I am writing to request casual leave for 3 day(s) from 10/07/2025 to 12/07/2025. The reason for my leave is a family engagement. I have ensured that all my immediate responsibilities are covered. I will resume my duties on 13/07/2025.
+
+I kindly request you to grant me the aforementioned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Department Head,
+PQR Department,
+789 Office Complex,
+Durgapur, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Casual Leave for 1 Day
+
+Respected Sir/Madam,
+
+I am writing to request casual leave for 1 day on 15/07/2025 due to a minor health issue. I will ensure all urgent tasks are completed before my leave. I will resume my duties on 16/07/2025. I kindly request you to grant me the aforementioned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Manager,
+Government Office X,
+101 Main Street,
+Bardhaman, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Casual Leave for 4 Day(s)
+
+Respected Sir/Madam,
+
+I am writing to request casual leave for 4 day(s) from 20/07/2025 to 23/07/2025. The reason for my leave is to attend to some urgent administrative work at my native place. I have delegated my responsibilities to a colleague to ensure smooth workflow. I will resume my duties on 24/07/2025. I kindly request you to grant me the aforementioned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+District School Board,
+District Headquarters,
+Purba Medinipur, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Casual Leave for 5 Day(s)
+
+Respected Sir/Madam,
+
+I am writing to request casual leave for 5 day(s) from 01/08/2025 to 05/08/2025. The reason for my leave is to participate in a family religious ceremony. I have completed all my pending tasks and arranged for my classes to be covered. I will resume my duties on 06/08/2025.
+
+I kindly request you to grant me the aforementioned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Head of Office,
+Block Development Office,
+Block Name,
+Murshidabad, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Casual Leave for 2 Day(s)
+
+Respected Sir/Madam,
+
+I am writing to request casual leave for 2 day(s) from 10/08/2025 to 11/08/2025. The reason for my leave is an unexpected personal emergency. I have ensured that all urgent matters are addressed before my absence. I will resume my duties on 12/08/2025. I kindly request you to grant me the aforementioned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'commutedLeave',
+            name: 'Commuted Leave (ML - Medical Leave)',
+            samples: [
+                `To,
+The Principal,
+Government High School,
+School Road,
+Bankura, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Commuted Leave (Medical Leave) for 7 Day(s)
+
+Respected Sir/Madam,
+
+I wish to apply for commuted leave for 7 day(s) from 01/08/2025 to 07/08/2025. I am suffering from severe fever and have been advised by the doctor to take complete rest. I will submit the medical certificate and fitness certificate upon my rejoining duty on 08/08/2025. I assure you that I will complete any pending work immediately after my return.
+I humbly request you to sanction my commuted leave.
+
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Department Head,
+Health Department,
+District Hospital,
+Purulia, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Commuted Leave (Medical Leave) for 10 Day(s)
+
+Respected Sir/Madam,
+
+I wish to apply for commuted leave for 10 day(s) from 15/08/2025 to 24/08/2025. I have been diagnosed with a viral infection and require rest as per doctor's advice. I will submit the necessary medical documents upon my rejoining duty on 25/08/2025. I will ensure all critical tasks are handled by my colleagues during my absence.
+I humbly request you to sanction my commuted leave.
+
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Director,
+Social Welfare Department,
+State Secretariat,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Commuted Leave (Medical Leave) for 5 Day(s)
+
+Respected Sir/Madam,
+
+I am writing to apply for commuted leave for 5 day(s) from 01/09/2025 to 05/09/2025. I need to undergo a minor surgical procedure and require recovery time. A medical certificate will be provided upon my return to duty on 06/09/2025. I have completed all urgent assignments.
+I humbly request you to sanction my commuted leave.
+
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Block Development Officer,
+BDO Office,
+Nadia, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Commuted Leave (Medical Leave) for 14 Day(s)
+
+Respected Sir/Madam,
+
+I wish to apply for commuted leave for 14 day(s) from 10/09/2025 to 23/09/2025 due to a prolonged illness requiring extensive medical care. I will provide all supporting medical documents. I anticipate rejoining duty on 24/09/2025.
+I kindly request your approval for this leave.
+
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Superintendent,
+District Hospital,
+Jalpaiguri, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Commuted Leave (Medical Leave) for 3 Day(s)
+
+Respected Sir/Madam,
+
+I am writing to apply for commuted leave for 3 day(s) from 01/10/2025 to 03/10/2025, as I am suffering from severe body ache and weakness. The doctor has advised rest.
+
+I will submit the medical certificate upon my return to duty on 04/10/2025. I have ensured all my immediate duties are covered.
+
+I humbly request you to sanction my commuted leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Chief Medical Officer of Health,
+CMOH Office,
+Cooch Behar, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Commuted Leave (Medical Leave) for 21 Day(s)
+
+Respected Sir/Madam,
+
+I wish to apply for commuted leave for 21 day(s) from 15/10/2025 to 04/11/2025, for recovery after a minor accident. I will provide all necessary medical records and a fitness certificate. I expect to rejoin duty on 05/11/2025.
+I kindly request your approval for this leave.
+
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'childCareLeave',
+            name: 'Child Care Leave (CCL)',
+            samples: [
+                `To,
+The Headmaster,
+Primary School X,
+Village Y,
+Murshidabad, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Child Care Leave for 15 Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for Child Care Leave for a period of 15 day(s) from 01/10/2025 to 15/10/2025. My child, [Child's Name], aged 8 years, requires my full-time care due to upcoming board examinations. I assure you that I will ensure all my official responsibilities are managed effectively during my absence. I have completed all lesson plans for the upcoming weeks.
+
+I kindly request you to sanction my Child Care Leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+Higher Secondary School Z,
+Town A,
+Jalpaiguri, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Child Care Leave for 20 Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for Child Care Leave for a period of 20 day(s) from 20/10/2025 to 08/11/2025. My child, [Child's Name], aged 5 years, requires my full-time care due to recent illness and recovery. I assure you that I will ensure all my official responsibilities are managed effectively during my absence. I have submitted all pending reports.
+
+I kindly request you to sanction my Child Care Leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The District Inspector of Schools (SE),
+Office of DI of Schools,
+Cooch Behar, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Child Care Leave for 10 Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for Child Care Leave for a period of 10 day(s) from 15/11/2025 to 24/11/2025. My child, [Child's Name], aged 12 years, requires my full-time care due to a special medical appointment. I assure you that I will ensure all my official responsibilities are managed effectively during my absence. I have informed my colleagues about urgent matters.
+
+I kindly request you to sanction my Child Care Leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Circle Inspector of Schools,
+Office of CIS,
+Uttar Dinajpur, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Child Care Leave for 30 Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for Child Care Leave for a period of 30 day(s) from 01/12/2025 to 30/12/2025. My child, [Child's Name], aged 3 years, requires my full-time care due to a critical developmental phase. I assure you that I will ensure all my official responsibilities are managed effectively during my absence. I have prepared a detailed handover note.
+
+I kindly request you to sanction my Child Care Leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The District Primary School Council,
+DPS Council Office,
+Hooghly, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Child Care Leave for 7 Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for Child Care Leave for a period of 7 day(s) from 05/01/2026 to 11/01/2026. My child, [Child's Name], aged 6 years, requires my full-time care due to a sudden illness. I assure you that I will ensure all my official responsibilities are managed effectively during my absence. I have informed the class teacher about my absence.
+
+I kindly request you to sanction my Child Care Leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Head of Institution,
+Vocational Training Centre,
+Bardhaman, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Child Care Leave for 14 Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for Child Care Leave for a period of 14 day(s) from 20/01/2026 to 02/02/2026. My child, [Child's Name], aged 10 years, requires my full-time care for preparation of competitive exams. I assure you that I will ensure all my official responsibilities are managed effectively during my absence. I have completed all necessary administrative tasks.
+
+I kindly request you to sanction my Child Care Leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'salaryBankChange',
+            name: 'Salary Bank Account Change',
+            samples: [
+                `To,
+The Headmaster,
+XYZ High School,
+School Road,
+Hooghly, West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Change of Salary Bank Account Details
+
+Respected Sir/Madam,
+
+I am writing to formally request a change in my salary bank account details. My current salary is being credited to my account number [Old Account Number] with [Old Bank Name], [Old Branch Name], IFSC Code: [Old IFSC Code]. Due to account closure, I wish to update my salary credit to my new bank account. The details of my new bank account are as follows:
+Account Holder Name: [Your Name]
+New Account Number: [New Account Number]
+Bank Name: [New Bank Name]
+Branch Name: [New Branch Name]
+IFSC Code: [New IFSC Code]
+
+I have attached a copy of my new bank passbook/cancelled cheque for your reference. Kindly process this request at your earliest convenience to ensure timely salary disbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Department Head,
+Finance Department,
+Collectorate,
+Paschim Medinipur, West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Change of Salary Bank Account Details
+
+Respected Sir/Madam,
+
+I am writing to formally request a change in my salary bank account details. My current salary is being credited to my account number [Old Account Number] with [Old Bank Name], [Old Branch Name], IFSC Code: [Old IFSC Code]. Due to my relocation to a new city, I wish to update my salary credit to my new bank account. The details of my new bank account are as follows:
+Account Holder Name: [Your Name]
+New Account Number: [New Account Number]
+Bank Name: [New Bank Name]
+Branch Name: [New Branch Name]
+IFSC Code: [New IFSC Code]
+
+I have attached a copy of my new bank passbook/cancelled cheque for your reference. Kindly process this request at your earliest convenience to ensure timely salary disbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Manager,
+State Bank of India,
+Branch Office,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Change of Salary Bank Account Details
+
+Respected Sir/Madam,
+
+I am writing to formally request a change in my salary bank account details. My current salary is being credited to my account number [Old Account Number] with [Old Bank Name], [Old Branch Name], IFSC Code: [Old IFSC Code]. Due to better banking facilities offered by the new bank, I wish to update my salary credit to my new bank account. The details of my new bank account are as follows:
+Account Holder Name: [Your Name]
+New Account Number: [New Account Number]
+Bank Name: [New Bank Name]
+Branch Name: [New Branch Name]
+IFSC Code: [New IFSC Code]
+
+I have attached a copy of my new bank passbook/cancelled cheque for your reference. Kindly process this request at your earliest convenience to ensure timely salary disbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Treasury Officer,
+District Treasury,
+Birbhum, West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Change of Salary Bank Account Details
+
+Respected Sir/Madam,
+
+I am writing to formally request a change in my salary bank account details. My current salary is being credited to my account number [Old Account Number] with [Old Bank Name], [Old Branch Name], IFSC Code: [Old IFSC Code]. Due to a merger of my previous bank, I wish to update my salary credit to my new bank account. The details of my new bank account are as follows:
+Account Holder Name: [Your Name]
+New Account Number: [New Account Number]
+Bank Name: [New Bank Name]
+Branch Name: [New Branch Name]
+IFSC Code: [New IFSC Code]
+
+I have attached a copy of my new bank passbook/cancelled cheque for your reference. Kindly process this request at your earliest convenience to ensure timely salary disbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Pay & Accounts Officer,
+Government of West Bengal,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Change of Salary Bank Account Details
+
+Respected Sir/Madam,
+
+I am writing to formally request a change in my salary bank account details. My current salary is being credited to my account number [Old Account Number] with [Old Bank Name], [Old Branch Name], IFSC Code: [Old IFSC Code]. Due to personal preference and ease of access, I wish to update my salary credit to my new bank account. The details of my new bank account are as follows:
+Account Holder Name: [Your Name]
+New Account Number: [New Account Number]
+Bank Name: [New Bank Name]
+Branch Name: [New Branch Name]
+IFSC Code: [New IFSC Code]
+
+I have attached a copy of my new bank passbook/cancelled cheque for your reference. Kindly process this request at your earliest convenience to ensure timely salary disbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Drawing and Disbursing Officer (DDO),
+[Your Office Name],
+[Your Office Address],
+[Your District], West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Change of Salary Bank Account Details
+
+Respected Sir/Madam,
+
+I am writing to formally request a change in my salary bank account details. My current salary is being credited to my account number [Old Account Number] with [Old Bank Name], [Old Branch Name], IFSC Code: [Old IFSC Code]. Due to the closure of the branch of my current bank, I wish to update my salary credit to my new bank account. The details of my new bank account are as follows:
+Account Holder Name: [Your Name]
+New Account Number: [New Account Number]
+Bank Name: [New Bank Name]
+Branch Name: [New Branch Name]
+IFSC Code: [New IFSC Code]
+
+I have attached a copy of my new bank passbook/cancelled cheque for your reference. Kindly process this request at your earliest convenience to ensure timely salary disbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'ltcApplication',
+            name: 'Leave Travel Concession (LTC) Application',
+            samples: [
+                `To,
+The Head of Department,
+Education Department,
+District Council,
+Malda, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Leave Travel Concession (LTC) for Block Year 2022-2025
+
+Respected Sir/Madam,
+
+I wish to apply for Leave Travel Concession (LTC) for the block year 2022-2025. I intend to avail LTC to visit Darjeeling with my family members, namely wife and 2 children. The proposed period of leave for this travel is from 01/01/2026 to 10/01/2026. The mode of travel will be Train.
+I kindly request you to sanction my LTC claim as per the prevailing rules and regulations. I shall submit all necessary bills and documents upon my return for reimbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal Secretary,
+Urban Development Department,
+Nabanna,
+Howrah, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Leave Travel Concession (LTC) for Block Year 2022-2025
+
+Respected Sir/Madam,
+
+I wish to apply for Leave Travel Concession (LTC) for the block year 2022-2025. I intend to avail LTC to visit Puri, Odisha with my family members, namely husband and 1 child. The proposed period of leave for this travel is from 15/01/2026 to 22/01/2026. The mode of travel will be Train.
+I kindly request you to sanction my LTC claim as per the prevailing rules and regulations. I shall submit all necessary bills and documents upon my return for reimbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Chief Engineer,
+Public Works Department,
+PWD Office,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Leave Travel Concession (LTC) for Block Year 2022-2025
+
+Respected Sir/Madam,
+
+I wish to apply for Leave Travel Concession (LTC) for the block year 2022-2025. I intend to avail LTC to visit Gangtok, Sikkim with my family members, namely parents. The proposed period of leave for this travel is from 01/02/2026 to 08/02/2026. The mode of travel will be Air.
+I kindly request you to sanction my LTC claim as per the prevailing rules and regulations. I shall submit all necessary bills and documents upon my return for reimbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The District Magistrate,
+DM Office,
+South 24 Parganas, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Leave Travel Concession (LTC) for Block Year 2022-2025
+
+Respected Sir/Madam,
+
+I wish to apply for Leave Travel Concession (LTC) for the block year 2022-2025. I intend to avail LTC to visit Goa with my family members, namely wife and 1 child. The proposed period of leave for this travel is from 15/02/2026 to 20/02/2026. The mode of travel will be Air.
+I kindly request you to sanction my LTC claim as per the prevailing rules and regulations. I shall submit all necessary bills and documents upon my return for reimbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Divisional Railway Manager,
+Eastern Railway,
+Howrah, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Leave Travel Concession (LTC) for Block Year 2022-2025
+
+Respected Sir/Madam,
+
+I wish to apply for Leave Travel Concession (LTC) for the block year 2022-2025. I intend to avail LTC to visit Varanasi with my family members, namely mother and brother. The proposed period of leave for this travel is from 01/03/2026 to 07/03/2026. The mode of travel will be Train.
+I kindly request you to sanction my LTC claim as per the prevailing rules and regulations. I shall submit all necessary bills and documents upon my return for reimbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Director General of Police,
+Police Headquarters,
+Bhabani Bhawan,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Leave Travel Concession (LTC) for Block Year 2022-2025
+
+Respected Sir/Madam,
+
+I wish to apply for Leave Travel Concession (LTC) for the block year 2022-2025. I intend to avail LTC to visit Andaman & Nicobar Islands with my family members, namely wife and 2 children. The proposed period of leave for this travel is from 10/03/2026 to 18/03/2026. The mode of travel will be Air.
+I kindly request you to sanction my LTC claim as per the prevailing rules and regulations. I shall submit all necessary bills and documents upon my return for reimbursement.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'gpfAdvance',
+            name: 'General Provident Fund (GPF) Advance Application',
+            samples: [
+                `To,
+The Treasury Officer,
+District Treasury,
+North 24 Parganas, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for General Provident Fund (GPF) Advance
+
+Respected Sir/Madam,
+
+I would like to apply for an advance from my General Provident Fund (GPF) account. My GPF Account No. [GPF Account Number]. The purpose of this advance is for house construction/purchase. I require an advance amount of Rs. 5,00,000/- (Rupees Five Lakhs Only). I assure you that the advance will be utilized solely for the stated purpose.
+I request you to kindly sanction the advance amount at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Accountant General (A&E),
+West Bengal,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for General Provident Fund (GPF) Advance
+
+Respected Sir/Madam,
+
+I would like to apply for an advance from my General Provident Fund (GPF) account. My GPF Account No. [GPF Account Number]. The purpose of this advance is for the higher education of my child. I require an advance amount of Rs. 2,00,000/- (Rupees Two Lakhs Only). I assure you that the advance will be utilized solely for the stated purpose.
+I request you to kindly sanction the advance amount at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Director of Health Services,
+Swasthya Bhawan,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for General Provident Fund (GPF) Advance
+
+Respected Sir/Madam,
+
+I would like to apply for an advance from my General Provident Fund (GPF) account. My GPF Account No. [GPF Account Number]. The purpose of this advance is for medical treatment for a family member. I require an advance amount of Rs. 1,50,000/- (Rupees One Lakh Fifty Thousand Only). I assure you that the advance will be utilized solely for the stated purpose.
+I request you to kindly sanction the advance amount at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The District Education Officer (SE),
+Office of DEO,
+East Medinipur, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for General Provident Fund (GPF) Advance
+
+Respected Sir/Madam,
+
+I would like to apply for an advance from my General Provident Fund (GPF) account. My GPF Account No. [GPF Account Number]. The purpose of this advance is for marriage expenses of my sister. I require an advance amount of Rs. 3,00,000/- (Rupees Three Lakhs Only). I assure you that the advance will be utilized solely for the stated purpose.
+I request you to kindly sanction the advance amount at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Block Development Officer,
+BDO Office,
+Bankura, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for General Provident Fund (GPF) Advance
+
+Respected Sir/Madam,
+
+I would like to apply for an advance from my General Provident Fund (GPF) account. My GPF Account No. [GPF Account Number]. The purpose of this advance is for the repayment of a housing loan. I require an advance amount of Rs. 4,00,000/- (Rupees Four Lakhs Only). I assure you that the advance will be utilized solely for the stated purpose.
+I request you to kindly sanction the advance amount at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Sub-Divisional Officer,
+SDO Office,
+Darjeeling, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for General Provident Fund (GPF) Advance
+
+Respected Sir/Madam,
+
+I would like to apply for an advance from my General Provident Fund (GPF) account. My GPF Account No. [GPF Account Number]. The purpose of this advance is for the purchase of a plot of land. I require an advance amount of Rs. 6,00,000/- (Rupees Six Lakhs Only). I assure you that the advance will be utilized solely for the stated purpose.
+I request you to kindly sanction the advance amount at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'maternityLeave',
+            name: 'Maternity Leave Application',
+            samples: [
+                `To,
+The Headmistress,
+Girls' High School,
+Kolkata, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Maternity Leave
+
+Respected Sir/Madam,
+
+I am writing to formally apply for Maternity Leave as per the rules and regulations. My expected date of delivery is 10/03/2026. Therefore, I request a leave of 180 days, starting from 01/02/2026 to 29/07/2026. I will ensure a proper handover of my responsibilities before going on leave.
+
+I kindly request you to sanction my maternity leave and oblige.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+College of Arts & Science,
+Burdwan, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Maternity Leave
+
+Respected Sir/Madam,
+
+I am writing to formally apply for Maternity Leave as per the rules and regulations. My expected date of delivery is 20/04/2026. Therefore, I request a leave of 24 weeks, starting from 01/03/2026 to 17/08/2026. I will ensure a proper handover of my responsibilities before going on leave.
+
+I kindly request you to sanction my maternity leave and oblige.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The District Magistrate,
+DM Office,
+Howrah, West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Maternity Leave
+
+Respected Sir/Madam,
+
+I am writing to formally apply for Maternity Leave as per the rules and regulations. My expected date of delivery is 05/05/2026. Therefore, I request a leave of 180 days, starting from 01/04/2026 to 28/09/2026. I will ensure a proper handover of my responsibilities before going on leave.
+I kindly request you to sanction my maternity leave and oblige.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'paternityLeave',
+            name: 'Paternity Leave Application',
+            samples: [
+                `To,
+The Head of Office,
+[Office Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Paternity Leave
+
+Respected Sir/Madam,
+
+I would like to apply for paternity leave for a period of 15 days, from [Start Date] to [End Date]. My wife, [Wife's Name], is expecting our child, with the expected date of delivery being [Expected Date of Delivery]. I wish to be with my family to support my wife and care for our newborn during this crucial period.
+
+I assure you that I will complete all my urgent tasks and make necessary arrangements to ensure that my absence does not affect the office work. I will resume my duties on [Rejoining Date].
+
+I kindly request you to approve my paternity leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+[School/College Name],
+[School/College Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Paternity Leave
+
+Respected Sir/Madam,
+
+I am writing to request paternity leave for a period of 10 days, from [Start Date] to [End Date], following the birth of my child on [Date of Birth]. This leave is essential for me to provide care and support to my wife and newborn.
+
+I have completed all my teaching assignments and made arrangements for my classes to be covered during my absence. I will rejoin duty on [Rejoining Date].
+
+I solicit your kind approval for the paternity leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Department Head,
+[Department Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Paternity Leave
+
+Respected Sir/Madam,
+
+I wish to apply for paternity leave for 7 days, from [Start Date] to [End Date], as my wife recently gave birth to our child. I need this time to assist my wife in her recovery and to bond with our new baby.
+
+All my pending tasks have been completed, and I have coordinated with my colleagues to ensure smooth operations in my absence. I will resume my duties on [Rejoining Date].
+
+Your approval of my leave would be highly appreciated.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'studyLeave',
+            name: 'Study Leave Application',
+            samples: [
+                `To,
+The Head of Department,
+[Department Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Study Leave for [Number] Months/Years
+
+Respected Sir/Madam,
+
+I am writing to apply for study leave for a period of [Number] [Months/Years] from [Start Date] to [End Date]. I intend to pursue [Name of Course/Program] at [Name of Institution]. This course is directly relevant to my current role and will enhance my professional capabilities in [mention how it benefits your work].
+
+I have made arrangements for my duties to be covered during my absence and will ensure a smooth handover of all my responsibilities. I will provide regular updates on my progress and submit all necessary documentation upon my return.
+
+I kindly request you to grant me this study leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+[School/College Name],
+[School/College Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Study Leave for Higher Education
+
+Respected Sir/Madam,
+
+I wish to apply for study leave for [Number] [Months/Years] from [Start Date] to [End Date] to undertake a [Degree/Program Name] in [Subject] at [University Name]. I believe this advanced qualification will significantly contribute to my effectiveness as an educator in [relevant subject/area].
+
+I have completed all my academic responsibilities and arranged for substitute teaching during my leave. I will rejoin duty on [Rejoining Date].
+
+I seek your approval for this study leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'earnedLeave',
+            name: 'Earned Leave (EL) Application',
+            samples: [
+                `To,
+The Head of Office,
+[Office Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Earned Leave for [Number] Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for earned leave for [Number] day(s) from [Start Date] to [End Date]. I wish to utilize my accumulated earned leave for [Reason, e.g., personal work, family visit, short vacation]. I have completed all my urgent tasks and made arrangements for my absence. I will resume my duties on [Rejoining Date].
+
+I kindly request you to sanction my earned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+[School/College Name],
+[School/College Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Earned Leave
+
+Respected Sir/Madam,
+
+I wish to apply for earned leave for [Number] days from [Start Date] to [End Date]. The purpose of this leave is [Reason, e.g., to attend a family function, for rest and recuperation]. I have ensured that my responsibilities are covered during my absence. I will rejoin duty on [Rejoining Date].
+
+I solicit your kind approval for the earned leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'halfPayLeave',
+            name: 'Half-Pay Leave Application',
+            samples: [
+                `To,
+The Head of Office,
+[Office Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Half-Pay Leave for [Number] Day(s)
+
+Respected Sir/Madam,
+
+I am writing to apply for half-pay leave for [Number] day(s) from [Start Date] to [End Date]. The reason for this leave is [Reason, e.g., medical treatment, urgent personal affairs]. I understand that this leave will be debited from my half-pay leave account. I will resume my duties on [Rejoining Date].
+
+I kindly request you to sanction my half-pay leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+[School/College Name],
+[School/College Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Half-Pay Leave
+
+Respected Sir/Madam,
+
+I wish to apply for half-pay leave for [Number] days from [Start Date] to [End Date] due to [Reason, e.g., recovery from illness, family commitment]. I have made necessary arrangements for my duties during my absence. I will rejoin duty on [Rejoining Date].
+
+I seek your approval for this half-pay leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'specialCasualLeave',
+            name: 'Special Casual Leave Application',
+            samples: [
+                `To,
+The Head of Office,
+[Office Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Special Casual Leave for [Number] Day(s)
+
+Respected Sir/Madam,
+
+I would like to apply for special casual leave for [Number] day(s) from [Start Date] to [End Date]. The reason for this request is [Specific Reason for Special Casual Leave, e.g., participation in a sports event, attending a professional conference, blood donation]. I have attached relevant supporting documents for your kind consideration. I will resume my duties on [Rejoining Date].
+
+I kindly request you to grant me this special casual leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+[School/College Name],
+[School/College Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Special Casual Leave
+
+Respected Sir/Madam,
+
+I wish to apply for special casual leave for [Number] days from [Start Date] to [End Date] to [Specific Reason for Special Casual Leave, e.g., act as an examiner for a university, attend a court hearing]. I have ensured that my responsibilities are managed during my absence. I will rejoin duty on [Rejoining Date].
+
+I solicit your kind approval for the special casual leave.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'permissionHigherStudies',
+            name: 'Permission for Higher Studies Application',
+            samples: [
+                `To,
+The Head of Department,
+[Department Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Permission to Pursue Higher Studies
+
+Respected Sir/Madam,
+
+I am writing to seek your kind permission to pursue higher studies. I intend to enroll in a [Name of Course/Program, e.g., Master's Degree, Ph.D.] in [Subject] at [Name of University/Institution]. The proposed course will commence from [Start Date of Course]. I assure you that this will not interfere with my official duties and I will manage my studies alongside my work responsibilities.
+
+I believe that pursuing this higher education will greatly benefit my professional growth and ultimately contribute to the efficiency of the department.
+
+I kindly request you to grant me permission for higher studies.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Principal,
+[School/College Name],
+[School/College Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Permission for Part-time Higher Studies
+
+Respected Sir/Madam,
+
+I wish to request permission to undertake a part-time [Degree/Program Name] in [Subject] from [University Name]. I plan to attend classes during non-working hours/weekends, ensuring no disruption to my teaching duties. This will enhance my knowledge in [relevant subject/area].
+
+I seek your kind approval for this request.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'incrementSanction',
+            name: 'Application for Increment Sanction',
+            samples: [
+                `To,
+The Drawing and Disbursing Officer (DDO),
+[Your Office Name],
+[Your Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Sanction of Annual Increment
+
+Respected Sir/Madam,
+
+I am writing to request the sanction of my annual increment which is due on [Date of Increment Due]. My current basic pay is Rs. [Current Basic Pay] and my employee ID is [Employee ID]. I have completed [Number] years of satisfactory service in this department.
+
+I kindly request you to process the necessary formalities for the sanction of my annual increment at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Head of Office,
+[Office Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Release of Stagnated Increment
+
+Respected Sir/Madam,
+
+I respectfully request the release of my stagnated increment, which has been pending since [Date of Stagnation]. My employee ID is [Employee ID] and my current basic pay is Rs. [Current Basic Pay]. I have fulfilled all criteria for the increment as per government rules.
+
+I humbly request your intervention to sanction and release my due increment.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'serviceBookCorrection',
+            name: 'Application for Service Book Correction',
+            samples: [
+                `To,
+The Head of Office,
+[Office Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Correction in Service Book
+
+Respected Sir/Madam,
+
+I am writing to request a correction in my Service Book. It has come to my notice that [Specific Error, e.g., my date of birth, my date of joining, my designation] has been incorrectly recorded as [Incorrect Entry] instead of [Correct Entry].
+
+I have attached supporting documents ([mention documents, e.g., birth certificate, appointment letter, previous service book entry]) for your verification. I kindly request you to make the necessary correction in my Service Book at your earliest convenience.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Accounts Officer,
+[Department Name],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Rectification of Entry in Service Book
+
+Respected Sir/Madam,
+
+I humbly request the rectification of an error in my Service Book concerning [Specific Error, e.g., my promotion date, my family details]. The entry currently shows [Incorrect Information], but the correct information is [Correct Information].
+
+Please find attached [relevant documents] for your perusal. Your prompt action in correcting this discrepancy would be highly appreciated.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        },
+        {
+            id: 'pensionSanction',
+            name: 'Application for Pension Sanction (Retiring Employee)',
+            samples: [
+                `To,
+The Pension Sanctioning Authority,
+[Relevant Department/Office],
+[Office Address],
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Application for Sanction of Pension (Retiring Employee)
+
+Respected Sir/Madam,
+
+I, [Your Name], [Designation], Employee ID [Employee ID], am due to retire from my service on [Date of Retirement]. I have completed [Number] years of qualifying service.
+
+I hereby apply for the sanction and timely disbursement of my pension and other retirement benefits as per the rules and regulations. I have attached all the necessary documents required for pension processing.
+
+I kindly request you to initiate the pension sanction process at your earliest convenience to ensure a smooth transition.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`,
+                `To,
+The Treasury Officer,
+District Treasury,
+[City/District], West Bengal
+
+Date: [Current Date]
+
+Subject: Request for Early Processing of Pension Papers
+
+Respected Sir/Madam,
+
+I am [Your Name], [Designation], Employee ID [Employee ID], and I am scheduled to retire on [Date of Retirement]. I wish to request the early processing of my pension papers and other terminal benefits.
+
+I have submitted all required forms and documents to my department. Your cooperation in expediting this process would be greatly appreciated.
+Thanking You,
+
+Yours faithfully,
+[Your Name]
+[Designation]
+[Employee ID/Teacher ID]
+[Contact Number]`
+            ]
+        }
+    ];
+
+    // Function to render application type radios
+    function renderApplicationTypeRadios() {
+        applicationTypeRadiosContainer.innerHTML = '';
+        const searchQuery = appSearchInput.value.toLowerCase();
+        const filteredApplicationTypes = applicationTypes.filter(type =>
+            type.name.toLowerCase().includes(searchQuery)
+        );
+
+        filteredApplicationTypes.forEach(type => {
+            const radioDiv = document.createElement('div');
+            radioDiv.classList.add('flex', 'items-center', 'p-3', 'border', 'border-gray-300', 'rounded-lg', 'bg-white', 'shadow-sm', 'cursor-pointer', 'hover:bg-blue-50', 'hover:border-blue-500', 'transition-all', 'duration-200');
+            if (selectedApplicationType === type.id) {
+                radioDiv.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+            }
+
+            radioDiv.innerHTML = `
+                <input
+                    type="radio"
+                    id="${type.id}"
+                    name="applicationType"
+                    value="${type.id}"
+                    class="form-radio h-4 w-4 text-blue-600 transition-all duration-200"
+                    ${selectedApplicationType === type.id ? 'checked' : ''}
+                >
+                <label for="${type.id}" class="ml-3 text-base font-medium text-gray-700 cursor-pointer flex-grow">${type.name}</label>
+            `;
+            radioDiv.addEventListener('click', () => {
+                selectedApplicationType = type.id;
+                selectedSampleIndex = 0; // Reset sample selection when application type changes
+                renderApplicationTypeRadios();
+                renderSampleSelection();
+                updateApplicationText();
+            });
+            applicationTypeRadiosContainer.appendChild(radioDiv);
+        });
+    }
+
+    // Function to render sample selection dropdown
+    function renderSampleSelection() {
+        sampleSelect.innerHTML = '';
+        const currentApplicationType = applicationTypes.find(type => type.id === selectedApplicationType);
+        if (currentApplicationType && currentApplicationType.samples.length > 0) {
+            sampleSelectionContainer.style.display = 'block'; // Show sample selection
+            currentApplicationType.samples.forEach((sample, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `Sample ${index + 1}`;
+                if (index === selectedSampleIndex) {
+                    option.selected = true;
+                }
+                sampleSelect.appendChild(option);
+            });
+        } else {
+            sampleSelectionContainer.style.display = 'none'; // Hide sample selection if no samples
+        }
+    }
+
+    // Function to update application text
+    function updateApplicationText() {
+        const currentApplicationType = applicationTypes.find(type => type.id === selectedApplicationType);
+        if (currentApplicationType && currentApplicationType.samples[selectedSampleIndex]) {
+            let text = currentApplicationType.samples[selectedSampleIndex];
+            // Replace [Current Date] with actual current date
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            const yyyy = today.getFullYear();
+            const currentDate = `${dd}/${mm}/${yyyy}`;
+            text = text.replace(/\[Current Date\]/g, currentDate);
+
+            applicationTextarea.value = text.trim();
+        } else {
+            applicationTextarea.value = 'No application sample available for this type.';
+        }
+    }
+
+    // Event listener for search input
+    appSearchInput.addEventListener('input', renderApplicationTypeRadios);
+
+    // Event listener for sample selection change
+    sampleSelect.addEventListener('change', (event) => {
+        selectedSampleIndex = parseInt(event.target.value);
+        updateApplicationText();
+    });
+
+    // Event listener for copy button
+    copyButton.addEventListener('click', () => {
+        applicationTextarea.select();
+        document.execCommand('copy');
+        copyMessage.textContent = 'Copied!';
+        setTimeout(() => {
+            copyMessage.textContent = '';
+        }, 2000);
+    });
+
+    // Function to handle printing
+    const printApplication = () => {
+        // Try to open the print window
+        const printWindow = window.open('', '_blank', 'height=600,width=800');
+
+        // Check if the window was successfully opened (not blocked by a popup blocker)
+        if (!printWindow) {
+            copyMessage.textContent = 'Failed to open print window. Please ensure popups are allowed for this site.';
+            setTimeout(() => {
+                copyMessage.textContent = '';
+            }, 5000); // Clear message after 5 seconds
+            return; // Exit the function if the window was not opened
+        }
+
+        try {
+            // Explicitly open the document for writing. This is good practice.
+            printWindow.document.open();
+            // Write the HTML content for printing into the new window
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Print Application</title>
+                    <style>
+                        body { font-family: 'Inter', sans-serif; margin: 0; padding: 20mm; box-sizing: border-box; }
+                        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 12pt; line-height: 1.5; }
+                    </style>
+                </head>
+                <body>
+                    <div id="print-area">
+                        <pre>${applicationTextarea.value}</pre>
+                    </div>
+                    <script>
+                        // This script runs inside the new print window
+                        window.onload = function() {
+                            window.print(); // Trigger the print dialog
+                            window.onafterprint = function() {
+                                window.close(); // Close the print window after printing (or canceling)
+                            };
+                        };
+                    </scr` + `ipt>
+                </body>
+                </html>
+            `);
+            // Close the document stream after writing all content
+            printWindow.document.close();
+        } catch (e) {
+            // Log any errors that occur during the document writing/closing process
+            console.error("An error occurred during the print operation:", e);
+            // Inform the user about the error
+            copyMessage.textContent = 'An error occurred during printing. Please try again.';
+            setTimeout(() => {
+                copyMessage.textContent = '';
+            }, 5000);
+            // Attempt to close the window if it was opened but an error occurred
+            if (printWindow && !printWindow.closed) {
+                printWindow.close();
+            }
+        }
+    };
+
+    // Event listener for print button
+    printButton.addEventListener('click', printApplication);
+
+    // Initial render on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set initial selectedApplicationType to the first one in the array if available
+        if (applicationTypes.length > 0) {
+            selectedApplicationType = applicationTypes[0].id;
+        }
+        renderApplicationTypeRadios(); // Render application types initially
+        renderSampleSelection(); // Render sample selection initially
+        updateApplicationText(); // Generate initial application text
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>মাধ্যমাধ্যমিক ও উচ্চ বিদ্যালয়ের শিক্ষক/কর্মীদের ছুটির নিয়মাবলী!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for body and container, optimized for mobile-first approach */
+        body {
+            font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 900px;
+            padding: 1rem; /* Base padding for mobile (16px) */
+            margin-left: auto;
+            margin-right: auto;
+            flex-grow: 1; /* Allows container to grow and fill space */
+        }
+
+        /* Card specific styles */
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+        }
+        .header-bg {
+            background-color: #4f46e5; /* Indigo-500 */
+        }
+        .text-indigo-700 {
+            color: #4338ca; /* Indigo-700 */
+        }
+        .text-gray-700 {
+            color: #374151; /* Gray-700 */
+        }
+        .leave-card-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem; /* Ample padding for touch targets on mobile */
+            background-color: #f9fafb; /* Gray-50 */
+            border-bottom: 1px solid #e5e7eb; /* Gray-200 */
+            border-radius: 0.75rem 0.75rem 0 0; /* rounded-t-xl */
+        }
+        .leave-card-header:hover {
+            background-color: #f3f4f6; /* Gray-100 */
+        }
+        .leave-card-content {
+            padding: 1rem; /* Consistent padding inside content */
+            border-radius: 0 0 0.75rem 0.75rem; /* rounded-b-xl */
+            border: 1px solid #e5e7eb; /* Gray-200 */
+            border-top: none;
+        }
+        .arrow-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        .arrow-icon.rotated {
+            transform: rotate(90deg);
+        }
+        /* Ensure the arrow icon is a block element for proper rotation */
+        .arrow-icon svg {
+            display: block;
+        }
+
+        /* Responsive adjustments using Tailwind's breakpoints (though many are handled by default) */
+        @media (min-width: 640px) { /* sm */
+            .container {
+                padding: 1.5rem; /* 24px */
+            }
+            .header-bg h1 {
+                font-size: 2.25rem; /* sm:text-4xl */
+            }
+            .header-bg p {
+                font-size: 1.125rem; /* sm:text-xl */
+            }
+        }
+        @media (min-width: 768px) { /* md */
+            .container {
+                padding: 2rem; /* 32px */
+            }
+        }
+        @media (min-width: 1024px) { /* lg */
+            .container {
+                padding: 2.5rem; /* 40px */
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+<div class="container mx-auto card p-6 sm:p-8 lg:p-10 my-8">
+    <!-- Header Section -->
+    <div class="header-bg text-white p-6 rounded-t-xl mb-6">
+        <h1 class="text-3xl sm:text-4xl font-bold text-center mb-2">মাধ্যমিক ও উচ্চ বিদ্যালয়ের শিক্ষক/কর্মীদের ছুটির নিয়মাবলী!</h1>
+        <p class="text-center text-lg sm:text-xl">চছুটির জন্য একটি বিস্তারিত নির্দেশিকা</p>
+    </div>
+
+    <!-- Introduction -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-indigo-700 mb-4">ভূমিকা</h2>
+        <p class="text-gray-700 leading-relaxed">
+            এই ছুটির নিয়মাবলী উচ্চ বিদ্যালয়ের শিক্ষকদের ছুটির অধিকার সম্পর্কে স্পষ্টতা এবং ন্যায্যতা প্রদানের জন্য তৈরি করা হয়েছে। এই নির্দেশিকাগুলি বোঝা কার্যকর পরিকল্পনা এবং শিক্ষামূলক পরিষেবাগুলির ধারাবাহিকতা নিশ্চিত করার জন্য অত্যন্ত গুরুত্বপূর্ণ। সকল শিক্ষককে এই নীতিগুলির সাথে পরিচিত হওয়ার জন্য উৎসাহিত করা হচ্ছে।
+        </p>
+    </section>
+
+    <!-- Types of Leave -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-indigo-700 mb-4">ছুটির প্রকারভেদ</h2>
+
+        <p class="text-gray-700 leading-relaxed mb-4 p-2 border border-blue-200 bg-blue-50 rounded-md">
+            <strong>পশ্চিমবঙ্গ মাধ্যমিক বিদ্যালয় শিক্ষক/অশিক্ষক কর্মচারী ছুটির নিয়মাবলী:</strong> স্বীকৃত বেসরকারি মাধ্যমিক বিদ্যালয়গুলির (স্পনসরড স্কুল বা রাজ্য সরকার দ্বারা নির্দিষ্ট অন্য কোনো স্কুল বা শ্রেণীর স্কুল ব্যতীত) শিক্ষক ও অশিক্ষক কর্মীদের জন্য ছুটি মঞ্জুরের নিয়মাবলী।
+        </p>
+
+        <!-- Casual Leave (CL) -->
+        <div class="mb-4 card">
+            <div class="leave-card-header rounded-t-xl" onclick="toggleLeaveDetails('cl-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">১. নৈমিত্তিক ছুটি (Casual Leave - CL)</h3>
+                <span class="arrow-icon transition-transform duration-300 ease-in-out">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="cl-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ১৪ দিন।</li>
+                    <li><strong>মন্তব্য:</strong> (i) একটানা ৫ দিনের বেশি নয়, (ii) রবিবার/ছুটির দিনের আগে/পরে ৭ দিনের বেশি নয়।</li>
+                    <li><strong>আবেদন:</strong> আবেদনপত্র জমা দিতে হবে।</li>
+                    <li><strong>বেতন:</strong> পূর্ণ বেতন।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Leave on Half Average Pay -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('half-pay-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">২. অর্ধ-গড় বেতনে ছুটি (Leave on Half Average Pay)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="half-pay-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ১৫ দিন (একবারে ৬০ দিনের বেশি হবে না)।</li>
+                    <li><strong>সময়কাল:</strong> একটি ক্যালেন্ডার বছর।</li>
+                    <li><strong>আবেদন:</strong> আবেদনপত্র জমা দিতে হবে।</li>
+                    <li><strong>বেতন:</strong> অর্ধ-গড় বেতন।</li>
+                    <li><strong>মন্তব্য:</strong> সার্কুলার S/221 Dt. 30.08.2010 এবং 79 Edn (s) Dt.28.01.94 অনুযায়ী।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Leave on Medical Grounds (Medical Leave) -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('medical-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">৩. চিকিৎসা সংক্রান্ত ছুটি (Medical Leave)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="medical-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ১৫ দিন।</li>
+                    <li><strong>সময়কাল:</strong> প্রতি সম্পূর্ণ হওয়া চাকরির বছরের জন্য।</li>
+                    <li><strong>আবেদন:</strong> আবেদনপত্র ও মেডিকেল সার্টিফিকেট জমা দিতে হবে।</li>
+                    <li><strong>বেতন:</strong> পূর্ণ বেতন।</li>
+                    <li><strong>মন্তব্য:</strong> চাকরি জীবনে ৩৬৫ দিনের বেশি নয়। ৩ দিনের জন্য মেডিকেল সার্টিফিকেট প্রয়োজন নেই। HM দ্বারা মঞ্জুর করা হবে।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Maternity Leave (ML) -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('mat-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">৪. মাতৃত্বকালীন ছুটি (Maternity Leave - ML)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="mat-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ১৮০ দিন (যেকোনো ছুটির সাথে বা পরিবর্তিত ছুটির সাথে ৩০ দিনের বেশি নয়)।</li>
+                    <li><strong>সময়কাল:</strong> ছুটির যেকোনো সময়/শুরুর তারিখ থেকে।</li>
+                    <li><strong>আবেদন:</strong> আবেদনপত্র এবং মেডিকেল সার্টিফিকেট জমা দিতে হবে।</li>
+                    <li><strong>বেতন:</strong> পূর্ণ বেতন।</li>
+                    <li><strong>মন্তব্য:</strong> চাকরি জীবনে ১ বছরের বেশি হবে না। গর্ভপাত সহ গর্ভপাতের জন্য ৬ সপ্তাহ।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Compensatory Leave -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('compensatory-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">৫. ক্ষতিপূরণমূলক ছুটি (Compensatory Leave)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="compensatory-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> কমপক্ষে ৭ দিনের উপস্থিতির বিপরীতে অর্ধেক সময়কাল।</li>
+                    <li><strong>সময়কাল:</strong> দীর্ঘ ছুটি (গ্রীষ্ম বা পূজা) বা অন্যান্য ছুটির দিনে।</li>
+                    <li><strong>আবেদন:</strong> আবেদনপত্র জমা দিতে হবে।</li>
+                    <li><strong>বেতন:</strong> পূর্ণ বেতন।</li>
+                    <li><strong>মন্তব্য:</strong> একটানা হওয়া জরুরি নয়।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Special Leave in Exceptional Circumstances -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('exceptional-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">৬. বিশেষ পরিস্থিতিতে বিশেষ ছুটি (Special Leave in Exceptional Circumstances)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="exceptional-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> (i) ১৮ মাসের বেশি নয়। (ii) B.Ed. পরীক্ষার সময়কাল এবং তার এক সপ্তাহ আগে। (iii) অশিক্ষক কর্মীদের জন্য MP বা তার উপরের পদের জন্য।</li>
+                    <li><strong>আবেদন:</strong> (i) আবেদনপত্র এবং বোর্ডের প্রস্তাব জমা দিতে হবে।</li>
+                    <li><strong>বেতন:</strong> অর্ধ/পূর্ণ বেতন (MC দ্বারা সিদ্ধান্ত নেওয়া হবে)।</li>
+                    <li><strong>মন্তব্য:</strong> (i) দীর্ঘ অসুস্থতার জন্য। (i) শুধুমাত্র তখনই মঞ্জুর করা হবে যখন অন্যান্য সকল ছুটি শেষ হয়ে যাবে। (i) MC দ্বারা ২ বছর পর্যন্ত মঞ্জুর করা হবে। (ii) এক পরীক্ষার স্তরের জন্য একবারের বেশি নয়।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Extraordinary Leave (EOL) -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('eol-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">৭. অসাধারণ ছুটি (Extraordinary Leave - EOL)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="eol-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> (i) সাধারণ ক্ষেত্রে ২ বছর। (ii) MP, MLA, জেলা পরিষদের সভাধিপতি ইত্যাদির জন্য ৫ বছর।</li>
+                    <li><strong>উদ্দেশ্য:</strong> যখন কেউ গবেষণা বা পড়াশোনার জন্য বা নির্দিষ্ট সময়ের জন্য উন্নত চাকরির জন্য বিদেশে যেতে চায়।</li>
+                    <li><strong>বেতন:</strong> বিনা বেতনে।</li>
+                    <li><strong>আবেদন:</strong> আবেদনপত্র জমা দিতে হবে।</li>
+                    <li><strong>মন্তব্য:</strong> যখন অন্য কোনো ছুটি অবশিষ্ট থাকে না। ২ বছর পর বোর্ড দ্বারা মঞ্জুর করা হবে।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quarantine Leave -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('quarantine-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">৮. কোয়ারেন্টাইন ছুটি (Quarantine Leave)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="quarantine-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ২১ দিন (ব্যতিক্রমী ক্ষেত্রে ৩০ দিন)।</li>
+                    <li><strong>উদ্দেশ্য:</strong> পরিবারের সদস্যদের এমন অসুস্থতার জন্য; কিন্তু নিজের অসুস্থতার জন্য নয়।</li>
+                    <li><strong>বেতন:</strong> বেতন ব্যাহত হবে না।</li>
+                    <li><strong>আবেদন:</strong> জেলা মেডিকেল বা স্বাস্থ্য কর্মকর্তার মেডিকেল সার্টিফিকেট জমা দিতে হবে।</li>
+                    <li><strong>মন্তব্য:</strong> অতিরিক্ত ছুটি সাধারণ ছুটি হিসাবে বিবেচিত হবে। কোভিড-১৯ কে কোয়ারেন্টাইন ছুটির অন্তর্ভুক্ত করার জন্য এখনও কোনো শিক্ষা দপ্তরের সার্কুলার প্রকাশিত হয়নি।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Child Care Leave (CCL) -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('ccl-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">৯. শিশু যত্ন ছুটি (Child Care Leave - CCL)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="ccl-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ২ বছর (৭৩০ দিন)।</li>
+                    <li><strong>উদ্দেশ্য:</strong> ১৮ বছর বয়স পর্যন্ত ২ জন সন্তানের জন্য সম্পূর্ণ চাকরি জীবনে।</li>
+                    <li><strong>বেতন:</strong> পূর্ণ বেতন।</li>
+                    <li><strong>আবেদন:</strong> (i) সন্তানের জন্ম সনদ (ii) প্রয়োজন হলে সঠিকভাবে পূরণ করা ফর্ম সহ আবেদনপত্র জমা দিতে হবে।</li>
+                    <li><strong>মন্তব্য:</strong> (i) একটি ক্যালেন্ডার বছরে সর্বোচ্চ ৩টি স্পেলে। (ii) একটি স্পেলে ১৫ দিনের কম নয়। (iii) একটি স্পেলে সর্বোচ্চ ৬০ দিন (যা ব্যতিক্রমী পরিস্থিতিতে ১২০ দিন পর্যন্ত বাড়ানো যেতে পারে)। সার্কুলার নং ৫০SE/S/21.02/17 তারিখ: ১৫.০১.′১৯ (শিক্ষা দপ্তর) এবং সার্কুলার ১১০০-F(P) তারিখ: ২৫.০২.১৬।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Paternity-cum-Child Care Leave -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('pcccl-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">১০. পিতৃত্ব-সহ-শিশু যত্ন ছুটি (Paternity-cum-Child Care Leave)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="pcccl-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ৩০ দিন।</li>
+                    <li><strong>উদ্দেশ্য:</strong> শিশুদের (২ জন পর্যন্ত) জন্ম এবং ১৮ বছর বয়স পর্যন্ত।</li>
+                    <li><strong>বেতন:</strong> পূর্ণ বেতন।</li>
+                    <li><strong>আবেদন:</strong> (i) সন্তানের জন্ম সনদ সহ আবেদনপত্র জমা দিতে হবে।</li>
+                    <li><strong>মন্তব্য:</strong> কর্মচারী শুধুমাত্র অন্যান্য প্রাপ্য ছুটি ব্যবহার করতে পারবেন। যেকোনো ধরনের ছুটির সাথে মিলিত হতে পারে [সার্কুলার ৫৫৬০-F (P) তারিখ: ১৭.০৭.′১৫ এবং ৬৪৪৪-F (P) তারিখ: ২৭.০৮.′১৫]। যেকোনো সংখ্যক দিনের জন্য নেওয়া যেতে পারে, যেমন ১, ৪, ৯, ১৪, ৩০ ইত্যাদি।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Child Adoption Leave -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('adoption-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">১১. শিশু দত্তক ছুটি (Child Adoption Leave)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="adoption-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> ১৩৫ দিন।</li>
+                    <li><strong>উদ্দেশ্য:</strong> ১ বছরের কম বয়সী শিশুর জন্য (২ জনের কম জীবিত সন্তান থাকা মহিলা কর্মচারীর জন্য)।</li>
+                    <li><strong>মন্তব্য:</strong> তিনি তার প্রাপ্য যেকোনো ছুটি ১ বছর পর্যন্ত বা শিশুর ১ বছর বয়স হওয়া পর্যন্ত, যেটি আগে হয়, তা ব্যবহার করতে পারেন। [সার্কুলার নং ৪২১-SE/(S)/2L-01/2011 তারিখ: ২৯.০২.২০১২; সার্কুলার নং S/214 তারিখ: ২৩.০৮.২০১০ ও দেখুন]।</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Joining Leave -->
+        <div class="mb-4 card">
+            <div class="leave-card-header" onclick="toggleLeaveDetails('joining-details', this)">
+                <h3 class="text-xl font-semibold text-gray-800">১২. যোগদান ছুটি (Joining Leave)</h3>
+                <span class="arrow-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+            </div>
+            <div id="joining-details" class="leave-card-content hidden">
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                    <li><strong>সময়কাল:</strong> সাধারণ স্থানান্তরের জন্য ৫ দিন এবং পারস্পরিক স্থানান্তরের জন্য ৩ দিন।</li>
+                    <li><strong>মন্তব্য:</strong> প্রবেশনকালীন সময়ের জন্য ১৫ দিনের সিসিএল (CCL)।</li>
+                </ul>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- General Guidelines -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-indigo-700 mb-4">সাধারণ নির্দেশিকা</h2>
+        <ul class="list-disc list-inside text-gray-700 space-y-2">
+            <li><strong>আবেদন প্রক্রিয়া:</strong> সকল ছুটির আবেদন পর্যাপ্ত নোটিশ সহ নির্ধারিত পোর্টাল বা ফর্মের মাধ্যমে জমা দিতে হবে।</li>
+            <li><strong>পূর্বানুমোদন:</strong> প্রকৃত জরুরি অবস্থা ব্যতীত, ছুটি নেওয়ার আগে অবশ্যই উপযুক্ত কর্তৃপক্ষের দ্বারা অনুমোদিত হতে হবে।</li>
+            <li><strong>বিকল্প ব্যবস্থা:</strong> শিক্ষকরা তাদের ক্লাসগুলি কভার করা হয়েছে বা বিকল্প ব্যবস্থা করা হয়েছে তা নিশ্চিত করতে উৎসাহিত, বিশেষ করে পরিকল্পিত ছুটির জন্য।</li>
+            <li><strong>ছুটির অপব্যবহার:</strong> ছুটির অধিকারের কোনো অপব্যবহারের ফলে শৃঙ্খলাবদ্ধ পদক্ষেপ নেওয়া হতে পারে।</li>
+            <li><strong>নীতি আপডেট:</strong> এই নিয়মাবলী শিক্ষা বোর্ড, সরকার বা বিদ্যালয় ব্যবস্থাপনার নির্দেশিকা অনুযায়ী পরিবর্তিত হতে পারে। যেকোনো আপডেটের বিষয়ে শিক্ষকদের অবহিত করা হবে।</li>
+            <li><strong>নথিভুক্তকরণ:</strong> নির্দিষ্ট ধরণের ছুটির জন্য সঠিক নথি (যেমন, চিকিৎসা সনদপত্র, প্রাসঙ্গিক প্রমাণ) জমা দিতে হবে।</li>
+            <li><strong>গুরুত্বপূর্ণ দ্রষ্টব্য:</strong> নৈমিত্তিক ছুটি এবং ক্ষতিপূরণমূলক ছুটি ব্যতীত, যেকোনো ধরনের ছুটি অন্য যেকোনো ছুটির সাথে বা তার ধারাবাহিকতায় মঞ্জুর করা যেতে পারে।</li>
+            <li><strong>গুরুত্বপূর্ণ দ্রষ্টব্য:</strong> সার্কুলার নং S/221 তারিখ: ৩০শে আগস্ট, ২০১০ অনুযায়ী, ছুটির আগে বা পরের সময়কাল (Prefixing and Suffixing Period) কোনো ছুটির জন্য গণনা করা হবে না।</li>
+            <li><strong>গুরুত্বপূর্ণ দ্রষ্টব্য:</strong> বিদ্যালয় পরিদর্শক (D.I. of Schools) ছুটি মঞ্জুর করার কর্তৃপক্ষ নন। বোর্ড পরীক্ষার সময় যেকোনো ছুটি বোর্ড দ্বারা মঞ্জুর করা হবে।</li>
+        </ul>
+    </section>
+
+    <!-- Important Note (Specific to West Bengal context if applicable) -->
+    <section class="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <h2 class="text-xl font-semibold text-yellow-800 mb-2">গুরুত্বপূর্ণ দ্রষ্টব্য:</h2>
+        <p class="text-yellow-700 leading-relaxed">
+            প্রতিটি ছুটির প্রকারের জন্য নির্দিষ্ট দিনের সংখ্যা, সঞ্চয়ের সীমা এবং বিস্তারিত পদ্ধতিগুলি পৃথক বিদ্যালয়ের অভ্যন্তরীণ নীতি, অধিভুক্তি বোর্ড এবং স্থানীয় সরকারি শ্রম আইন অনুযায়ী সামান্য পরিবর্তিত হতে পারে। শিক্ষকদের সর্বদা তাদের বিদ্যালয়ের অফিসিয়াল এইচআর নীতি নথিটি সবচেয়ে সঠিক এবং হালনাগাদ তথ্যের জন্য উল্লেখ করা উচিত।
+        </p>
+    </section>
+
+    <!-- Notice/Memorandum Source -->
+    <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-indigo-700 mb-4">নোটিশ/স্মারকলিপি উৎস</h2>
+        <p class="text-gray-700 leading-relaxed mb-4">
+            শিক্ষকদের ছুটির নিয়মাবলী সম্পর্কিত অফিসিয়াল নোটিশ এবং স্মারকলিপিগুলি সংশ্লিষ্ট শিক্ষা বোর্ড, রাজ্য সরকার, বা বিদ্যালয় কর্তৃপক্ষের ওয়েবসাইট/নোটিশ বোর্ড থেকে পাওয়া যাবে। নিচে পশ্চিমবঙ্গ মাধ্যমিক বিদ্যালয়ের শিক্ষক/অশিক্ষক কর্মীদের ছুটির নিয়মাবলী সম্পর্কিত কিছু গুরুত্বপূর্ণ স্মারকলিপি ও আদেশের তালিকা দেওয়া হলো:
+        </p>
+        <ul class="list-disc list-inside text-gray-700 space-y-2">
+            <li>No. 1541-Edn dated 15.12.1977 - ছুটির নিয়মাবলী (মাধ্যমিক বিদ্যালয় শিক্ষক/অশিক্ষক কর্মচারী)</li>
+            <li>No. S/342 dated 24.04.1979 - এক্সটেনশন পিরিয়ডে ছুটি</li>
+            <li>No. 103/9 dated 02.01.1980 - অর্ধ-গড় বেতনে ছুটির স্পষ্টীকরণ</li>
+            <li>No. Nil dated 24.01.1980 - ছুটির নিয়মাবলীর স্পষ্টীকরণ (চিকিৎসা ছুটি)</li>
+            <li>No. Nil dated 24.05.1980 - নৈমিত্তিক ছুটির নিয়মাবলীর স্পষ্টীকরণ</li>
+            <li>No. S/Mc-386/81 dated 07.07.1981 - শিক্ষক ও অশিক্ষক কর্মীদের ছুটির নিয়মাবলী (WBBSE)</li>
+            <li>No. 8417/G dated 07.11.1981 - ছুটির নিয়মাবলীর নির্দিষ্ট কিছু বিষয়ে স্পষ্টীকরণ</li>
+            <li>No. 2308/G dated 15.03.1982 - ছুটির নিয়মাবলীর নির্দিষ্ট কিছু বিষয়ে স্পষ্টীকরণ</li>
+            <li>No. 7211/G dated 21.07.1982 - নির্দিষ্ট কিছু বিষয়ে স্পষ্টীকরণ</li>
+            <li>No. 8310/G dated 24.08.1982 - বিদ্যালয়ের ছুটির বিষয়ে স্পষ্টীকরণ</li>
+            <li>No. 2819/G dated 16.03.1983 - অন্য স্কুলে যোগদানের জন্য ছুটি স্থানান্তর</li>
+            <li>No. 5197/G dated 02.06.1983 - শিক্ষক ও ক্লার্কের নৈমিত্তিক ছুটির স্পষ্টীকরণ</li>
+            <li>No. 9246/G dated 28.10.1983 - চিকিৎসা ছুটির স্পষ্টীকরণ</li>
+            <li>No. 26/3/8 dated 16.04.1987 - ছুটির নিয়মাবলীর স্পষ্টীকরণ</li>
+            <li>No. 411/B dated 05.02.1988 - কোয়ারেন্টাইন ছুটির স্পষ্টীকরণ</li>
+            <li>No. 835/8 dated 02.03.1988 - চিকিৎসা সংক্রান্ত বিশেষ ছুটির স্পষ্টীকরণ</li>
+            <li>No. S/863 dated 12.12.1988 - নির্বাচন ডিউটির জন্য বিশেষ নৈমিত্তিক ছুটি</li>
+            <li>No. S/180 dated 07.04.1990 - বিদ্যমান ছুটির নিয়মাবলীর ৫ নং ধারা অনুযায়ী বিশেষ ছুটি</li>
+            <li>No. S/218 dated 26.04.1990 - লিয়েন (Lien) এর বিধান</li>
+            <li>No. S/122 dated 02.05.1991 - পরীক্ষার জন্য বিশেষ ছুটি</li>
+            <li>No. S/133A dated 22.04.1992 - ৫(ii) ধারা অনুযায়ী পরীক্ষার জন্য বিশেষ ছুটি</li>
+            <li>No. 629-Edn dated 24.08.1993 - নির্বাচন ডিউটির জন্য বিশেষ ছুটি</li>
+            <li>No. 9517/G/1 dated 27.01.1994 - ক্ষতিপূরণমূলক ছুটি এবং চিকিৎসা ছুটি</li>
+            <li>No. 79-Edn dated 28.01.1994 - ছুটির নিয়মাবলীর সংশোধন</li>
+            <li>No. 903/G dated 01.03.1994 - আন্তর্জাতিক সম্মেলনের জন্য বিশেষ ছুটি</li>
+            <li>No. S/181 dated 26.05.1994 - ছুটির নিয়মাবলীর সংশোধন</li>
+            <li>No. S/246 dated 16.06.1995 - (কোনো নির্দিষ্ট বিবরণ নেই, সম্ভবত সাধারণ সংশোধন)</li>
+            <li>No. 169-SE dated 25.03.1996 - পৌর কর্পোরেশন ও পৌরসভায় নির্বাচিতদের জন্য বিশেষ নৈমিত্তিক ছুটি</li>
+            <li>No. 284-SE dated 02.04.1997 - বিনা বেতনে অসাধারণ ছুটি</li>
+            <li>No. 288-SE dated 08.04.1997 - বিশেষ নৈমিত্তিক ছুটি</li>
+            <li>No. 3948/G dated 26.11.1999 - চিকিৎসা এবং নৈমিত্তিক ছুটির স্পষ্টীকরণ</li>
+            <li>No. 2327/04/G dated 11.06.2004 - অগ্রিম চিকিৎসা ছুটি</li>
+            <li>No. S/104 dated 07.08.2009 - একাডেমিক সেশন পরিবর্তনের কারণে নৈমিত্তিক ছুটি</li>
+            <li>No. S/214 dated 23.08.2010 - দত্তক গ্রহণকারী মায়েদের জন্য ছুটি</li>
+            <li>No. S/221 dated 30.08.2010 - মাতৃত্বকালীন ছুটি, পরিবর্তিত ছুটি এবং অর্ধ-গড় বেতনের ছুটির বিষয়ে স্পষ্টীকরণ</li>
+        </ul>
+        <p class="text-gray-700 leading-relaxed mt-4">
+            <em>বিশেষ দ্রষ্টব্য: উপরের লিঙ্কগুলি শুধুমাত্র উদাহরণস্বরূপ দেওয়া হয়েছে। অনুগ্রহ করে আপনার প্রতিষ্ঠানের জন্য সঠিক এবং বৈধ উৎসগুলি দিয়ে প্রতিস্থাপন করুন।</em>
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <div class="text-center text-gray-500 text-sm mt-8">
+        <p>&copy; 2025 [wbcalculator]। সর্বস্বত্ব সংরক্ষিত।</p>
+    </div>
+</div>
+
+<script>
+    /**
+     * Toggles the visibility of leave details and rotates the arrow icon.
+     * Ensures only one leave detail section is open at a time.
+     * @param {string} id - The ID of the div containing the leave details to toggle.
+     * @param {HTMLElement} headerElement - The header element that was clicked.
+     */
+    function toggleLeaveDetails(id, headerElement) {
+        const detailsElement = document.getElementById(id);
+        const arrowIcon = headerElement.querySelector('.arrow-icon');
+        const allDetails = document.querySelectorAll('.leave-card-content');
+        const allArrowIcons = document.querySelectorAll('.arrow-icon');
+
+        // Close all other open details and reset their arrow icons
+        allDetails.forEach(detail => {
+            if (detail.id !== id && !detail.classList.contains('hidden')) {
+                detail.classList.add('hidden');
+            }
+        });
+        allArrowIcons.forEach(icon => {
+            if (icon !== arrowIcon && icon.classList.contains('rotated')) {
+                icon.classList.remove('rotated');
+            }
+        });
+
+        // Toggle the clicked detail and rotate its arrow icon
+        if (detailsElement) {
+            detailsElement.classList.toggle('hidden');
+            if (arrowIcon) {
+                arrowIcon.classList.toggle('rotated');
+            }
+        }
+    }
+</script>
+</body>
+</html>

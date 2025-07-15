@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary Teacher Notational Salary Fixation Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body{font-family:'Inter',sans-serif;background-color:#eef2f6;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}.container{background-color:#fff;border-radius:1.5rem;box-shadow:0 15px 30px rgba(0,0,0,.15);padding:2.5rem;max-width:900px;width:100%;border:1px solid #d1d8e0}.gradient-text{background-image:linear-gradient(to right,#3b82f6,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.message-box{padding:1rem;border-radius:.75rem;margin-top:1.5rem;font-weight:600;border:1px solid;transition:all .3s ease-out}.message-box.hidden{display:none}.message-box.bg-red-100{background-color:#fee2e2;color:#b91c1c;border-color:#fca5a5}.message-box.bg-yellow-100{background-color:#fffbeb;color:#b45309;border-color:#fcd34d}.summary-box{background-color:#e0f2fe;border:1px solid #90cdf4;border-radius:.75rem;padding:1.25rem;font-weight:600;color:#1e40af;box-shadow:0 4px 10px rgba(0,0,0,.08);transition:all .2s ease-in-out}.summary-box:hover{transform:translateY(-2px);box-shadow:0 6px 15px rgba(0,0,0,.12)}@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}.animate-fade-in-up{animation:fadeInUp .6s ease-out forwards}.animate-slide-in-left{animation:slideInLeft .5s ease-out forwards}.animate-pop-in{animation:popIn .4s ease-out forwards}.loading-spinner{position:relative;pointer-events:none;opacity:.8}.loading-spinner::after{content:'';position:absolute;width:1.25rem;height:1.25rem;border:3px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;left:calc(50% + 45px);top:50%;transform:translateY(-50%)}@keyframes spin{to{transform:rotate(360deg)}}@media (max-width:768px){.container{padding:1.5rem}.text-4xl{font-size:2.5rem}.text-base{font-size:.95rem}.grid-cols-1.md\:grid-cols-2{grid-template-columns:1fr}.summary-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body class="p-6">
+<div class="container animate-fade-in-up">
+    <h1 class="text-4xl font-bold text-center mb-8 gradient-text">Primary Teacher Notational Salary Fixation Calculator</h1>
+    <p class="text-center text-gray-600 text-base mb-8">Calculate notional benefits from April 1, 2008, to December 31, 2019, and salary fixation under ROPA 2019 from January 1, 2020, for West Bengal primary teachers.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="animate-slide-in-left" style="animation-delay: 0.1s;">
+            <label for="teacherType" class="block text-base font-medium text-gray-700 mb-2">Teacher Type:</label>
+            <select id="teacherType" class="block w-full border border-gray-300 rounded-xl p-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
+                <option value="trained">Trained Primary Teacher (from start)</option>
+                <option value="untrained_dynamic">Untrained Primary Teacher (might gain training later)</option>
+                <option value="untrained_fixed">Untrained Primary Teacher (from start)</option>
+            </select>
+        </div>
+        <div class="animate-slide-in-left" style="animation-delay: 0.2s;">
+            <label for="payInPayBand2008" class="block text-base font-medium text-gray-700 mb-2">Pay in Pay Band as of 01/04/2008:</label>
+            <input type="number" id="payInPayBand2008" class="block w-full border border-gray-300 rounded-xl p-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="e.g., 5400" min="5400" value="5400">
+        </div>
+        <div class="animate-slide-in-left" style="animation-delay: 0.3s;">
+            <label for="gradePay2008" class="block text-base font-medium text-gray-700 mb-2">Grade Pay as of 01/04/2008:</label>
+            <input type="number" id="gradePay2008" class="block w-full border border-gray-300 rounded-xl p-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" placeholder="e.g., 2300" min="0" value="2300">
+        </div>
+        <div class="animate-slide-in-left" style="animation-delay: 0.4s;">
+            <label for="joiningDate" class="block text-base font-medium text-gray-700 mb-2">Date of Joining:</label>
+            <input type="date" id="joiningDate" class="block w-full border border-gray-300 rounded-xl p-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" value="2008-04-01">
+        </div>
+        <div class="animate-slide-in-left" style="animation-delay: 0.5s;">
+            <label for="incrementMonth" class="block text-base font-medium text-gray-700 mb-2">Annual Increment Month:</label>
+            <select id="incrementMonth" class="block w-full border border-gray-300 rounded-xl p-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
+                <option value="1">January</option>
+                <option value="7" selected>July</option>
+            </select>
+        </div>
+        <div id="trainingDateDiv" class="hidden animate-slide-in-left" style="animation-delay: 0.6s;">
+            <label for="trainingCompletionDate" class="block text-base font-medium text-gray-700 mb-2">Date of Training Completion:</label>
+            <input type="date" id="trainingCompletionDate" class="block w-full border border-gray-300 rounded-xl p-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" value="2014-01-01">
+            <p class="text-sm text-gray-600 mt-1">Leave blank if training was completed before joining or if already trained.</p>
+        </div>
+        <div class="animate-slide-in-left" style="animation-delay: 0.7s;">
+            <label for="endDate" class="block text-base font-medium text-gray-700 mb-2">Projection End Date:</label>
+            <input type="date" id="endDate" class="block w-full border border-gray-300 rounded-xl p-3 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300" value="2025-12-31">
+        </div>
+    </div>
+    <button id="calculateBtn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-800 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 animate-pulse">Calculate Salary Fixation</button>
+    <div id="messageBox" class="message-box hidden animate-pop-in"></div>
+    <div id="results" class="mt-8 hidden animate-fade-in-up">
+        <h2 class="text-3xl font-bold text-blue-700 mb-6">Salary Fixation Summary</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 summary-grid">
+            <div class="summary-box">Notional Basic Pay as of 31/12/2019: <span id="notionalBasicPay">Rs. 0</span></div>
+            <div class="summary-box" id="notionalBenefitContainer">Cumulative Notional Benefit (2008–2019): <span id="notionalBenefit">Rs. 0</span></div>
+            <div class="summary-box">Fixed Basic Pay as of 01/01/2020: <span id="fixedBasicPay2020">Rs. 0</span></div>
+            <div class="summary-box">Fixed Basic Pay as of 01/01/2021: <span id="fixedBasicPay2021">Rs. 0</span></div>
+            <div class="summary-box">Fixed Basic Pay as of 01/01/2022: <span id="fixedBasicPay2022">Rs. 0</span></div>
+            <div class="summary-box">Fixed Basic Pay as of 01/01/2023: <span id="fixedBasicPay2023">Rs. 0</span></div>
+            <div class="summary-box">Fixed Basic Pay as of 01/01/2024: <span id="fixedBasicPay2024">Rs. 0</span></div>
+            <div class="summary-box">Fixed Basic Pay as of 01/01/2025: <span id="fixedBasicPay2025">Rs. 0</span></div>
+        </div>
+        <p class="text-sm text-gray-600 mt-6"><strong class="text-red-600">Disclaimer:</strong> This calculator provides an estimation based on simplified ROPA 2008 notional pay calculations (3% annual increment after 6 months, rounded to nearest Rs. 10, grade pay adjustments with bunching) and ROPA 2019 pay fixation rules (2.57 fitment factor, provided Pay Matrix). It uses provided data for notional pay matching (Grade Pay 2300→2900, 2600→3600). For official calculations, refer to West Bengal ROPA 2008 and 2019 notifications (e.g., No. 5562–F, dated September 25, 2019) and consult a financial expert.</p>
+    </div>
+</div>
+<script>
+    // Provided notional pay data (unchanged)
+    const notionalPayData = {
+        2900: [
+            { payInPayBand: 6700, gradePay: 2900, basicPay: 9600 },
+            { payInPayBand: 6890, gradePay: 2900, basicPay: 9790 },
+            { payInPayBand: 7070, gradePay: 2900, basicPay: 9970 },
+            { payInPayBand: 7260, gradePay: 2900, basicPay: 10160 },
+            { payInPayBand: 7440, gradePay: 2900, basicPay: 10340 },
+            { payInPayBand: 7630, gradePay: 2900, basicPay: 10530 },
+            { payInPayBand: 7820, gradePay: 2900, basicPay: 10720 },
+            { payInPayBand: 8050, gradePay: 2900, basicPay: 10950 },
+            { payInPayBand: 8280, gradePay: 2900, basicPay: 11180 },
+            { payInPayBand: 8510, gradePay: 2900, basicPay: 11410 },
+            { payInPayBand: 8750, gradePay: 2900, basicPay: 11650 },
+            { payInPayBand: 8980, gradePay: 2900, basicPay: 11880 },
+            { payInPayBand: 9210, gradePay: 2900, basicPay: 12110 },
+            { payInPayBand: 9440, gradePay: 2900, basicPay: 12340 },
+            { payInPayBand: 9680, gradePay: 2900, basicPay: 12580 },
+            { payInPayBand: 9910, gradePay: 2900, basicPay: 12810 },
+            { payInPayBand: 10140, gradePay: 2900, basicPay: 13040 },
+            { payInPayBand: 10370, gradePay: 2900, basicPay: 13270 },
+            { payInPayBand: 10610, gradePay: 2900, basicPay: 13510 },
+            { payInPayBand: 10890, gradePay: 2900, basicPay: 13790 },
+            { payInPayBand: 11160, gradePay: 2900, basicPay: 14060 },
+            { payInPayBand: 11440, gradePay: 2900, basicPay: 14340 },
+            { payInPayBand: 11720, gradePay: 2900, basicPay: 14620 },
+            { payInPayBand: 12000, gradePay: 2900, basicPay: 14900 },
+            { payInPayBand: 12280, gradePay: 2900, basicPay: 15180 },
+            { payInPayBand: 12560, gradePay: 2900, basicPay: 15460 },
+            { payInPayBand: 12840, gradePay: 2900, basicPay: 15740 },
+            { payInPayBand: 13120, gradePay: 2900, basicPay: 16020 },
+            { payInPayBand: 13400, gradePay: 2900, basicPay: 16300 },
+            { payInPayBand: 13680, gradePay: 2900, basicPay: 16580 },
+            { payInPayBand: 13950, gradePay: 2900, basicPay: 16850 },
+            { payInPayBand: 14230, gradePay: 2900, basicPay: 17130 },
+            { payInPayBand: 14510, gradePay: 2900, basicPay: 17410 },
+            { payInPayBand: 14790, gradePay: 2900, basicPay: 17690 }
+        ],
+        3600: [
+            { payInPayBand: 7440, gradePay: 3600, basicPay: 11040 },
+            { payInPayBand: 7680, gradePay: 3600, basicPay: 11280 },
+            { payInPayBand: 7910, gradePay: 3600, basicPay: 11510 },
+            { payInPayBand: 8190, gradePay: 3600, basicPay: 11790 },
+            { payInPayBand: 8470, gradePay: 3600, basicPay: 12070 },
+            { payInPayBand: 8750, gradePay: 3600, basicPay: 12350 },
+            { payInPayBand: 9030, gradePay: 3600, basicPay: 12630 },
+            { payInPayBand: 9300, gradePay: 3600, basicPay: 12900 },
+            { payInPayBand: 9580, gradePay: 3600, basicPay: 13180 },
+            { payInPayBand: 9860, gradePay: 3600, basicPay: 13460 },
+            { payInPayBand: 10190, gradePay: 3600, basicPay: 13790 },
+            { payInPayBand: 10510, gradePay: 3600, basicPay: 14110 },
+            { payInPayBand: 10840, gradePay: 3600, basicPay: 14440 },
+            { payInPayBand: 11160, gradePay: 3600, basicPay: 14760 },
+            { payInPayBand: 11490, gradePay: 3600, basicPay: 15090 },
+            { payInPayBand: 11820, gradePay: 3600, basicPay: 15420 },
+            { payInPayBand: 12140, gradePay: 3600, basicPay: 15740 },
+            { payInPayBand: 12470, gradePay: 3600, basicPay: 16070 },
+            { payInPayBand: 12790, gradePay: 3600, basicPay: 16390 },
+            { payInPayBand: 13120, gradePay: 3600, basicPay: 16720 },
+            { payInPayBand: 13490, gradePay: 3600, basicPay: 17090 },
+            { payInPayBand: 13860, gradePay: 3600, basicPay: 17460 },
+            { payInPayBand: 14230, gradePay: 3600, basicPay: 17830 },
+            { payInPayBand: 14610, gradePay: 3600, basicPay: 18210 },
+            { payInPayBand: 14980, gradePay: 3600, basicPay: 18580 },
+            { payInPayBand: 15350, gradePay: 3600, basicPay: 18950 },
+            { payInPayBand: 15720, gradePay: 3600, basicPay: 19320 },
+            { payInPayBand: 16090, gradePay: 3600, basicPay: 19690 },
+            { payInPayBand: 16470, gradePay: 3600, basicPay: 20070 },
+            { payInPayBand: 16840, gradePay: 3600, basicPay: 20440 },
+            { payInPayBand: 17210, gradePay: 3600, basicPay: 20810 },
+            { payInPayBand: 17580, gradePay: 3600, basicPay: 21180 },
+            { payInPayBand: 17950, gradePay: 3600, basicPay: 21550 },
+            { payInPayBand: 18330, gradePay: 3600, basicPay: 21930 },
+            { payInPayBand: 18700, gradePay: 3600, basicPay: 22300 }
+        ]
+    };
+
+    // Event listeners for UI elements
+    document.getElementById('calculateBtn').addEventListener('click', calculateSalaryFixation);
+    document.getElementById('teacherType').addEventListener('change', toggleTrainingDateInput);
+    toggleTrainingDateInput(); // Call on load to set initial visibility
+
+    // Helper function to round incremented pay
+    function customRoundIncrement(pay) {
+        const incremented = pay * 1.03;
+        return Math.ceil(Math.floor(incremented) / 10) * 10;
+    }
+
+    // Helper function to adjust pay for grade pay, ensuring it meets minimums
+    function adjustPayForGradePay(pay, notionalGradePay) {
+        const minBasicPay = notionalGradePay === 2900 ? 8300 : 9000;
+        const minPayInPayBand = minBasicPay - notionalGradePay;
+        if (pay < minPayInPayBand) {
+            pay = minPayInPayBand;
+            // If adjusted, apply one increment immediately as per some rules for bunching
+            // This might need further refinement based on exact ROPA 2008 bunching rules
+            // For simplicity, we apply a round-up to nearest 10 after adjustment
+            pay = Math.ceil(pay / 10) * 10;
+        }
+        return Math.ceil(pay / 10) * 10; // Ensure final pay is rounded to nearest 10
+    }
+
+    // Helper function to find matching pay in the notional pay data
+    function findNotionalPayMatch(pay, gradePay) {
+        const data = notionalPayData[gradePay] || [];
+        // Try to find an exact match first
+        const match = data.find(item => item.payInPayBand === pay);
+        if (match) return match;
+        // If no exact match, find the next higher value (bunching)
+        const higher = data.find(item => item.payInPayBand > pay);
+        // If no higher value found, it means the calculated pay is above the highest in the band.
+        // In this simplified model, we'll take the last value. In a real scenario,
+        // specific rules for exceeding the pay band would apply.
+        return higher || data[data.length - 1];
+    }
+
+    // Display a message to the user (error or warning)
+    function showMessage(message, type = 'warning') {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.textContent = message;
+        messageBox.className = `message-box animate-pop-in ${type === 'error' ? 'bg-red-100 text-red-800 border-red-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200'}`;
+        messageBox.classList.remove('hidden');
+    }
+
+    // Hide the message box
+    function hideMessage() {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.classList.add('hidden');
+    }
+
+    // Toggle visibility of the training completion date input
+    function toggleTrainingDateInput() {
+        const teacherType = document.getElementById('teacherType').value;
+        const trainingDateDiv = document.getElementById('trainingDateDiv');
+        if (teacherType === 'untrained_dynamic') {
+            trainingDateDiv.classList.remove('hidden');
+            trainingDateDiv.classList.add('animate-slide-in-left');
+        } else {
+            trainingDateDiv.classList.add('hidden');
+            trainingDateDiv.classList.remove('animate-slide-in-left');
+        }
+    }
+
+    // ROPA 2019 Pay Matrix for Level 9 (Simplified for demonstration)
+    const generatePayLevel9Matrix = (entryPay) => {
+        const matrix = [];
+        let currentPay = entryPay;
+        // Generate about 50 cells to cover a reasonable range for Level 9
+        for (let i = 0; i < 50; i++) {
+            matrix.push(Math.round(currentPay / 100) * 100); // Round to nearest 100 as per ROPA 2019
+            currentPay *= 1.03;
+        }
+        return [...new Set(matrix)].sort((a, b) => a - b); // Remove duplicates and sort
+    };
+
+    let payLevel9Matrix = []; // Will be populated based on user selection
+
+    // Helper function to find the nearest or next higher value in the pay matrix
+    function findPayInMatrix(basicPay, matrix) {
+        // Find the first value in the matrix that is greater than or equal to basicPay
+        const foundIndex = matrix.findIndex(pay => pay >= basicPay);
+
+        if (foundIndex !== -1) {
+            return {
+                basicPay: matrix[foundIndex],
+                cellIndex: foundIndex + 1 // Cell index is 1-based
+            };
+        } else {
+            // If basicPay is higher than all values in the matrix, take the highest available.
+            // In a real scenario, this might indicate reaching the end of the pay level.
+            return {
+                basicPay: matrix[matrix.length - 1],
+                cellIndex: matrix.length
+            };
+        }
+    }
+
+    // Main calculation function
+    function calculateSalaryFixation() {
+        hideMessage(); // Clear any previous messages
+        const calculateBtn = document.getElementById('calculateBtn');
+        // Disable button and show loading state
+        calculateBtn.disabled = true;
+        calculateBtn.textContent = 'Calculating...';
+        calculateBtn.classList.add('loading-spinner');
+
+        // Use a timeout to allow UI to update before heavy calculation,
+        // and to simulate a brief processing time.
+        setTimeout(() => {
+            // Retrieve input values
+            const teacherType = document.getElementById('teacherType').value;
+            const payInPayBand2008 = parseFloat(document.getElementById('payInPayBand2008').value);
+            const gradePay2008 = parseFloat(document.getElementById('gradePay2008').value);
+            const joiningDate = document.getElementById('joiningDate').value;
+            const incrementMonth = parseInt(document.getElementById('incrementMonth').value);
+            const trainingCompletionDate = document.getElementById('trainingCompletionDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            // Input validation
+            if (isNaN(payInPayBand2008) || payInPayBand2008 < 5400 || payInPayBand2008 > 25200) {
+                showMessage('Please enter a valid Pay in Pay Band (Rs. 5400–25200) as of 01/04/2008 or joining date.', 'error');
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate Salary Fixation';
+                calculateBtn.classList.remove('loading-spinner');
+                return;
+            }
+            if (isNaN(gradePay2008) || ![2300, 2600].includes(gradePay2008)) {
+                showMessage('Please enter a valid Grade Pay (Rs. 2300 for untrained, Rs. 2600 for trained) as of 01/04/2008 or joining date.', 'error');
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate Salary Fixation';
+                calculateBtn.classList.remove('loading-spinner');
+                return;
+            }
+            if (!joiningDate) {
+                showMessage('Please select a Date of Joining.', 'error');
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate Salary Fixation';
+                calculateBtn.classList.remove('loading-spinner');
+                return;
+            }
+            if (!endDate) {
+                showMessage('Please select a Projection End Date.', 'error');
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate Salary Fixation';
+                calculateBtn.classList.remove('loading-spinner');
+                return;
+            }
+
+            // Define key dates
+            const startDate = new Date('2008-04-01'); // ROPA 2008 effective date
+            const notionalEndDate = new Date('2019-12-31'); // End of notional period
+            const ropa2019StartDate = new Date('2020-01-01'); // Start of ROPA 2019
+            const joinDate = new Date(joiningDate);
+            const projectionEndDate = new Date(endDate);
+
+            // Date validations
+            if (joinDate.getTime() > notionalEndDate.getTime()) {
+                showMessage('Joining date must be before December 31, 2019, for notional pay calculation.', 'error');
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate Salary Fixation';
+                calculateBtn.classList.remove('loading-spinner');
+                return;
+            }
+            if (projectionEndDate.getTime() < ropa2019StartDate.getTime()) {
+                showMessage('Projection end date must be on or after January 1, 2020.', 'error');
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = 'Calculate Salary Fixation';
+                calculateBtn.classList.remove('loading-spinner');
+                return;
+            }
+
+            let trainingDate = null;
+            if (teacherType === 'untrained_dynamic' && trainingCompletionDate) {
+                trainingDate = new Date(trainingCompletionDate);
+                // Set training date to the 1st of the month for consistent comparison
+                trainingDate = new Date(trainingDate.getFullYear(), trainingDate.getMonth(), 1);
+                if (trainingDate.getTime() < joinDate.getTime()) {
+                    showMessage('Training completion date cannot be before the joining date. If already trained, select "Trained Primary Teacher".', 'error');
+                    calculateBtn.disabled = false;
+                    calculateBtn.textContent = 'Calculate Salary Fixation';
+                    calculateBtn.classList.remove('loading-spinner');
+                    return;
+                }
+                if (trainingDate.getTime() > notionalEndDate.getTime()) {
+                    // If training is completed after the notional period, it doesn't affect notional benefit
+                    showMessage('Training completion after December 31, 2019, does not affect notional benefit for this period.', 'warning');
+                    trainingDate = null;
+                }
+            }
+
+            // Define grade pay constants
+            const untrainedGradePay = 2300;
+            const untrainedNotionalGradePay = 2900;
+            const trainedGradePay = 2600;
+            const trainedNotionalGradePay = 3600;
+            const trainingPayAdjustment = trainedGradePay - untrainedGradePay; // Rs. 300 difference
+
+            // Initialize current pay values for the notional period
+            let actualPayInPayBand = Math.ceil(payInPayBand2008 / 10) * 10;
+            let notionalPayInPayBand = actualPayInPayBand;
+            let isTrained = (teacherType === 'trained'); // Flag to track if the teacher is trained
+
+            // Apply initial notional grade pay adjustment based on initial teacher type
+            let currentNotionalGradePay = isTrained ? trainedNotionalGradePay : untrainedNotionalGradePay;
+            let currentActualGradePay = isTrained ? trainedGradePay : untrainedGradePay;
+
+            // Adjust notional pay in pay band based on initial grade pay and bunching rules
+            notionalPayInPayBand = adjustPayForGradePay(notionalPayInPayBand, currentNotionalGradePay);
+
+            let cumulativeNotionalBenefit = 0;
+
+            // Determine the effective start date for calculations (later of 2008-04-01 or joining date)
+            const effectiveStartDate = new Date(Math.max(joinDate.getTime(), startDate.getTime()));
+            let startYear = effectiveStartDate.getFullYear();
+            let startMonth = effectiveStartDate.getMonth() + 1;
+
+            // Calculate the date 6 months after joining
+            const sixMonthCompletionDate = new Date(joinDate);
+            sixMonthCompletionDate.setMonth(sixMonthCompletionDate.getMonth() + 6);
+
+            // Determine the first potential increment date after joining, aligning with Jan/July
+            let nextIncrementDate = new Date(joinDate.getFullYear(), incrementMonth - 1, 1);
+
+            // Adjust `nextIncrementDate` until it is on or after the 6-month completion date.
+            // This ensures the 6-month service rule is met for the first increment.
+            while (nextIncrementDate.getTime() < sixMonthCompletionDate.getTime()) {
+                nextIncrementDate.setFullYear(nextIncrementDate.getFullYear() + 1);
+            }
+
+            let notionalBasicPay31Dec2019 = 0;
+
+            // Loop through months from effective start date to 2019-12-31 for notional pay
+            for (let year = startYear; year <= 2019; year++) {
+                let monthStart = (year === startYear && joinDate.getFullYear() === year) ? joinDate.getMonth() + 1 : 1;
+                let monthEnd = year === 2019 ? 12 : 12;
+
+                for (let month = monthStart; month <= monthEnd; month++) {
+                    const currentDate = new Date(year, month - 1, 1); // Current month's date
+
+                    // Check for training completion for dynamic untrained teachers
+                    if (teacherType === 'untrained_dynamic' && trainingDate && !isTrained && currentDate.getTime() >= trainingDate.getTime()) {
+                        isTrained = true;
+                        // Apply grade pay change for actual pay
+                        actualPayInPayBand += trainingPayAdjustment;
+                        currentActualGradePay = trainedGradePay;
+
+                        // Apply grade pay change for notional pay
+                        notionalPayInPayBand += trainingPayAdjustment;
+                        currentNotionalGradePay = trainedNotionalGradePay;
+                        // Re-adjust notional pay in pay band based on new grade pay
+                        notionalPayInPayBand = adjustPayForGradePay(notionalPayInPayBand, currentNotionalGradePay);
+                    }
+
+                    // Apply annual increment
+                    if (currentDate.getFullYear() === nextIncrementDate.getFullYear() && currentDate.getMonth() === nextIncrementDate.getMonth()) {
+                        actualPayInPayBand = customRoundIncrement(actualPayInPayBand);
+                        notionalPayInPayBand = customRoundIncrement(notionalPayInPayBand);
+                        notionalPayInPayBand = adjustPayForGradePay(notionalPayInPayBand, currentNotionalGradePay);
+
+                        // Set next increment date
+                        nextIncrementDate.setFullYear(nextIncrementDate.getFullYear() + 1);
+                    }
+
+                    const notionalPayMatch = findNotionalPayMatch(notionalPayInPayBand, currentNotionalGradePay);
+                    // Update notionalPayInPayBand to the exact value from the matched table entry
+                    notionalPayInPayBand = notionalPayMatch.payInPayBand;
+
+
+                    const currentActualBasicPay = actualPayInPayBand + currentActualGradePay;
+                    const currentNotionalBasicPay = notionalPayMatch.basicPay; // Use the basicPay from the notional match
+
+                    const monthlyNotionalBenefit = currentNotionalBasicPay - currentActualBasicPay;
+                    cumulativeNotionalBenefit += monthlyNotionalBenefit;
+
+                    // Store the notional basic pay as of 31/12/2019
+                    if (year === 2019 && month === 12) {
+                        notionalBasicPay31Dec2019 = currentNotionalBasicPay;
+                    }
+                }
+            }
+
+            // --- ROPA 2019 Salary Fixation (from 2020 onwards) ---
+            const entryPayLevel9 = 28900; // Hardcoded as the input field is removed
+            payLevel9Matrix = generatePayLevel9Matrix(entryPayLevel9);
+
+            // Calculate Fixed Basic Pay as of 01/01/2020
+            const fitmentFactor = 2.57;
+            let fixedBasicPay2020 = Math.round(notionalBasicPay31Dec2019 * fitmentFactor);
+
+            // Find the nearest cell in the Pay Level 9 matrix
+            const initialFixedPayResult = findPayInMatrix(fixedBasicPay2020, payLevel9Matrix);
+            fixedBasicPay2020 = initialFixedPayResult.basicPay;
+            let currentCellIndex = initialFixedPayResult.cellIndex;
+
+            // Store fixed basic pay for each year
+            const fixedPaysByYear = {};
+            fixedPaysByYear[2020] = fixedBasicPay2020;
+
+
+            // Determine the first increment date for ROPA 2019
+            let ropa2019NextIncrementDate = new Date(ropa2019StartDate.getFullYear(), incrementMonth - 1, 1);
+            // If the increment month has already passed in 2020, the first increment will be next year
+            if (ropa2019NextIncrementDate.getTime() < ropa2019StartDate.getTime()) {
+                ropa2019NextIncrementDate.setFullYear(ropa2019NextIncrementDate.getFullYear() + 1);
+            }
+
+            let currentRopaBasicPay = fixedBasicPay2020;
+            // Loop from 2020-01-01 to projection end date
+            for (let year = 2020; year <= projectionEndDate.getFullYear(); year++) {
+                let monthStart = (year === 2020) ? 1 : 1;
+                let monthEnd = (year === projectionEndDate.getFullYear()) ? projectionEndDate.getMonth() + 1 : 12;
+
+                for (let month = monthStart; month <= monthEnd; month++) {
+                    const currentDate = new Date(year, month - 1, 1);
+
+                    // Apply annual increment for ROPA 2019
+                    if (currentDate.getFullYear() === ropa2019NextIncrementDate.getFullYear() && currentDate.getMonth() === ropa2019NextIncrementDate.getMonth()) {
+                        // Find the next cell in the matrix
+                        const nextCellIndex = currentCellIndex + 1;
+                        if (nextCellIndex <= payLevel9Matrix.length) {
+                            currentRopaBasicPay = payLevel9Matrix[nextCellIndex - 1];
+                            currentCellIndex = nextCellIndex;
+                        } else {
+                            // If at the end of the matrix, stay at the last value
+                            currentRopaBasicPay = payLevel9Matrix[payLevel9Matrix.length - 1];
+                            currentCellIndex = payLevel9Matrix.length;
+                        }
+                        ropa2019NextIncrementDate.setFullYear(ropa2019NextIncrementDate.getFullYear() + 1);
+                    }
+
+                    // Capture basic pay for January 1st of each year
+                    if (month === 1 && year >= 2020 && year <= 2025) {
+                        fixedPaysByYear[year] = currentRopaBasicPay;
+                    }
+                }
+            }
+
+            // Update summary display
+            document.getElementById('notionalBasicPay').textContent = `Rs. ${notionalBasicPay31Dec2019.toLocaleString('en-IN')}`;
+            document.getElementById('notionalBenefit').textContent = `Rs. ${cumulativeNotionalBenefit.toLocaleString('en-IN')}`;
+
+            // Update the text of the notional benefit container
+            const notionalBenefitContainer = document.getElementById('notionalBenefitContainer');
+            notionalBenefitContainer.childNodes[0].nodeValue = `Cumulative Notional Benefit (${effectiveStartDate.getFullYear()}–${notionalEndDate.getFullYear()}): `;
+
+            document.getElementById('fixedBasicPay2020').textContent = `Rs. ${fixedPaysByYear[2020] ? fixedPaysByYear[2020].toLocaleString('en-IN') : 'N/A'}`;
+            document.getElementById('fixedBasicPay2021').textContent = `Rs. ${fixedPaysByYear[2021] ? fixedPaysByYear[2021].toLocaleString('en-IN') : 'N/A'}`;
+            document.getElementById('fixedBasicPay2022').textContent = `Rs. ${fixedPaysByYear[2022] ? fixedPaysByYear[2022].toLocaleString('en-IN') : 'N/A'}`;
+            document.getElementById('fixedBasicPay2023').textContent = `Rs. ${fixedPaysByYear[2023] ? fixedPaysByYear[2023].toLocaleString('en-IN') : 'N/A'}`;
+            document.getElementById('fixedBasicPay2024').textContent = `Rs. ${fixedPaysByYear[2024] ? fixedPaysByYear[2024].toLocaleString('en-IN') : 'N/A'}`;
+            document.getElementById('fixedBasicPay2025').textContent = `Rs. ${fixedPaysByYear[2025] ? fixedPaysByYear[2025].toLocaleString('en-IN') : 'N/A'}`;
+
+
+            // Show results section
+            document.getElementById('results').classList.remove('hidden');
+
+            // Re-enable button and remove loading state
+            calculateBtn.disabled = false;
+            calculateBtn.textContent = 'Calculate Salary Fixation';
+            calculateBtn.classList.remove('loading-spinner');
+        }, 500); // Simulate network delay
+    }
+</script>
+</body>
+</html>

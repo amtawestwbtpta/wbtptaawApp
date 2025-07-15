@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WB Primary Teachers Recruitment Weightage Calculator</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc; /* Light gray background */
+            margin: 0;
+            padding: 0;
+        }
+        .calculator-container {
+            background-color: #ffffff; /* White background for the calculator */
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+            max-width: 520px; /* Slightly wider */
+            margin: 40px auto;
+            border: 1px solid #e2e8f0; /* Light border */
+        }
+        .calculator-container h2 {
+            text-align: center;
+            color: #1a73e8; /* Google Blue */
+            margin-bottom: 24px;
+            font-size: 1.8em; /* Slightly larger heading */
+            font-weight: 700;
+        }
+        .instructions {
+            font-size: 1em;
+            color: #4a5568; /* Darker gray */
+            margin-bottom: 20px;
+            background-color: #e6f0ff; /* Light blue background */
+            padding: 12px 18px;
+            border-radius: 10px;
+            border-left: 4px solid #1a73e8; /* Blue left border */
+        }
+        form label {
+            font-weight: 600;
+            color: #2d3748; /* Even darker gray */
+            display: block;
+            margin-bottom: 8px;
+        }
+        form input[type="number"] {
+            width: 100%;
+            padding: 12px 14px; /* More padding */
+            margin-top: 4px;
+            margin-bottom: 20px; /* More space below inputs */
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 17px; /* Slightly larger font */
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: #f8fafc; /* Off-white background */
+        }
+        form input[type="number"]:focus {
+            border-color: #1a73e8; /* Blue focus border */
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2); /* Blue glow on focus */
+            outline: none;
+        }
+        form button {
+            background-color: #1a73e8; /* Google Blue */
+            color: #fff;
+            padding: 15px 0; /* More padding */
+            width: 100%;
+            font-size: 19px; /* Larger font */
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2); /* Soft shadow */
+        }
+        form button:hover {
+            background-color: #155bb5; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+        form button:active {
+            transform: translateY(0); /* Press effect */
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #ecfdf5; /* Light green background for success */
+            border-radius: 12px;
+            border: 1px solid #a7f3d0; /* Green border */
+            color: #065f46; /* Dark green text */
+            text-align: center;
+            min-height: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #result.error {
+            background-color: #fee2e2; /* Light red for errors */
+            border-color: #fca5a5; /* Red border */
+            color: #991b1b; /* Dark red text */
+        }
+        #result .total-weightage {
+            font-size: 2.2em; /* Larger total weightage */
+            font-weight: 800;
+            color: #1a73e8; /* Blue for total */
+            margin-bottom: 10px;
+        }
+        #result.error .total-weightage {
+            color: #991b1b; /* Red for error total */
+        }
+        #result .breakdown {
+            font-size: 0.95em;
+            color: #4a5568; /* Darker gray for breakdown */
+            line-height: 1.6;
+            text-align: left; /* Align breakdown left */
+            width: 100%; /* Take full width */
+            margin-top: 10px;
+        }
+        #result .breakdown strong {
+            color: #2d3748; /* Stronger color for labels */
+        }
+        .key-notes {
+            margin: 32px auto 0 auto;
+            max-width: 520px; /* Match calculator width */
+            background-color: #fffbe7; /* Light yellow background */
+            border-left: 5px solid #fbbf24; /* Yellow border */
+            padding: 18px 24px;
+            border-radius: 10px;
+            color: #92400e; /* Dark orange text */
+            font-size: 1em;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.08);
+        }
+        .key-notes ul {
+            margin: 0 0 0 18px;
+            padding: 0;
+            list-style-type: disc; /* Ensure disc style */
+        }
+        .key-notes li {
+            margin-bottom: 6px;
+        }
+        .key-notes li:last-child {
+            margin-bottom: 0;
+        }
+        .footer-link {
+            text-align: center;
+            margin-top: 30px;
+            font-size: .95em;
+            color: #64748b;
+        }
+        .footer-link a {
+            color: #1a73e8; /* Google Blue */
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .calculator-container {
+                padding: 20px;
+                margin: 20px auto;
+                border-radius: 12px;
+            }
+            .calculator-container h2 {
+                font-size: 1.5em;
+                margin-bottom: 18px;
+            }
+            .instructions {
+                padding: 10px 15px;
+                font-size: 0.95em;
+            }
+            form input[type="number"] {
+                padding: 10px 12px;
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+            form button {
+                padding: 12px 0;
+                font-size: 17px;
+            }
+            #result {
+                padding: 15px;
+                font-size: 18px;
+                border-radius: 10px;
+            }
+            #result .total-weightage {
+                font-size: 1.8em;
+            }
+            #result .breakdown {
+                font-size: 0.9em;
+            }
+            .key-notes {
+                padding: 15px 20px;
+                margin: 20px auto 0 auto;
+                border-radius: 8px;
+            }
+            .footer-link {
+                margin-top: 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="calculator-container">
+    <h2>WB Primary Teachers Recruitment<br>Weightage Calculator</h2>
+    <div class="instructions">
+        Enter your marks/percentages below. The calculator will show your total weightage (out of 50) as per official guidelines, including interview marks.
+    </div>
+    <form id="weightageForm" autocomplete="off">
+        <label>Madhyamik (Class 10) %
+            <input type="number" step="0.01" min="0" max="100" id="madhyamik" placeholder="e.g. 78.50" required>
+        </label>
+        <label>Higher Secondary (Class 12) %
+            <input type="number" step="0.01" min="0" max="100" id="hs" placeholder="e.g. 82.00" required>
+        </label>
+        <label>Teacher Training (D.El.Ed/B.Ed) %
+            <input type="number" step="0.01" min="0" max="100" id="tt" placeholder="e.g. 88.00" required>
+        </label>
+        <label>TET %
+            <input type="number" step="0.01" min="0" max="100" id="tet" placeholder="e.g. 75.00" required>
+        </label>
+        <label>Extra-Curricular/Teaching Experience (out of 5)
+            <input type="number" step="0.01" min="0" max="5" id="extra" placeholder="e.g. 3.5" required>
+        </label>
+        <label>Interview Marks (out of 10)
+            <input type="number" step="0.01" min="0" max="10" id="interview" placeholder="e.g. 7.5" required>
+        </label>
+        <button type="button" onclick="calculateWeightage()">Calculate Weightage</button>
+    </form>
+    <div id="result"></div>
+</div>
+
+<div style="max-width:520px;margin:40px auto 60px auto;padding:0 15px;">
+    <h2>WB Primary Teachers Recruitment Weightage Calculator: Your Ultimate Guide</h2>
+    <p>Welcome to the WB Primary Teachers Recruitment Weightage Calculator, a user-friendly tool designed to help candidates accurately calculate their total weightage score as per the latest official guidelines. This calculator simplifies the complex process of evaluating marks from Madhyamik, Higher Secondary, Teacher Training, TET, Extra-Curricular/Teaching Experience, and Interview, providing instant results to assist in your recruitment preparation.</p>
+    <h3>Why Use This Calculator?</h3>
+    <p>Calculating your recruitment weightage manually can be confusing and time-consuming. Our calculator ensures accuracy and transparency, helping you understand how each component contributes to your total score out of 50. It is especially useful for candidates aiming to verify their eligibility and strategize their application process effectively.</p>
+    <h3>How Does the Calculator Work?</h3>
+    <p>The calculator takes your percentages from Madhyamik (Class 10), Higher Secondary (Class 12), Teacher Training (D.El.Ed/B.Ed), and TET, along with your extra-curricular or teaching experience marks and interview marks, and applies the official weightage formula. The total score is then displayed clearly, breaking down each section's contribution.</p>
+    <h3>Frequently Asked Questions (FAQ)</h3>
+    <h4>1. What is the maximum total weightage?</h4>
+    <p>The maximum total weightage is 50 marks, calculated based on the official guidelines provided by the West Bengal Board of Primary Education and including the interview.</p>
+    <h4>2. Can I enter marks in decimals?</h4>
+    <p>Yes, the calculator accepts decimal values for precise calculation of your percentages and experience/interview marks.</p>
+    <h4>3. What if my marks exceed the maximum allowed?</h4>
+    <p>The calculator validates inputs and will prompt you if any value is out of the acceptable range (e.g., percentages above 100, experience above 5, or interview above 10).</p>
+    <h4>4. Is this calculator mobile-friendly?</h4>
+    <p>Absolutely! The calculator is designed to be fully responsive and works seamlessly on mobile devices for your convenience.</p>
+    <h4>5. Where can I find official guidelines?</h4>
+    <p>For detailed rules and updates, please visit the <a href="https://www.wbedu.in/wb-primary-teachers-recruitment-weightage-calculation/" target="_blank" rel="noopener">official WB Primary Teachers Recruitment website</a>.</p>
+    <p>Use this tool to confidently calculate your recruitment weightage and prepare effectively for your teaching career in West Bengal.</p>
+    <div class="key-notes">
+        <strong>Key Notes:</strong>
+        <ul>
+            <li>Enter your actual percentages as printed on your mark sheets.</li>
+            <li>Extra-curricular/Teaching experience marks should not exceed 5.</li>
+            <li>Interview marks should not exceed 10.</li>
+            <li>Total weightage is calculated out of 50 as per the latest official guidelines.</li>
+            <li>For detailed rules and updates, always refer to the official website.</li>
+        </ul>
+    </div>
+</div>
+<div class="footer-link">For more details, see the <a href="https://www.wbedu.in/wb-primary-teachers-recruitment-weightage-calculation/" target="_blank" rel="noopener">official guidelines</a>.</div>
+
+<script>
+    function calculateWeightage() {
+        // Get input values and convert to float, defaulting to 0 if empty
+        let madhyamik = parseFloat(document.getElementById('madhyamik').value) || 0;
+        let hs = parseFloat(document.getElementById('hs').value) || 0;
+        let teacherTraining = parseFloat(document.getElementById('tt').value) || 0;
+        let tet = parseFloat(document.getElementById('tet').value) || 0;
+        let extra = parseFloat(document.getElementById('extra').value) || 0;
+        let interview = parseFloat(document.getElementById('interview').value) || 0;
+
+        let errors = []; // Array to store validation error messages
+        const resultDiv = document.getElementById('result'); // Get the result div
+
+        // Input validation checks
+        if (madhyamik < 0 || madhyamik > 100) errors.push("Madhyamik % must be between 0 and 100.");
+        if (hs < 0 || hs > 100) errors.push("Higher Secondary % must be between 0 and 100.");
+        if (teacherTraining < 0 || teacherTraining > 100) errors.push("Teacher Training % must be between 0 and 100.");
+        if (tet < 0 || tet > 100) errors.push("TET % must be between 0 and 100.");
+        if (extra < 0 || extra > 5) errors.push("Extra-Curricular/Teaching Experience must be between 0 and 5.");
+        if (interview < 0 || interview > 10) errors.push("Interview marks must be between 0 and 10.");
+
+        // If there are validation errors, display them and add 'error' class
+        if (errors.length > 0) {
+            resultDiv.innerHTML = `<div class="text-red-700 font-semibold">${errors.join('<br>')}</div>`;
+            resultDiv.classList.add('error'); // Add error class for styling
+            resultDiv.classList.remove('success'); // Remove success class if present
+            return; // Stop execution if errors exist
+        }
+
+        // Calculate individual weightages based on official guidelines
+        // Madhyamik: 5% of marks
+        let madhyamikWeightage = (madhyamik * 5) / 100;
+        // Higher Secondary: 10% of marks
+        let hsWeightage = (hs * 10) / 100;
+        // Teacher Training: 15% of marks
+        let teacherTrainingWeightage = (teacherTraining * 15) / 100;
+        // TET: 5% of marks
+        let tetWeightage = (tet * 5) / 100;
+        // Extra-Curricular/Teaching Experience: Directly taken (max 5)
+        let extraWeightage = extra;
+        // Interview Marks: Directly taken (max 10)
+        let interviewWeightage = interview;
+
+        // Calculate total weightage
+        let totalWeightage = madhyamikWeightage + hsWeightage + teacherTrainingWeightage + tetWeightage + extraWeightage + interviewWeightage;
+
+        // Construct the elegant HTML output for the result
+        resultDiv.innerHTML = `
+            <div class="total-weightage">
+                ${totalWeightage.toFixed(2)} / 50
+            </div>
+            <div class="breakdown">
+                <strong>Madhyamik:</strong> ${madhyamikWeightage.toFixed(2)}<br>
+                <strong>Higher Secondary:</strong> ${hsWeightage.toFixed(2)}<br>
+                <strong>Teacher Training:</strong> ${teacherTrainingWeightage.toFixed(2)}<br>
+                <strong>TET:</strong> ${tetWeightage.toFixed(2)}<br>
+                <strong>Extra-Curricular/Experience:</strong> ${extraWeightage.toFixed(2)}<br>
+                <strong>Interview:</strong> ${interviewWeightage.toFixed(2)}
+            </div>
+        `;
+        resultDiv.classList.remove('error'); // Remove error class
+        resultDiv.classList.add('success'); // Add success class for styling (if needed, currently not used in CSS)
+    }
+</script>
+</body>
+</html>

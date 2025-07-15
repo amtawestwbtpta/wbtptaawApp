@@ -634,7 +634,7 @@ const YearwiseTeachers = () => {
                 No Teachers found for the selected Year.
               </Text>
             )}
-            {filteredData.length > 0 && (
+            {/* {filteredData.length > 0 && (
               <CustomButton
                 title={'Download Forms'}
                 size={'medium'}
@@ -645,6 +645,52 @@ const YearwiseTeachers = () => {
                   await Linking.openURL(url);
                 }}
               />
+            )} */}
+            {user.circle === 'admin' && (
+              <View style={{ marginVertical: responsiveHeight(2) }}>
+                {(new Date().getFullYear() - parseInt(selectedYear) === 10 ||
+                  new Date().getFullYear() - parseInt(selectedYear) === 20) &&
+                  filteredData.length > 0 && (
+                    <View
+                      style={{
+                        marginVertical: responsiveHeight(2),
+                      }}
+                    >
+                      <CustomButton
+                        title={'Download Proforma'}
+                        size={'medium'}
+                        fontSize={responsiveFontSize(1.5)}
+                        color={'chocolate'}
+                        onClick={async () => {
+                          const url = `${DownloadWeb}/DownloadBenefitForm?data=${JSON.stringify(
+                            { year: selectedYear },
+                          )}`;
+                          await Linking.openURL(url);
+                        }}
+                      />
+                    </View>
+                  )}
+                {new Date().getFullYear() - parseInt(selectedYear) === 2 && (
+                  <View
+                    style={{
+                      marginVertical: responsiveHeight(2),
+                    }}
+                  >
+                    <CustomButton
+                      title={'Download Confirmation Proforma'}
+                      size={'medium'}
+                      fontSize={responsiveFontSize(1.3)}
+                      color={'blueviolet'}
+                      onClick={async () => {
+                        const url = `${DownloadWeb}/DownloadConfirmationProforma?data=${JSON.stringify(
+                          { year: selectedYear },
+                        )}`;
+                        await Linking.openURL(url);
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
             )}
           </View>
         ) : null}

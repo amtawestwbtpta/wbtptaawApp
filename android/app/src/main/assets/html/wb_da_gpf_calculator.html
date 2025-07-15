@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WB Rates & Interest</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        /* Custom spinner for loading state */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #4f46e5; /* Indigo color for spinner */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Table specific styles for better appearance */
+        .data-table th, .data-table td {
+            padding: 12px 15px; /* Comfortable padding */
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0; /* Light border */
+        }
+        .data-table th {
+            background-color: #f8fafc; /* Lighter header background */
+            font-weight: 600;
+            color: #475569; /* Slightly darker text for headers */
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+        .data-table tbody tr:hover {
+            background-color: #f1f5f9; /* Subtle hover effect */
+        }
+        .data-table tbody tr:last-child td {
+            border-bottom: none; /* No border for the last row */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-2xl border border-gray-200">
+    <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">West Bengal Rates & Interest</h1>
+
+    <div class="flex justify-center space-x-6 mb-8">
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="rateType" value="da" class="form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500 transition duration-150 ease-in-out" checked>
+            <span class="ml-2 text-lg font-medium text-gray-700">WB DA Rate</span>
+        </label>
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="rateType" value="gpf" class="form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500 transition duration-150 ease-in-out">
+            <span class="ml-2 text-lg font-medium text-gray-700">WB GPF Interest Rate</span>
+        </label>
+    </div>
+
+    <div id="loadingIndicator" class="flex justify-center items-center py-8 hidden">
+        <div class="spinner"></div>
+        <p class="ml-3 text-gray-600">Loading data...</p>
+    </div>
+
+    <div id="dataDisplay" class="min-h-[150px] bg-indigo-50 p-6 rounded-lg shadow-inner border border-indigo-200 flex flex-col items-center">
+        <!-- Data will be displayed here -->
+    </div>
+
+    <p class="text-sm text-gray-500 mt-6 text-center">
+        Disclaimer: Rates are based on the latest available public information. Please refer to official government notifications for the most accurate and up-to-date figures.
+    </p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const daRateInfo = {
+            rate: "18%",
+            effectiveDate: "April 1, 2025",
+            notes: "The Supreme Court has directed payment of 25% DA, but the currently implemented state rate is 18%.",
+            historicData: [
+                { notification: "1132-F dt. 25.03.2025", date: "April 1, 2025", rate: "18%" },
+                { notification: "1090-F dt. 01.03.2024 / 2691-F dt. 11.06.2024", date: "April 1, 2024", rate: "14%" },
+                { notification: "56-F dt. 03.01.2024", date: "January 1, 2024", rate: "10%" },
+                { notification: "850-F dt. 24.02.2023", date: "March 1, 2023", rate: "6%" },
+                { notification: "78-F dt. 08.01.2021", date: "January 1, 2021", rate: "3%" },
+                { notification: "ROPA 2019 (5562-F dt. 25.09.2019)", date: "January 1, 2019", rate: "125%" }, // ROPA 2019
+                { notification: "4037-F dt. 21.06.2018", date: "January 1, 2019", rate: "125%" },
+                { notification: "5724-F dt. 12.09.2017", date: "January 1, 2018", rate: "100%" },
+                { notification: "18-F dt. 02.01.2017", date: "January 1, 2017", rate: "85%" },
+                { notification: "8430-F dt. 14.12.2015", date: "January 1, 2016", rate: "75%" },
+                { notification: "143-F dt. 09.01.2015", date: "January 1, 2015", rate: "65%" },
+                { notification: "8840-F dt. 16.12.2013", date: "January 1, 2014", rate: "58%" },
+                { notification: "10615-F dt. 31.12.2012", date: "January 1, 2013", rate: "52%" },
+                { notification: "11080-F dt. 12.12.2011", date: "January 1, 2012", rate: "45%" },
+                { notification: "10850-F dt. 23.11.2010", date: "December 1, 2010", rate: "35%" },
+                { notification: "2580-F dt. 09.04.2010", date: "April 1, 2010", rate: "27%" },
+                { notification: "10301-F dt. 03.12.2009", date: "December 1, 2009", rate: "22%" },
+                { notification: "ROPA 2009 (1690-F dt. 23.02.2009)", date: "April 1, 2009", rate: "16%" },
+                { notification: "1370-F dt. 12.02.2009", date: "March 1, 2009", rate: "47% (Calc. on B.P.D.P.)" },
+                { notification: "8195-F dt. 04.11.2008", date: "November 1, 2008", rate: "41% (Calc. on B.P.D.P.)" },
+                { notification: "4236-F dt. 12.06.2008", date: "June 1, 2008", rate: "35% (Calc. on B.P.D.P.)" },
+                { notification: "13-F dt. 01.01.2008", date: "January 1, 2008", rate: "29% (Calc. on B.P.D.P.)" },
+                { notification: "2415-F dt. 27-03-2007", date: "April 1, 2007", rate: "50% (Merger of D.A.)" },
+                { notification: "2416-F dt. 27-03-2007", date: "April 1, 2007", rate: "24% (Calc. on B.P.D.P.)" },
+                { notification: "1-F dt. 02-01-2007", date: "January 1, 2007", rate: "71%" },
+                { notification: "6568-F dt. 01.09.2006", date: "September 1, 2006", rate: "67%" },
+                { notification: "4760-F dt. 27.06.2006", date: "July 1, 2006", rate: "64%" },
+                { notification: "1699-F dt. 27.02.2006", date: "March 1, 2006", rate: "61%" },
+                { notification: "9110-F dt. 11.11.2005", date: "December 1, 2005", rate: "59%" },
+                { notification: "7390-F dt. 19-08-2005", date: "September 1, 2005", rate: "55%" },
+                { notification: "3134-F dt. 04-04-2005", date: "April 1, 2005", rate: "52%" },
+                { notification: "7848-F dt. 12-08-2004", date: "September 1, 2004", rate: "49%" },
+                { notification: "6815-F dt. 27-06-2003", date: "July 1, 2003", rate: "45%" },
+                { notification: "6110-F dt. 27-06-2001", date: "July 1, 2001", rate: "41%" },
+                { notification: "7640-F dt. 06-09-2000", date: "October 1, 2000", rate: "38%" },
+                { notification: "3230-F dt. 04-04-2000", date: "April 1, 2000", rate: "37%" },
+                { notification: "7285-F dt. 26-07-1999", date: "August 1, 1999", rate: "32%" },
+                { notification: "ROPA 1998 (7306-F dated 16.10.1998)", date: "November 1, 1998", rate: "22%" },
+                { notification: "2590-F dt. 02-04-1998", date: "April 1, 1998", rate: "182.4%" }, // Pre-ROPA 1998
+                { notification: "10705-F dt. 10-12-1997", date: "December 1, 1997", rate: "170%" },
+                { notification: "6695-F dt. 25-07-1997", date: "August 1, 1997", rate: "159%" },
+                { notification: "2896-F dt. 27-03-1997", date: "April 1, 1997", rate: "(I.R. 10% or min Rs. 100/-)" },
+                { notification: "7756-F dt. 27-08-1996", date: "October 1, 1996", rate: "148%" },
+                { notification: "2675-F dt. 08-03-1996", date: "April 1, 1996", rate: "136%" },
+                { notification: "11200-F dt. 13-11-1995", date: "December 1, 1995", rate: "125%" },
+                { notification: "955-F dt. 29-11-1995", date: "December 1, 1995", rate: "Rs. 100/- (I.R)" },
+                { notification: "5733-F dt. 01-06-1995", date: "June 1, 1995", rate: "114%" },
+                { notification: "975-F dt. 31-01-1995", date: "February 1, 1995", rate: "104%" },
+                { notification: "10410-F dt. 28-10-1994", date: "November 1, 1994", rate: "97%" },
+                { notification: "4130-F dt. 12-04-1994", date: "May 1, 1994", rate: "92%" },
+                { notification: "12550-F dt. 26-11-1993", date: "December 1, 1993", rate: "83%" },
+                { notification: "7801-F dt. 02-07-1993", date: "July 1, 1993", rate: "71%" },
+                { notification: "10485-F dt. 14-10-1992", date: "November 1, 1992", rate: "60%" },
+                { notification: "11210-F dt. 05-12-1991", date: "January 1, 1992", rate: "51%" },
+                { notification: "2880-F dt. 26-03-1991", date: "April 1, 1991", rate: "43%" },
+                { notification: "11715-F dt. 22-11-1990", date: "December 1, 1990", rate: "38%" },
+                { notification: "5075-F dt. 24-05-1990", date: "June 1, 1990", rate: "34%" },
+                { notification: "11560-F dt. 20-10-1989", date: "November 1, 1989", rate: "29%" },
+                { notification: "5619-F dt. 20-05-1989", date: "June 1, 1989", rate: "23%" },
+                { notification: "610-F dt. 17-01-1989", date: "February 1, 1989", rate: "18%" },
+                { notification: "5690-F dt. 17-05-1988", date: "June 1, 1988", rate: "13%" },
+                { notification: "12890-F dt. 28-11-1987", date: "December 1, 1987", rate: "8%" },
+                { notification: "3360-F & 3367-F dt. 04.04.1987", date: "March 1, 1987", rate: "4%" }
+            ].sort((a, b) => new Date(b.date) - new Date(a.date))
+        };
+
+        const gpfRateInfo = {
+            rate: "7.1%",
+            effectiveDate: "April 1, 2025 to June 30, 2025",
+            notes: "This rate is applicable for the specified quarter, continuing a consistent trend.",
+            historicData: [
+                { notification: "023-F dt. 11.04.2025", period: "April 1, 2025 - June 30, 2025", rate: "7.1%" },
+                { notification: "004-F(J) dt. 14.01.2025", period: "January 1, 2025 - March 31, 2025", rate: "7.1%" },
+                { notification: "123-F(J) dt. 24.10.2024", period: "October 1, 2024 - December 31, 2024", rate: "7.1%" },
+                { notification: "101-F(J) dt. 06.08.2024", period: "July 1, 2024 - September 30, 2024", rate: "7.1%" },
+                { notification: "067-F(J) dt. 14.06.2024", period: "April 1, 2024 - June 30, 2024", rate: "7.1%" },
+                { notification: "001-F(J) dt. 04.06.2024", period: "January 1, 2024 - March 31, 2024", rate: "7.1%" },
+                { notification: "090-F dt. 12.10.2023", period: "October 1, 2023 - December 31, 2023", rate: "7.1%" },
+                { notification: "048-F dt. 19.07.2023", period: "July 1, 2023 - September 30, 2023", rate: "7.1%" },
+                { notification: "019-F dt. 24.04.2023", period: "April 1, 2023 - June 30, 2023", rate: "7.1%" },
+                { notification: "176-F dt. 16.01.2023", period: "January 1, 2023 - March 31, 2023", rate: "7.1%" },
+                { notification: "2930-F dt. 20.10.2022", period: "October 1, 2022 - December 31, 2022", rate: "7.1%" },
+                { notification: "1882-F dt. 20.07.2022", period: "July 1, 2022 - September 30, 2022", rate: "7.1%" },
+                { notification: "914-F dt. 19.04.2022", period: "April 1, 2022 - June 30, 2022", rate: "7.1%" },
+                { notification: "2750-F dt. 18.01.2022", period: "January 1, 2022 - March 31, 2022", rate: "7.1%" },
+                { notification: "2142-F dt. 02.11.2021", period: "October 1, 2021 - December 31, 2021", rate: "7.1%" },
+                { notification: "1320-F dt. 28.07.2021", period: "July 1, 2021 - September 30, 2021", rate: "7.1%" },
+                { notification: "1127-F dt. 05.05.2021", period: "April 1, 2021 - June 30, 2021", rate: "7.1%" },
+                { notification: "169-F dt. 21.01.2021", period: "January 1, 2021 - March 31, 2021", rate: "7.1%" },
+                { notification: "3141-F dt. 10.11.2020", period: "October 1, 2020 - December 31, 2020", rate: "7.1%" },
+                { notification: "2356-F dt. 06.08.2020", period: "July 1, 2020 - September 30, 2020", rate: "7.1%" },
+                { notification: "1630-F dt. 22.04.2020", period: "April 1, 2020 - June 30, 2020", rate: "7.1%" },
+                { notification: "464-F dt. 22.01.2020", period: "January 1, 2020 - March 31, 2020", rate: "7.9%" },
+                { notification: "3879-F dt. 31.10.2019", period: "October 1, 2019 - December 31, 2019", rate: "7.9%" },
+                { notification: "2803-F dt. 18.07.2019", period: "July 1, 2019 - September 30, 2019", rate: "7.9%" },
+                { notification: "1563-F dt. 24.04.2019", period: "April 1, 2019 - June 30, 2019", rate: "8.0%" },
+                { notification: "279-F dt. 17.01.2019", period: "January 1, 2019 - March 31, 2019", rate: "8.0%" },
+                { notification: "4111-F dt. 01.11.2018", period: "October 1, 2018 - December 31, 2018", rate: "8.0%" },
+                { notification: "2894-F dt. 26.07.2018", period: "July 1, 2018 - September 30, 2018", rate: "7.6%" },
+                { notification: "1415-F dt. 23.04.2018", period: "April 1, 2018 - June 30, 2018", rate: "7.6%" },
+                { notification: "407-F dt. 07.02.2018", period: "January 1, 2018 - March 31, 2018", rate: "7.6%" },
+                { notification: "4581-F dt. 08.11.2017", period: "October 1, 2017 - December 31, 2017", rate: "7.8%" },
+                { notification: "3715-F dt. 21.08.2017", period: "July 1, 2017 - September 30, 2017", rate: "7.8%" },
+                { notification: "1759-F dt. 03.05.2017", period: "April 1, 2017 - June 30, 2017", rate: "7.9%" },
+                { notification: "656-F dt. 21.02.2017", period: "January 1, 2017 - March 31, 2017", rate: "8.0%" },
+                { notification: "4793-F dt. 20.12.2016", period: "October 1, 2016 - December 31, 2016", rate: "8.0%" },
+                { notification: "4024-F dt. 21.10.2016", period: "July 1, 2016 - September 30, 2016", rate: "8.1%" },
+                { notification: "2631-F dt. 30.06.2016", period: "April 1, 2016 - June 30, 2016", rate: "8.1%" },
+                { notification: "2854-F dt. 11.05.2015", period: "April 1, 2015 - March 31, 2016", rate: "8.7%" },
+                { notification: "1059-F dt. 31.03.2014", period: "April 1, 2014 - March 31, 2015", rate: "8.7%" },
+                { notification: "AGWB", period: "April 1, 2013 - March 31, 2014", rate: "8.7%" },
+                { notification: "5288-F dt. 22.06.2012", period: "April 1, 2012 - March 31, 2013", rate: "8.8%" },
+                { notification: "2908-F dt. 09.04.2012", period: "December 1, 2011 - March 31, 2012", rate: "8.6%" },
+                { notification: "2908-F dt. 09.04.2012", period: "April 1, 2011 - November 30, 2011", rate: "8.0%" },
+                { notification: "AGWB", period: "April 1, 2010 - March 31, 2011", rate: "8.0%" },
+                { notification: "103-F dt. 05.01.2010", period: "April 1, 2009 - March 31, 2010", rate: "8.0%" },
+                { notification: "5160-F dt. 12.06.2009", period: "April 1, 2008 - March 31, 2009", rate: "8.0%" },
+                { notification: "7916-F dt. 21.10.2008", period: "April 1, 2007 - March 31, 2008", rate: "8.0%" },
+                { notification: "AGWB", period: "April 1, 2006 - March 31, 2007", rate: "8.0%" },
+                { notification: "AGWB", period: "April 1, 2005 - March 31, 2006", rate: "8.0%" },
+                { notification: "AGWB", period: "April 1, 2004 - March 31, 2005", rate: "8.0%" },
+                { notification: "AGWB", period: "April 1, 2003 - March 31, 2004", rate: "8.0%" },
+                { notification: "AGWB", period: "April 1, 2002 - March 31, 2003", rate: "9.0%" },
+                { notification: "AGWB", period: "April 1, 2001 - March 31, 2002", rate: "9.5%" },
+                { notification: "AGWB", period: "April 1, 2000 - March 31, 2001", rate: "11.0%" },
+                { notification: "AGWB", period: "April 1, 1999 - March 31, 2000", rate: "12%" },
+                { notification: "AGWB", period: "April 1, 1986 - March 31, 1999", rate: "12%" },
+                { notification: "AGWB", period: "April 1, 1985 - March 31, 1986", rate: "10.5%" },
+                { notification: "AGWB", period: "April 1, 1984 - March 31, 1985", rate: "10%" },
+                { notification: "AGWB", period: "April 1, 1983 - March 31, 1984", rate: "9.5%" },
+                { notification: "AGWB", period: "April 1, 1981 - March 31, 1983", rate: "9%" },
+                { notification: "AGWB", period: "April 1, 1980 - March 31, 1981", rate: "8.5%" },
+                { notification: "AGWB", period: "April 1, 1977 - March 31, 1980", rate: "8%" },
+                { notification: "AGWB", period: "April 1, 1975 - March 31, 1977", rate: "7.5%" },
+                { notification: "AGWB", period: "April 1, 1974 - March 31, 1975", rate: "6.5%" },
+                { notification: "AGWB", period: "April 1, 1972 - March 31, 1974", rate: "6%" },
+                { period: "April 1, 1971 - March 31, 1972", rate: "5.7%" },
+                { period: "April 1, 1970 - March 31, 1971", rate: "5.5%" },
+                { period: "April 1, 1969 - March 31, 1970", rate: "5.25%" },
+                { period: "April 1, 1968 - March 31, 1969", rate: "5.1%" },
+                { period: "April 1, 1967 - March 31, 1968", rate: "4.8%" },
+                { period: "April 1, 1966 - March 31, 1967", rate: "4.6%" },
+                { period: "April 1, 1965 - March 31, 1966", rate: "4.5%" },
+                { period: "April 1, 1964 - March 31, 1965", rate: "4%" }
+            ].sort((a, b) => {
+                const getDate = (item) => {
+                    if (item.date) return new Date(item.date);
+                    if (item.period) {
+                        const [start] = item.period.split(' - ');
+                        return new Date(start);
+                    }
+                    return new Date(0); // Fallback for invalid dates
+                };
+                return getDate(b) - getDate(a); // Sort in descending order (latest first)
+            })
+        };
+
+        const radioButtons = document.querySelectorAll('input[name="rateType"]');
+        const dataDisplay = document.getElementById('dataDisplay');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        /**
+         * Generates the HTML for displaying the current rate information.
+         * @param {object} info - The current rate information object (daRateInfo or gpfRateInfo).
+         * @returns {string} HTML string for current rate display.
+         */
+        function generateCurrentDataHtml(info) {
+            return `
+                <div class="current-data text-center w-full mb-6 pb-4 border-b border-indigo-200">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-3">Current Rate</h2>
+                    <p class="text-4xl font-bold text-indigo-700 mb-2">${info.rate}</p>
+                    <p class="text-lg text-gray-700 mb-1">Effective from: <span class="font-semibold">${info.effectiveDate}</span></p>
+                    <p class="text-md text-gray-600 italic">${info.notes}</p>
+                </div>
+            `;
+        }
+
+        /**
+         * Generates the HTML for the historical data table.
+         * @param {Array<object>} historicData - Array of historical data entries.
+         * @param {string} type - 'da' or 'gpf' to determine table headers.
+         * @returns {string} HTML string for the historical data table.
+         */
+        function generateHistoricTableHtml(historicData, type) {
+            if (!historicData || historicData.length === 0) {
+                return `<p class="text-gray-600 text-center mt-4">No historical data available.</p>`;
+            }
+
+            const dateHeader = type === 'da' ? 'Effective Date' : 'Period';
+
+            let tableRows = historicData.map(entry => `
+                <tr class="transition-colors duration-200 ease-in-out">
+                    <td class="px-4 py-2 text-gray-700">${entry.date || entry.period}</td>
+                    <td class="px-4 py-2 text-gray-700 font-medium">${entry.rate}</td>
+                    <td class="px-4 py-2 text-gray-700 text-sm">${entry.notification || 'N/A'}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div class="historic-data w-full mt-6">
+                    <h2 class="text-xl font-semibold text-center text-gray-700 mb-4">Historical Data</h2>
+                    <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+                        <table class="min-w-full bg-white data-table">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">${dateHeader}</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Rate</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Notification No.</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Displays the rate information (current and historical) based on the selected type.
+         * @param {string} type - 'da' for DA rate or 'gpf' for GPF interest rate.
+         */
+        function displayData(type) {
+            loadingIndicator.classList.remove('hidden'); // Show loading spinner
+            dataDisplay.innerHTML = ''; // Clear previous content
+            dataDisplay.classList.remove('flex-col'); // Remove flex-col while loading/empty
+
+            // Simulate a slight delay for better UX, then display data
+            setTimeout(() => {
+                let info;
+                if (type === 'da') {
+                    info = daRateInfo;
+                } else if (type === 'gpf') {
+                    info = gpfRateInfo;
+                } else {
+                    dataDisplay.innerHTML = `<p class="text-red-600 font-semibold">Error: Invalid data type selected.</p>`;
+                    loadingIndicator.classList.add('hidden');
+                    return;
+                }
+
+                const currentHtml = generateCurrentDataHtml(info);
+                const historicHtml = generateHistoricTableHtml(info.historicData, type);
+
+                dataDisplay.innerHTML = currentHtml + historicHtml;
+                dataDisplay.classList.add('flex-col'); // Add back flex-col for proper alignment
+                loadingIndicator.classList.add('hidden'); // Hide loading spinner
+            }, 300); // Small delay
+        }
+
+        // Add event listeners to radio buttons
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                displayData(event.target.value);
+            });
+        });
+
+        // Initial display based on the checked radio button
+        const initialChecked = document.querySelector('input[name="rateType"]:checked');
+        if (initialChecked) {
+            displayData(initialChecked.value);
+        }
+    });
+</script>
+</body>
+</html>

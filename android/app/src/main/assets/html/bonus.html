@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>West Bengal Bonus Eligibility Calculator 2025</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8 flex items-center justify-center min-h-screen">
+<div class="bg-white p-6 sm:p-8 md:p-10 rounded-xl shadow-lg w-full max-w-lg">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
+        West Bengal Bonus Eligibility Calculator 2025
+    </h1>
+
+    <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-semibold mb-2">
+            Are you an Employee or a Pensioner?
+        </label>
+        <div class="flex flex-col sm:flex-row gap-4">
+            <label class="inline-flex items-center">
+                <input type="radio" class="form-radio text-blue-600 rounded-md" name="userType" value="employee" checked onchange="toggleFields(); updateEmployeeEmoluments()">
+                <span class="ml-2 text-gray-800">Employee</span>
+            </label>
+            <label class="inline-flex items-center">
+                <input type="radio" class="form-radio text-blue-600 rounded-md" name="userType" value="pensioner" onchange="toggleFields(); updatePensionerCalculations()">
+                <span class="ml-2 text-gray-800">Pensioner</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Employee Fields -->
+    <div id="employeeFields" class="space-y-4">
+        <div>
+            <label for="basicPay" class="block text-gray-700 text-sm font-semibold mb-2">
+                Basic Pay (in ₹)
+            </label>
+            <input type="number" id="basicPay" class="shadow-sm appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" placeholder="e.g., 25000" oninput="updateEmployeeEmoluments()">
+        </div>
+        <div>
+            <label class="block text-gray-700 text-sm font-semibold mb-2">
+                Receive Non-Practicing Allowance (NPA)?
+            </label>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" class="form-radio text-blue-600 rounded-md" name="npaOption" value="yes" onchange="updateEmployeeEmoluments()">
+                    <span class="ml-2 text-gray-800">Yes</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" class="form-radio text-blue-600 rounded-md" name="npaOption" value="no" checked onchange="updateEmployeeEmoluments()">
+                    <span class="ml-2 text-gray-800">No</span>
+                </label>
+            </div>
+        </div>
+        <div>
+            <label for="calculatedEmoluments" class="block text-gray-700 text-sm font-semibold mb-2">
+                Calculated Monthly Emoluments (Basic Pay + DA + NPA)
+            </label>
+            <input type="text" id="calculatedEmoluments" class="shadow-sm appearance-none border rounded-md w-full py-2 px-3 text-gray-700 bg-gray-100 cursor-not-allowed leading-tight" readonly>
+            <p class="text-xs text-gray-500 mt-1">DA is assumed at 18% of Basic Pay. NPA is 20% of Basic Pay, capped at ₹10,000.</p>
+        </div>
+        <div>
+            <label for="serviceDuration" class="block text-gray-700 text-sm font-semibold mb-2">
+                Continuous Service in 2024-2025 (in months, min 6 months for eligibility)
+            </label>
+            <input type="number" id="serviceDuration" class="shadow-sm appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" placeholder="e.g., 12">
+        </div>
+        <!-- Conditional field for months below ceiling -->
+        <div id="monthsBelowCeilingContainer" class="hidden">
+            <label for="monthsBelowCeiling" class="block text-gray-700 text-sm font-semibold mb-2">
+                Number of months in 2024-2025 where emoluments were ₹44,000 or below (minimum 6 months required for eligibility if current emoluments exceed ceiling)
+            </label>
+            <input type="number" id="monthsBelowCeiling" class="shadow-sm appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" placeholder="e.g., 6">
+            <p class="text-xs text-gray-500 mt-1">This is applicable if your calculated monthly emoluments on 31st March 2025 exceed ₹44,000. Enter the number of months (out of 12) your emoluments were ₹44,000 or below during the financial year.</p>
+        </div>
+        <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-3 rounded-md shadow-sm text-sm">
+            <p><strong>Note for Employees:</strong> If your calculated emoluments on 31st March 2025 exceed ₹44,000/-, you might still be eligible if your emoluments were less than or equal to ₹44,000/- for at least 6 months during 2024-2025 (e.g., due to promotion, increment etc.). This calculator now accounts for this. Please refer to official notifications for complex scenarios.</p>
+        </div>
+    </div>
+
+    <!-- Pensioner Fields -->
+    <div id="pensionerFields" class="space-y-4 hidden">
+        <div>
+            <label for="basicPension" class="block text-gray-700 text-sm font-semibold mb-2">
+                Basic Pension (in ₹)
+            </label>
+            <input type="number" id="basicPension" class="shadow-sm appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" placeholder="e.g., 30000" oninput="updatePensionerCalculations()">
+        </div>
+        <div>
+            <label for="calculatedPensionDR" class="block text-gray-700 text-sm font-semibold mb-2">
+                Calculated Dearness Relief (DR) (in ₹)
+            </label>
+            <input type="text" id="calculatedDR" class="shadow-sm appearance-none border rounded-md w-full py-2 px-3 text-gray-700 bg-gray-100 cursor-not-allowed leading-tight" readonly>
+            <p class="text-xs text-gray-500 mt-1">Dearness Relief (DR) is assumed at 18% of Basic Pension.</p>
+        </div>
+        <div>
+            <label for="totalPensionDR" class="block text-gray-700 text-sm font-semibold mb-2">
+                Total (Basic Pension + Dearness Relief) (in ₹)
+            </label>
+            <input type="text" id="totalPensionDR" class="shadow-sm appearance-none border rounded-md w-full py-2 px-3 text-gray-700 bg-gray-100 cursor-not-allowed leading-tight" readonly>
+        </div>
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-md shadow-sm text-sm">
+            <p><strong>Note for Pensioners:</strong> You are not eligible for ex-gratia if you are also eligible for ad-hoc bonus sanctioned by the State Government, or if you are employed/re-employed under any Public Undertakings/Statutory Bodies and receiving bonus/ex-gratia.</p>
+        </div>
+    </div>
+
+    <button onclick="calculateEligibility()" class="mt-8 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 transform hover:scale-105">
+        Calculate Eligibility
+    </button>
+
+    <div id="result" class="mt-6 p-4 border rounded-md bg-gray-50 text-gray-800 text-center text-lg font-semibold min-h-[60px] flex items-center justify-center transition-all duration-300">
+        <!-- Result will be displayed here -->
+        Enter your details and click "Calculate Eligibility".
+    </div>
+
+    <div id="messageBox" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
+            <h3 id="messageBoxTitle" class="text-xl font-semibold text-gray-900 mb-4"></h3>
+            <p id="messageBoxContent" class="text-gray-700 mb-6"></p>
+            <button onclick="hideMessageBox()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                OK
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const EMPLOYEE_DA_RATE = 0.18; // Assumed 18% DA for calculation for state government employees
+    const NPA_RATE = 0.20; // 20% of basic pay
+    const NPA_CAP = 10000; // Capped at Rs. 10,000
+    const PENSIONER_DR_RATE = 0.18; // 18% DR for pensioners as per request
+    const EMPLOYEE_EMOLUMENTS_CEILING = 44000; // Bonus eligibility ceiling for employees
+    const PENSIONER_EX_GRATIA_CEILING = 38000; // Ex-gratia eligibility ceiling for pensioners
+    const AD_HOC_BONUS_AMOUNT = 6800; // Maximum ad-hoc bonus amount for employees
+    const EX_GRATIA_AMOUNT = 3500; // Fixed ex-gratia amount for pensioners
+
+    /**
+     * Displays a custom message box to the user.
+     * @param {string} title - The title of the message box.
+     * @param {string} content - The content message to display.
+     */
+    function showMessageBox(title, content) {
+        document.getElementById('messageBoxTitle').innerText = title;
+        document.getElementById('messageBoxContent').innerText = content;
+        document.getElementById('messageBox').classList.remove('hidden');
+    }
+
+    /**
+     * Hides the custom message box.
+     */
+    function hideMessageBox() {
+        document.getElementById('messageBox').classList.add('hidden');
+    }
+
+    /**
+     * Updates the calculated monthly emoluments for employees based on Basic Pay and NPA selection.
+     * Also controls the visibility of the 'monthsBelowCeiling' field.
+     */
+    function updateEmployeeEmoluments() {
+        const basicPay = parseFloat(document.getElementById('basicPay').value);
+        const npaSelected = document.querySelector('input[name="npaOption"]:checked').value;
+        const calculatedEmolumentsField = document.getElementById('calculatedEmoluments');
+        const monthsBelowCeilingContainer = document.getElementById('monthsBelowCeilingContainer');
+        const monthsBelowCeilingInput = document.getElementById('monthsBelowCeiling');
+
+        if (isNaN(basicPay) || basicPay <= 0) {
+            calculatedEmolumentsField.value = "Enter Basic Pay";
+            monthsBelowCeilingContainer.classList.add('hidden'); // Hide if basic pay is invalid
+            monthsBelowCeilingInput.value = ''; // Clear value
+            return;
+        }
+
+        let dearnessAllowance = basicPay * EMPLOYEE_DA_RATE;
+        let npaAmount = 0;
+
+        if (npaSelected === 'yes') {
+            npaAmount = Math.min(basicPay * NPA_RATE, NPA_CAP);
+        }
+
+        const totalEmoluments = basicPay + dearnessAllowance + npaAmount;
+        calculatedEmolumentsField.value = `₹ ${totalEmoluments.toFixed(2)}`;
+
+        // Toggle visibility of monthsBelowCeiling field based on current emoluments
+        if (totalEmoluments > EMPLOYEE_EMOLUMENTS_CEILING) {
+            monthsBelowCeilingContainer.classList.remove('hidden');
+        } else {
+            monthsBelowCeilingContainer.classList.add('hidden');
+            monthsBelowCeilingInput.value = ''; // Clear input if field is hidden
+        }
+    }
+
+    /**
+     * Updates the calculated Dearness Relief and total pension for pensioners.
+     */
+    function updatePensionerCalculations() {
+        const basicPension = parseFloat(document.getElementById('basicPension').value);
+        const calculatedDRField = document.getElementById('calculatedDR');
+        const totalPensionDRField = document.getElementById('totalPensionDR');
+
+        if (isNaN(basicPension) || basicPension <= 0) {
+            calculatedDRField.value = "Enter Basic Pension";
+            totalPensionDRField.value = "Enter Basic Pension";
+            return;
+        }
+
+        const dearnessRelief = basicPension * PENSIONER_DR_RATE;
+        const totalPensionAndDR = basicPension + dearnessRelief;
+
+        calculatedDRField.value = `₹ ${dearnessRelief.toFixed(2)}`;
+        totalPensionDRField.value = `₹ ${totalPensionAndDR.toFixed(2)}`;
+    }
+
+    /**
+     * Toggles the visibility of employee and pensioner fields based on user type selection.
+     * Resets the result display upon toggling.
+     */
+    function toggleFields() {
+        const userType = document.querySelector('input[name="userType"]:checked').value;
+        const employeeFields = document.getElementById('employeeFields');
+        const pensionerFields = document.getElementById('pensionerFields');
+        const monthsBelowCeilingInput = document.getElementById('monthsBelowCeiling'); // Get the input element
+        const monthsBelowCeilingContainer = document.getElementById('monthsBelowCeilingContainer');
+
+
+        if (userType === 'employee') {
+            employeeFields.classList.remove('hidden');
+            pensionerFields.classList.add('hidden');
+            updateEmployeeEmoluments(); // Update emoluments and visibility when switching to employee
+        } else {
+            employeeFields.classList.add('hidden');
+            pensionerFields.classList.remove('hidden');
+            // Ensure employee-specific fields are reset/hidden when switching to pensioner
+            monthsBelowCeilingInput.value = ''; // Clear value
+            monthsBelowCeilingContainer.classList.add('hidden'); // Hide container
+            updatePensionerCalculations(); // Update calculations when switching to pensioner
+        }
+        document.getElementById('result').innerText = 'Enter your details and click "Calculate Eligibility".';
+    }
+
+    /**
+     * Calculates the bonus or ex-gratia eligibility based on the entered details for employees or pensioners.
+     * Displays the result in the dedicated result area.
+     */
+    function calculateEligibility() {
+        const userType = document.querySelector('input[name="userType"]:checked').value;
+        const resultDisplay = document.getElementById('result');
+        // Reset background/text color
+        resultDisplay.classList.remove('bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800');
+        resultDisplay.classList.add('bg-gray-50', 'text-gray-800');
+
+        if (userType === 'employee') {
+            const basicPay = parseFloat(document.getElementById('basicPay').value);
+            const npaSelected = document.querySelector('input[name="npaOption"]:checked').value;
+            const serviceDuration = parseInt(document.getElementById('serviceDuration').value);
+            const monthsBelowCeiling = parseInt(document.getElementById('monthsBelowCeiling').value);
+
+            // Input validation for employees
+            if (isNaN(basicPay) || basicPay <= 0) {
+                showMessageBox('Invalid Input', 'Please enter a valid positive number for Basic Pay.');
+                return;
+            }
+            if (isNaN(serviceDuration) || serviceDuration < 0 || serviceDuration > 12) {
+                showMessageBox('Invalid Input', 'Please enter a valid continuous service duration in months (0-12).');
+                return;
+            }
+            // Only validate monthsBelowCeiling if the field is visible (i.e., emoluments exceed ceiling)
+            const monthsBelowCeilingContainer = document.getElementById('monthsBelowCeilingContainer');
+            if (!monthsBelowCeilingContainer.classList.contains('hidden')) {
+                if (isNaN(monthsBelowCeiling) || monthsBelowCeiling < 0 || monthsBelowCeiling > 12) {
+                    showMessageBox('Invalid Input', 'Please enter a valid number for months where emoluments were ₹44,000 or below (0-12 months).');
+                    return;
+                }
+            }
+
+
+            let dearnessAllowance = basicPay * EMPLOYEE_DA_RATE;
+            let npaAmount = 0;
+
+            if (npaSelected === 'yes') {
+                npaAmount = Math.min(basicPay * NPA_RATE, NPA_CAP);
+            }
+
+            const calculatedMonthlyEmoluments = basicPay + dearnessAllowance + npaAmount;
+
+            let isEligible = false;
+            let reason = '';
+
+            // Employee Eligibility Logic:
+            // Case 1: Emoluments on March 31, 2025, are below or equal to the ceiling (₹44,000)
+            if (calculatedMonthlyEmoluments <= EMPLOYEE_EMOLUMENTS_CEILING) {
+                if (serviceDuration >= 6) {
+                    isEligible = true;
+                } else {
+                    reason = 'Not Eligible: Requires at least 6 months continuous service in 2024-2025.';
+                }
+            }
+            // Case 2: Emoluments on March 31, 2025, are above the ceiling (₹44,000)
+            // Eligibility depends on whether emoluments were below ceiling for at least 6 months during the year
+            else { // calculatedMonthlyEmoluments > 44000
+                if (monthsBelowCeiling >= 6 && serviceDuration >= 6) {
+                    isEligible = true;
+                } else {
+                    if (monthsBelowCeiling < 6) {
+                        reason += `Not Eligible: Calculated Monthly Emoluments (₹${calculatedMonthlyEmoluments.toFixed(2)}) exceed ₹${EMPLOYEE_EMOLUMENTS_CEILING} and you did not have emoluments below ₹${EMPLOYEE_EMOLUMENTS_CEILING} for at least 6 months during 2024-2025.`;
+                    }
+                    if (serviceDuration < 6) {
+                        if (reason !== '') reason += ' And ';
+                        reason += 'Not Eligible: Requires at least 6 months continuous service in 2024-2025.';
+                    }
+                }
+            }
+
+            if (isEligible) {
+                let bonusAmount = (AD_HOC_BONUS_AMOUNT / 12) * serviceDuration;
+                bonusAmount = Math.min(bonusAmount, AD_HOC_BONUS_AMOUNT); // Cap at maximum 6800
+                resultDisplay.innerText = `You are eligible for an ad-hoc bonus of ₹${bonusAmount.toFixed(2)}! Muslim employees receive it before Eid-ul-Fitr, others between September 15-19 for Durga Puja.`;
+                resultDisplay.classList.add('bg-green-100', 'text-green-800');
+            } else {
+                resultDisplay.innerText = reason || 'Not Eligible based on current criteria.';
+                resultDisplay.classList.add('bg-red-100', 'text-red-800');
+            }
+
+        } else { // Pensioner
+            const basicPension = parseFloat(document.getElementById('basicPension').value);
+            const dearnessRelief = basicPension * PENSIONER_DR_RATE;
+            const totalPensionAndDR = basicPension + dearnessRelief;
+
+            // Input validation for pensioners
+            if (isNaN(basicPension) || basicPension <= 0) {
+                showMessageBox('Invalid Input', 'Please enter a valid positive number for Basic Pension.');
+                return;
+            }
+
+            // Pensioner Eligibility Logic:
+            // Eligible for ex-gratia if total pension + DR is below or equal to ₹38,000
+            if (totalPensionAndDR <= PENSIONER_EX_GRATIA_CEILING) {
+                resultDisplay.innerText = `Eligible for Ex-gratia Payment: ₹ ${EX_GRATIA_AMOUNT.toFixed(2)}`;
+                resultDisplay.classList.add('bg-green-100', 'text-green-800');
+            } else {
+                resultDisplay.innerText = `Not Eligible: Total Basic Pension + Dearness Relief (₹${totalPensionAndDR.toFixed(2)}) exceeds ₹${PENSIONER_EX_GRATIA_CEILING} as of 31st March 2025.`;
+                resultDisplay.classList.add('bg-red-100', 'text-red-800');
+            }
+        }
+    }
+
+    // Initial setup calls to ensure fields are correctly initialized on load
+    toggleFields(); // Sets initial visibility and updates employee/pensioner fields
+    updateEmployeeEmoluments(); // Ensures calculated emoluments are shown if employee is default
+    updatePensionerCalculations(); // Ensures calculated pension is shown if pensioner is default (or hidden)
+</script>
+</body>
+</html>

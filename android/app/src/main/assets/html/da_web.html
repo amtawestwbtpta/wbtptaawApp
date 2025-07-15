@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DA Arrear Calculator (West Bengal)</title>
+    <meta name="description" content="Calculate your DA arrears with historical slabs for West Bengal government employees and pensioners. Mobile-friendly, accurate, and includes 25% bonus.">
+    <meta name="keywords" content="DA arrear calculator, West Bengal DA, dearness allowance, pension arrear, state government, WB DA calculator">
+    <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background: #eef2f7;
+          margin: 0;
+          padding: 10px;
+        }
+        .container {
+          max-width: 480px;
+          margin: auto;
+          padding: 20px;
+          background: #ffffff;
+          border-radius: 12px;
+          box-shadow: 0 0 8px rgba(0,0,0,0.05);
+        }
+        h1 {
+          font-size: 20px;
+          text-align: center;
+          color: #1e3a8a;
+          margin-bottom: 16px;
+        }
+        label {
+          font-size: 14px;
+          font-weight: 600;
+          margin-top: 12px;
+          display: block;
+        }
+        select, input, button {
+          width: 100%;
+          padding: 10px;
+          font-size: 14px;
+          margin-top: 6px;
+          margin-bottom: 12px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+        }
+        button {
+          background: #1e40af;
+          color: white;
+          font-weight: bold;
+          border: none;
+        }
+        button:hover {
+          background: #3749b6;
+        }
+        table {
+          width: 100%;
+          margin-top: 20px;
+          border-collapse: collapse;
+          font-size: 13px;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: center;
+        }
+        thead {
+          background: #f1f5f9;
+          font-weight: bold;
+        }
+        .total {
+          font-weight: bold;
+          text-align: right;
+          padding-top: 10px;
+        }
+        article {
+          max-width: 480px;
+          margin: 40px auto 20px;
+          background: #fff;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 0 8px rgba(0,0,0,0.05);
+          font-size: 14px;
+          line-height: 1.6;
+          color: #333;
+        }
+        article h2 {
+          color: #1e3a8a;
+          font-size: 16px;
+          margin-bottom: 10px;
+        }
+        article h3 {
+          color: #374151;
+          font-size: 14px;
+          margin-top: 20px;
+        }
+        ul {
+          padding-left: 18px;
+        }
+        ul li {
+          margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>DA Arrear Calculator</h1>
+
+    <label>Date of Joining</label>
+    <div style="display:flex; gap:6px;">
+        <select id="day"><option value="">DD</option></select>
+        <select id="month"><option value="">MM</option></select>
+        <select id="year"><option value="">YYYY</option></select>
+    </div>
+
+    <label>Put Your Basic Pay</label>
+    <input type="number" id="basicPay" placeholder="e.g. 20000" />
+
+    <button onclick="calcDA()">Calculate</button>
+
+    <div id="result"></div>
+</div>
+
+<!-- Informational Articles -->
+<article>
+    <h2>🧮 How DA Arrear Calculation Works</h2>
+    <p>Dearness Allowance (DA) arrear is the difference between the revised DA amount and the DA that was being paid before the revision. Government employees are entitled to DA revisions typically twice a year – in January and July – to help offset inflation.</p>
+    <ul>
+        <li><strong>DA Rate:</strong> Percentage of basic pay. For example, 6% of ₹20,000 = ₹1,200/month.</li>
+        <li><strong>Months:</strong> Number of months the revised DA applies to, calculated based on announcement date vs disbursement.</li>
+        <li><strong>3% Annual Increment:</strong> Basic Pay increases by 3% each July and is rounded to the nearest ₹10.</li>
+        <li><strong>Bonus:</strong> 25% bonus may be applicable based on employer policy (included in this calculator).</li>
+    </ul>
+    <h3>📊 Example</h3>
+    <p>If your joining date was <strong>01/07/2010</strong> and your basic pay was ₹20,000, the DA Arrear is calculated for each slab in effect after your joining date, with 3% annual basic increment applied from July every year. The DA is calculated slab-wise and totaled with a 25% bonus.</p>
+</article>
+
+<article>
+    <h2>📌 West Bengal DA Arrear Information</h2>
+    <p>In West Bengal, DA arrears are typically paid to government employees and pensioners when the state government announces revised DA rates. The implementation may lag behind Central Government DA announcements, leading to arrears for several months.</p>
+    <h3>Key Points:</h3>
+    <ul>
+        <li><strong>Applicable Employees:</strong> All state government employees, teachers, and pensioners.</li>
+        <li><strong>Recent Trends:</strong> DA revisions are announced approximately every 6–12 months. Arrears are often cleared in lump sum.</li>
+        <li><strong>DA % Increase:</strong> Historically ranges from 3% to 10% per cycle depending on inflation trends and government approval.</li>
+        <li><strong>Arrear Payment Mode:</strong> Generally added to salary/pension or paid as separate installment.</li>
+    </ul>
+    <p>This calculator is based on historical slabs up to 2019. For current WB DA slabs post-2020, visit the official <a href="https://wbfin.nic.in" target="_blank">WB Finance Department</a> website or contact your HR department.</p>
+</article>
+
+<script>
+    for (let i = 1; i <= 31; i++) {
+      document.getElementById("day").innerHTML += `<option value="${i}">${i}</option>`;
+    }
+    for (let i = 1; i <= 12; i++) {
+      document.getElementById("month").innerHTML += `<option value="${i}">${i}</option>`;
+    }
+    for (let i = 1995; i <= new Date().getFullYear(); i++) {
+      document.getElementById("year").innerHTML += `<option value="${i}">${i}</option>`;
+    }
+
+    const da = [
+      { from: "2009-07-01", to: "2009-12-01", rate: .06, months: 5 },
+      { from: "2009-07-01", to: "2010-04-01", rate: .05, months: 9 },
+      { from: "2010-01-01", to: "2010-12-01", rate: .08, months: 11 },
+      { from: "2010-07-01", to: "2010-12-01", rate: .1, months: 18 },
+      { from: "2011-01-01", to: "2013-01-01", rate: .07, months: 24 },
+      { from: "2011-07-01", to: "2014-01-01", rate: .06, months: 30 },
+      { from: "2012-01-01", to: "2015-01-01", rate: .07, months: 36 },
+      { from: "2012-07-01", to: "2016-01-01", rate: .07, months: 42 },
+      { from: "2013-01-01", to: "2017-01-01", rate: .08, months: 48 },
+      { from: "2013-07-01", to: "2018-01-01", rate: .1, months: 54 },
+      { from: "2014-01-01", to: "2016-01-01", rate: .03, months: 24 },
+      { from: "2014-01-01", to: "2017-01-01", rate: .02, months: 36 },
+      { from: "2014-01-01", to: "2018-01-01", rate: .05, months: 48 },
+      { from: "2014-07-01", to: "2019-01-01", rate: .07, months: 54 },
+      { from: "2015-01-01", to: "2019-01-01", rate: .06, months: 48 },
+      { from: "2015-07-01", to: "2019-01-01", rate: .06, months: 42 },
+      { from: "2016-01-01", to: "2019-01-01", rate: .06, months: 36 }
+    ];
+
+    const round10 = n => Math.ceil(n / 10) * 10;
+
+    function calcDA() {
+      const day = document.getElementById("day").value;
+      const month = document.getElementById("month").value;
+      const year = document.getElementById("year").value;
+      const basic = parseFloat(document.getElementById("basicPay").value);
+      const result = document.getElementById("result");
+      result.innerHTML = "";
+
+      if (!day || !month || !year || isNaN(basic)) {
+        result.innerHTML = `<p style="color:red;">Please enter full Date of Joining and Basic Pay.</p>`;
+        return;
+      }
+
+      const joiningDate = new Date(`${year}-${month}-${day}`);
+      let currentBasic = basic;
+      let totalArrear = 0;
+      let tableRows = "";
+      let incrementDate = new Date(joiningDate.getFullYear(), 6, 1);
+      let serial = 1;
+
+      da.forEach(period => {
+        const fromDate = new Date(period.from);
+        const toDate = new Date(period.to);
+
+        if (joiningDate <= toDate) {
+          while (incrementDate <= fromDate) {
+            currentBasic = round10(currentBasic * 1.03);
+            incrementDate.setFullYear(incrementDate.getFullYear() + 1);
+          }
+
+          const arrear = Math.round(currentBasic * period.rate * period.months);
+          totalArrear += arrear;
+
+          tableRows += `<tr>
+            <td>${serial++}</td>
+            <td>${(period.rate * 100).toFixed(2)}%</td>
+            <td>${period.months}</td>
+            <td>₹${arrear}</td>
+          </tr>`;
+        }
+      });
+
+      const bonus = Math.round(totalArrear * 0.25);
+
+      result.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Sl</th>
+              <th>DA Rate</th>
+              <th>Months</th>
+              <th>DA Arrear</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+        <div class="total">Total DA Arrear: ₹${Math.round(totalArrear)}</div>
+        <div class="total">25% DA Arrear is: ₹${bonus}</div>
+      `;
+    }
+</script>
+</body>
+</html>

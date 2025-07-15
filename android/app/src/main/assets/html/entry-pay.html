@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WB Employee Starting Salary Breakup (2025)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Inter font and elegant layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to right bottom, #6366f1, #8b5cf6); /* Gradient background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card-container {
+            background-color: #ffffff;
+            border-radius: 16px; /* More pronounced rounded corners */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            /* Deeper, softer shadow */
+            padding: 40px;
+            width: 100%;
+            max-width: 550px; /* Slightly wider card */
+            display: flex;
+            flex-direction: column;
+            gap: 24px; /* Increased spacing */
+            align-items: center;
+            animation: fadeIn 0.8s ease-out; /* Fade-in animation for the card */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #1f2937; /* Darker text for heading */
+            font-size: 2.25rem; /* Larger heading */
+            font-weight: 800; /* Extra bold */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            color: #374151; /* Darker text for labels */
+            font-weight: 600; /* Semi-bold */
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: #f9fafb; /* Lighter background for select */
+            border: 1px solid #e5e7eb; /* Light grey border */
+            border-radius: 10px; /* More rounded */
+            padding: 14px 45px 14px 20px; /* Adjust padding for custom arrow */
+            font-size: 1.05rem;
+            width: 100%;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease-in-out;
+            color: #374151;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        }
+        select:hover {
+            border-color: #a78bfa; /* Light purple on hover */
+        }
+        select:focus {
+            border-color: #8b5cf6; /* Deeper purple on focus */
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.25); /* Stronger focus ring */
+        }
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .select-wrapper::after {
+            content: '▼'; /* Custom dropdown arrow */
+            font-size: 0.9rem;
+            color: #6b7280;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        /* Table styling */
+        .salary-table {
+            width: 100%;
+            border-collapse: separate; /* Use separate for rounded corners */
+            border-spacing: 0;
+            border-radius: 10px; /* Rounded corners for the entire table */
+            overflow: hidden; /* Ensures rounded corners are visible */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            /* Subtle table shadow */
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            /* Smooth transition for table appearance */
+            /* ADD THIS FOR HORIZONTAL SCROLL IF TABLE CONTENT OVERFLOWS */
+            overflow-x: auto;
+        }
+        .salary-table.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none; /* Disable interaction when hidden */
+        }
+        .salary-table th, .salary-table td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb; /* Light border between rows */
+            /* Ensure text doesn't get cut off vertically */
+            vertical-align: middle;
+        }
+        .salary-table th {
+            background-color: #eef2ff; /* Light indigo for header */
+            color: #4338ca; /* Darker indigo for header text */
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+        .salary-table tr:last-child td {
+            border-bottom: none; /* No border for the last row */
+        }
+        .salary-table tbody tr:nth-child(odd) {
+            background-color: #f9fafb; /* Lightest grey for odd rows (zebra striping) */
+        }
+        .salary-table tbody tr:nth-child(even) {
+            background-color: #ffffff; /* White for even rows */
+        }
+        .salary-table tbody tr:hover {
+            background-color: #eff6ff; /* Light blue on hover for rows */
+            cursor: pointer; /* Indicate interactivity */
+        }
+        .salary-table td:last-child {
+            text-align: right; /* Align amounts to the right */
+            font-weight: 500;
+            color: #1f2937;
+            /* IMPORTANT: Add these for the amount column */
+            white-space: nowrap; /* Prevent amounts from wrapping */
+            min-width: 100px; /* Ensure a minimum width for amounts, adjust as needed */
+        }
+        .salary-table tbody tr:nth-child(5) td, /* Gross Salary */
+        .salary-table tbody tr:last-child td { /* Net Salary */
+            font-weight: 700; /* Bold for totals */
+            color: #4f46e5; /* Indigo for totals */
+            background-color: #e0f2fe; /* Light blue background for totals */
+        }
+        .salary-table tbody tr:nth-child(7) td, /* Total Deductions */
+        .salary-table tbody tr:nth-child(8) td { /* Professional Tax */
+            background-color: #fef2f2; /* Light red background for deductions */
+            color: #b91c1c; /* Dark red for deductions */
+        }
+
+        .note-text {
+            font-size: 0.85rem;
+            color: #6b7280;
+            line-height: 1.4;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .note-text a {
+            color: #6366f1; /* Indigo link color */
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+        .note-text a:hover {
+            color: #4f46e5; /* Darker indigo on hover */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="card-container">
+    <h1 class="text-gray-800">WB Employee Starting Salary Breakup</h1>
+
+    <div class="select-wrapper">
+        <label for="employee-dropdown" class="block text-gray-700">Select Employee Role:</label>
+        <select id="employee-dropdown" onchange="displaySalaryBreakup()">
+            <option value="" disabled selected>Select a role</option>
+            <option value="post-graduate-teacher">Post Graduate School Teacher</option>
+            <option value="graduate-teacher">Graduate School Teacher</option>
+            <option value="upper-primary-teacher">Upper Primary School Teacher</option>
+            <option value="primary-teacher">Primary School Teacher</option>
+            <option value="icds-supervisor">ICDS Supervisor</option>
+            <option value="librarian">Librarian</option>
+            <option value="clerk">Clerk</option>
+            <option value="group-d">Group D Staff</option>
+        </select>
+    </div>
+
+    <div id="salary-table" class="salary-table hidden">
+        <table class="w-full">
+            <thead>
+            <tr>
+                <th class="text-left">Component</th>
+                <th class="text-right">Amount (₹)</th>
+            </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+
+    <p class="note-text">
+        Note: Salaries are based on the 6th Pay Commission (ROPA 2019) with an 18% DA hike (effective 1st April, 2025). HRA 12 Percentage rates. Librarian and Group D salaries are estimated. For accurate details, visit the <a href="https://finance.wb.gov.in/" target="_blank" rel="noopener noreferrer">West Bengal Finance Department</a>. Sources: wbedu.in.
+    </p>
+</div>
+
+<script>
+    function displaySalaryBreakup() {
+        const employeeDropdown = document.getElementById("employee-dropdown");
+        const tableBody = document.getElementById("table-body");
+        const salaryTableContainer = document.getElementById("salary-table");
+
+        // Clear previous table content
+        tableBody.innerHTML = "";
+        // Define basic pay for each role
+        const basicPayData = {
+            "post-graduate-teacher": { basicPay: 42600 },
+            "graduate-teacher": { basicPay: 33400 },
+            "upper-primary-teacher": { basicPay: 30500 },
+            "primary-teacher": { basicPay: 28900 },
+            "icds-supervisor": { basicPay: 28900 },
+            "librarian": { basicPay: 28900 }, // Estimated
+            "clerk": { basicPay: 22700 },
+            "group-d": { basicPay: 17000 } // Estimated
+        };
+        const selectedRole = employeeDropdown.value;
+
+        if (selectedRole && basicPayData[selectedRole]) {
+            const basicPay = basicPayData[selectedRole].basicPay;
+            // Calculate components
+            const dearnessAllowance = Math.round(0.18 * basicPay); // 18% DA
+            const houseRentAllowance = Math.round(0.12 * basicPay); // 12% HRA
+            const medicalAllowance = 500; // Fixed Medical Allowance
+            const grossSalary = basicPay + dearnessAllowance + houseRentAllowance + medicalAllowance;
+            // GPF calculation (minimum 6% of Basic Pay)
+            const gpfDeduction = Math.round(0.06 * basicPay);
+            // Professional Tax calculation based on Gross Salary slabs
+            let professionalTax = 0;
+            if (grossSalary <= 10000) {
+                professionalTax = 0;
+            } else if (grossSalary <= 15000) {
+                professionalTax = 110;
+            } else if (grossSalary <= 25000) {
+                professionalTax = 130;
+            } else if (grossSalary <= 40000) {
+                professionalTax = 150;
+            } else {
+                professionalTax = 200;
+            }
+
+            const totalDeductions = gpfDeduction + professionalTax;
+            const netSalary = grossSalary - totalDeductions;
+
+            // Data for the table rows
+            const salaryBreakup = [
+                { component: "Basic Pay", amount: basicPay },
+                { component: "Dearness Allowance (18%)", amount: dearnessAllowance },
+                { component: "House Rent Allowance (12%)", amount: houseRentAllowance },
+                { component: "Medical Allowance", amount: medicalAllowance },
+                { component: "Gross Salary", amount: grossSalary },
+                { component: "GPF (6%) - From 2nd year onwards GPF is deducted as per minimum 6% or as per employee choice up to 100%", amount: gpfDeduction },
+                { component: "Professional Tax", amount: professionalTax },
+                { component: "Total Deductions", amount: totalDeductions },
+                { component: "Net Salary", amount: netSalary }
+            ];
+            // Populate the table
+            salaryBreakup.forEach(item => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td class="border-gray-300">${item.component}</td>
+                    <td class="border-gray-300 text-right">${item.amount.toLocaleString("en-IN")}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            // Show the table with a smooth transition
+            salaryTableContainer.classList.remove("hidden");
+        } else {
+            // Hide the table if no valid role is selected
+            salaryTableContainer.classList.add("hidden");
+        }
+    }
+</script>
+</body>
+</html>

@@ -37,9 +37,6 @@ import { downloadFile } from '../modules/downloadFile';
 import {
   AppURL,
   appVersion,
-  DA,
-  GithubWebsite,
-  HRA,
   TelegramURL,
   VercelWeb,
 } from '../modules/constants';
@@ -996,6 +993,24 @@ const Dashboard = () => {
                   color={'navy'}
                   onClick={async () => {
                     setShowModal(true);
+                  }}
+                />
+                <CustomButton
+                  size={'small'}
+                  fontSize={responsiveFontSize(1.5)}
+                  title={'Inapp Website'}
+                  color={'blue'}
+                  onClick={async () => {
+                    navigation.navigate('Website');
+                  }}
+                />
+                <CustomButton
+                  size={'small'}
+                  fontSize={responsiveFontSize(1.5)}
+                  title={'Tools'}
+                  color={'purple'}
+                  onClick={async () => {
+                    navigation.navigate('FileListScreen');
                   }}
                 />
               </View>

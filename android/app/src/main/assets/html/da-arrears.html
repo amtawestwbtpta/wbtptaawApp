@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Calculate West Bengal DA arrears from 2008 to 2019 with IR relief, A Category, and 10/20 years increment benefits. Enter joining date, pay in pay band, and grade pay for DA arrear details.">
+    <meta name="keywords" content="West Bengal DA calculator, DA arrears, dearness allowance calculator, West Bengal government employees, IR relief, A Category benefit">
+    <meta name="robots" content="index, follow">
+    <title>West Bengal DA Arrear Calculator</title>
+    <style>
+        .da-calculator {
+            max-width: 700px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            border: 2px solid #0073aa;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .da-calculator h2 {
+            text-align: center;
+            color: #0073aa;
+        }
+        .da-calculator h3 {
+            margin-top: 30px;
+            color: #005f8d;
+        }
+        .da-calculator label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+        .da-calculator input[type="date"], .da-calculator input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .da-calculator input[type="radio"] {
+            margin: 0 5px 0 10px;
+        }
+        .da-calculator button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #0073aa;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .da-calculator button:hover {
+            background: #005f8d;
+        }
+        #result {
+            margin-top: 30px;
+        }
+        #result table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        #result th, #result td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        #result th {
+            background: #0073aa;
+            color: #fff;
+        }
+        .final-summary, .notes-section {
+            font-size: 1.1em;
+            background: #e8f4fd;
+            padding: 15px;
+            border: 1px solid #0073aa;
+            border-radius: 8px;
+        }
+        .faq-section, .notes-section {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .faq-section p, .notes-section li {
+            line-height: 1.6;
+        }
+        @media (max-width: 600px) {
+            .da-calculator {
+                padding: 15px;
+            }
+            .da-calculator h2 {
+                font-size: 1.5em;
+            }
+            #result table {
+                font-size: .9em;
+            }
+            .faq-section, .notes-section {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="da-calculator">
+    <h2>West Bengal DA Arrear Calculator (2008–2019)</h2>
+    <p>Calculate DA arrears for West Bengal government employees from 2008 to 2019. Input joining date, pay in pay band, and grade pay for DA arrear details.</p>
+    <label for="joiningDate">Date of Joining:</label>
+    <input type="date" id="joiningDate">
+    <label for="payInPayBand">Pay in Pay Band:</label>
+    <input type="number" id="payInPayBand" placeholder="Enter pay in pay band">
+    <label for="gradePay">Grade Pay:</label>
+    <input type="number" id="gradePay" placeholder="Enter grade pay">
+    <label>A Category Benefit:</label>
+    <input type="radio" id="aCategoryNo" name="aCategory" value="no" checked> <span>No</span>
+    <input type="radio" id="aCategoryYes" name="aCategory" value="yes"> <span>Yes</span>
+    <label for="aCategoryDate">A Category Benefit Date (if Yes):</label>
+    <input type="date" id="aCategoryDate">
+    <label>10/20 Years Increment Benefit:</label>
+    <input type="radio" id="incrementNo" name="incrementBenefit" value="no" checked> <span>No</span>
+    <input type="radio" id="incrementYes" name="incrementBenefit" value="yes"> <span>Yes</span>
+    <label for="incrementDate">10/20 Years Increment Date (if Yes):</label>
+    <input type="date" id="incrementDate">
+    <button id="calcBtn">Calculate DA Arrears</button>
+    <div id="result"></div>
+    <h3>FAQ</h3>
+    <div class="faq-section">
+        <p><strong>What is DA Arrear?</strong><br>DA arrears are unpaid Dearness Allowance amounts for West Bengal employees due to delayed DA revisions.</p>
+        <p><strong>How is DA calculated?</strong><br>Uses basic pay (pay in pay band + grade pay), applies DA rates monthly from joining date to Dec 2019, with annual increment per WB rules, rounded to nearest ₹10.</p>
+        <p><strong>What is IR Relief?</strong><br>From 01/07/2016 to 31/12/2018, a 10% of pay in pay band is subtracted as Internal Relief per government announcement.</p>
+        <p><strong>What is A Category Benefit?</strong><br>Grade pay increases from 2300 to 2600 and pay in pay band gets one 3% increment on the specified date.</p>
+        <p><strong>What is 10/20 Years Increment?</strong><br>Grants double 3% increment to basic pay on the specified date for 10/20 years service benefit.</p>
+        <p><strong>Why 25% of total DA?</strong><br>25% represents a portion used for financial calculations per government policies.</p>
+        <p><strong>Is this accurate?</strong><br>Provides estimates based on DA rates; verify with official records.</p>
+    </div>
+    <h3>Important Notes</h3>
+    <div class="notes-section">
+        <ul>
+            <li>This calculator provides estimates. Basic pay is rounded up to the nearest ₹10 at each stage (initial, annual, and special increments).</li>
+            <li>Annual increment: 3% of pay in pay band, added to pay in pay band, rounded to nearest ₹10, applied on 1st July after 6 months of service per West Bengal rules.</li>
+            <li>A Category Benefit: If selected, grade pay increases from 2300 to 2600 and pay in pay band gets one 3% increment on the specified date.</li>
+            <li>10/20 Years Increment: If selected, double 3% increment is applied to basic pay on the specified date.</li>
+            <li>Part 1: DA calculated as is from 01/04/2008 to 30/06/2016.</li>
+            <li>Part 2: From 01/07/2016 to 31/12/2018, DA is adjusted by subtracting 10% of pay in pay band as IR relief.</li>
+            <li>Post 31/12/2018: DA calculated as is from 01/01/2019 to 31/12/2019, no IR relief.</li>
+            <li>DA difference percentages are based on ROPA 2009 data (01/04/2008 to 31/12/2019).</li>
+            <li>For precise figures, consult your department or official notifications.</li>
+        </ul>
+    </div>
+</div>
+<script>
+    const daRates = [
+        {m: "April 2008", d: 0.1}, {m: "May 2008", d: 0.1}, {m: "June 2008", d: 0.06}, {m: "July 2008", d: 0.1},
+        {m: "August 2008", d: 0.1}, {m: "September 2008", d: 0.1}, {m: "October 2008", d: 0.1}, {m: "November 2008", d: 0.07},
+        {m: "December 2008", d: 0.07}, {m: "January 2009", d: 0.13}, {m: "February 2009", d: 0.13}, {m: "March 2009", d: 0.1},
+        {m: "April 2009", d: 0.06}, {m: "May 2009", d: 0.06}, {m: "June 2009", d: 0.06}, {m: "July 2009", d: 0.11},
+        {m: "August 2009", d: 0.11}, {m: "September 2009", d: 0.11}, {m: "October 2009", d: 0.11}, {m: "November 2009", d: 0.11},
+        {m: "December 2009", d: 0.05}, {m: "January 2010", d: 0.13}, {m: "February 2010", d: 0.13}, {m: "March 2010", d: 0.13},
+        {m: "April 2010", d: 0.08}, {m: "May 2010", d: 0.08}, {m: "June 2010", d: 0.08}, {m: "July 2010", d: 0.18},
+        {m: "August 2010", d: 0.18}, {m: "September 2010", d: 0.18}, {m: "October 2010", d: 0.18}, {m: "November 2010", d: 0.18},
+        {m: "December 2010", d: 0.1}, {m: "January 2011", d: 0.16}, {m: "February 2011", d: 0.16}, {m: "March 2011", d: 0.16},
+        {m: "April 2011", d: 0.16}, {m: "May 2011", d: 0.16}, {m: "June 2011", d: 0.16}, {m: "July 2011", d: 0.23},
+        {m: "August 2011", d: 0.23}, {m: "September 2011", d: 0.23}, {m: "October 2011", d: 0.23}, {m: "November 2011", d: 0.23},
+        {m: "December 2011", d: 0.23}, {m: "January 2012", d: 0.2}, {m: "February 2012", d: 0.2}, {m: "March 2012", d: 0.2},
+        {m: "April 2012", d: 0.2}, {m: "May 2012", d: 0.2}, {m: "June 2012", d: 0.2}, {m: "July 2012", d: 0.27},
+        {m: "August 2012", d: 0.27}, {m: "September 2012", d: 0.27}, {m: "October 2012", d: 0.27}, {m: "November 2012", d: 0.27},
+        {m: "December 2012", d: 0.27}, {m: "January 2013", d: 0.28}, {m: "February 2013", d: 0.28}, {m: "March 2013", d: 0.28},
+        {m: "April 2013", d: 0.28}, {m: "May 2013", d: 0.28}, {m: "June 2013", d: 0.28}, {m: "July 2013", d: 0.38},
+        {m: "August 2013", d: 0.38}, {m: "September 2013", d: 0.38}, {m: "October 2013", d: 0.38}, {m: "November 2013", d: 0.38},
+        {m: "December 2013", d: 0.38}, {m: "January 2014", d: 0.42}, {m: "February 2014", d: 0.42}, {m: "March 2014", d: 0.42},
+        {m: "April 2014", d: 0.42}, {m: "May 2014", d: 0.42}, {m: "June 2014", d: 0.42}, {m: "July 2014", d: 0.49},
+        {m: "August 2014", d: 0.49}, {m: "September 2014", d: 0.49}, {m: "October 2014", d: 0.49}, {m: "November 2014", d: 0.49},
+        {m: "December 2014", d: 0.49}, {m: "January 2015", d: 0.48}, {m: "February 2015", d: 0.48}, {m: "March 2015", d: 0.48},
+        {m: "April 2015", d: 0.48}, {m: "May 2015", d: 0.48}, {m: "June 2015", d: 0.48}, {m: "July 2015", d: 0.54},
+        {m: "August 2015", d: 0.54}, {m: "September 2015", d: 0.54}, {m: "October 2015", d: 0.54}, {m: "November 2015", d: 0.54},
+        {m: "December 2015", d: 0.54}, {m: "January 2016", d: 0.5}, {m: "February 2016", d: 0.5}, {m: "March 2016", d: 0.5},
+        {m: "April 2016", d: 0.5}, {m: "May 2016", d: 0.5}, {m: "June 2016", d: 0.5}, {m: "July 2016", d: 0.57},
+        {m: "August 2016", d: 0.57}, {m: "September 2016", d: 0.57}, {m: "October 2016", d: 0.57}, {m: "November 2016", d: 0.57},
+        {m: "December 2016", d: 0.57}, {m: "January 2017", d: 0.51}, {m: "February 2017", d: 0.51}, {m: "March 2017", d: 0.51},
+        {m: "April 2017", d: 0.51}, {m: "May 2017", d: 0.51}, {m: "June 2017", d: 0.51}, {m: "July 2017", d: 0.54},
+        {m: "August 2017", d: 0.54}, {m: "September 2017", d: 0.54}, {m: "October 2017", d: 0.54}, {m: "November 2017", d: 0.54},
+        {m: "December 2017", d: 0.54}, {m: "January 2018", d: 0.42}, {m: "February 2018", d: 0.42}, {m: "March 2018", d: 0.42},
+        {m: "April 2018", d: 0.42}, {m: "May 2018", d: 0.42}, {m: "June 2018", d: 0.42}, {m: "July 2018", d: 0.48},
+        {m: "August 2018", d: 0.48}, {m: "September 2018", d: 0.48}, {m: "October 2018", d: 0.48}, {m: "November 2018", d: 0.48},
+        {m: "December 2018", d: 0.48}, {m: "January 2019", d: 0.29}, {m: "February 2019", d: 0.29}, {m: "March 2019", d: 0.29},
+        {m: "April 2019", d: 0.29}, {m: "May 2019", d: 0.29}, {m: "June 2019", d: 0.29}, {m: "July 2019", d: 0.39},
+        {m: "August 2019", d: 0.39}, {m: "September 2019", d: 0.39}, {m: "October 2019", d: 0.39}, {m: "November 2019", d: 0.39},
+        {m: "December 2019", d: 0.39}
+    ];
+
+    function calculateDA() {
+        const joiningDate = new Date(document.getElementById("joiningDate").value);
+        const payInPayBandInput = parseFloat(document.getElementById("payInPayBand").value);
+        let gradePay = parseFloat(document.getElementById("gradePay").value);
+        const aCategory = document.querySelector('input[name="aCategory"]:checked').value;
+        const aCategoryDate = new Date(document.getElementById("aCategoryDate").value);
+        const incrementBenefit = document.querySelector('input[name="incrementBenefit"]:checked').value;
+        const incrementDate = new Date(document.getElementById("incrementDate").value);
+
+        if (!joiningDate || isNaN(payInPayBandInput) || isNaN(gradePay)) {
+            alert("Please enter valid joining date, pay in pay band, and grade pay.");
+            return;
+        }
+        if (aCategory === "yes" && !aCategoryDate) {
+            alert("Please enter a valid A Category Benefit date.");
+            return;
+        }
+        if (incrementBenefit === "yes" && !incrementDate) {
+            alert("Please enter a valid 10/20 Years Increment date.");
+            return;
+        }
+
+        let payInPayBand = payInPayBandInput;
+        let basicPay = Math.ceil((payInPayBand + gradePay) / 10) * 10;
+        let totalDA = 0;
+        let tableRows = "";
+        const monthMap = { January: 0, February: 1, March: 2, April: 3, May: 4, June: 5, July: 6, August: 7, September: 8, October: 9, November: 10, December: 11 };
+        const part2Start = new Date(2016, 6, 1); // 01/07/2016
+        const part2End = new Date(2018, 11, 31); // 31/12/2018
+
+        // Determine first increment date per West Bengal rules
+        let incrementDateAnnually;
+        const sixMonthsLater = new Date(joiningDate);
+        sixMonthsLater.setMonth(joiningDate.getMonth() + 6);
+        if (sixMonthsLater.getMonth() < 6 || (sixMonthsLater.getMonth() === 6 && sixMonthsLater.getDate() <= 1)) {
+            incrementDateAnnually = new Date(sixMonthsLater.getFullYear(), 6, 1); // 1st July
+        } else {
+            incrementDateAnnually = new Date(sixMonthsLater.getFullYear() + 1, 6, 1); // 1st July next year
+        }
+
+        for (let i = 0; i < daRates.length; i++) {
+            const [month, year] = daRates[i].m.split(" ");
+            const currentDate = new Date(parseInt(year), monthMap[month]);
+
+            if (currentDate >= joiningDate) {
+                // Apply A Category Benefit
+                if (aCategory === "yes" && currentDate.getFullYear() === aCategoryDate.getFullYear() && currentDate.getMonth() === aCategoryDate.getMonth()) {
+                    if (gradePay === 2300) gradePay = 2600;
+                    const increment = Math.ceil((payInPayBand * 1.03) / 10) * 10 - payInPayBand; // 3% increment on pay in pay band
+                    payInPayBand += increment;
+                }
+
+                // Apply 10/20 Years Increment Benefit
+                if (incrementBenefit === "yes" && currentDate.getFullYear() === incrementDate.getFullYear() && currentDate.getMonth() === incrementDate.getMonth()) {
+                    const increment = Math.ceil((payInPayBand * 1.03) / 10) * 10 - payInPayBand; // First 3% increment on pay in pay band
+                    payInPayBand += increment;
+                    payInPayBand = Math.ceil((payInPayBand + increment) / 10) * 10; // Second 3% increment on pay in pay band
+                }
+
+                // Apply annual increment per West Bengal rules: 3% of pay in pay band, applied on 1st July after 6 months of service
+                if (month === "July" && currentDate.getDate() === 1 && currentDate >= incrementDateAnnually) {
+                    const increment = Math.ceil((payInPayBand * 1.03) / 10) * 10 - payInPayBand; // 3% of pay in pay band
+                    payInPayBand += increment; // Add to pay in pay band
+                    incrementDateAnnually = new Date(currentDate.getFullYear() + 1, 6, 1); // Next 1st July
+                }
+
+                basicPay = Math.ceil((payInPayBand + gradePay) / 10) * 10;
+                let daAmount = Math.round(basicPay * daRates[i].d);
+                let irRelief = 0;
+                if (currentDate >= part2Start && currentDate <= part2End) {
+                    irRelief = Math.round(payInPayBand * 0.10); // 10% of pay in pay band as IR relief
+                    daAmount -= irRelief;
+                }
+
+                totalDA += daAmount;
+                tableRows += `<tr><td>${daRates[i].m}</td><td>${basicPay}</td><td>${Math.round(100 * daRates[i].d)}%</td><td>${daAmount}</td><td>${irRelief || '-'}</td></tr>`;
+            }
+        }
+
+        document.getElementById("result").innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Basic Pay</th>
+                        <th>DA%</th>
+                        <th>DA Amount</th>
+                        <th>IR Relief</th>
+                    </tr>
+                </thead>
+                <tbody>${tableRows}</tbody>
+            </table>
+            <div class="final-summary">
+                <strong>GRAND TOTAL of DA Arrear:</strong> ₹${totalDA}<br>
+                <strong>25% of Total DA Arrear:</strong> ₹${Math.round(0.25 * totalDA)}<br>
+                <strong>80% of 25% of Total DA Arrear (Transfer to Salary Account):</strong> ₹${Math.round(0.20 * totalDA)}<br>
+                <strong>20% of 25% of Total DA Arrear (Transfer to GPF Account):</strong> ₹${Math.round(0.05 * totalDA)}
+            </div>`;
+    }
+
+    document.getElementById("calcBtn").addEventListener("click", calculateDA);
+</script>
+</body>
+</html>

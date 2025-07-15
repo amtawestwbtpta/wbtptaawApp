@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WBSSC 2025 Weightage Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .container, .article {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 25px auto;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .eligible {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 5px solid #4caf50;
+        }
+
+        .not-eligible {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 5px solid #f44336;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .result-value {
+            font-weight: 500;
+            color: #3498db;
+        }
+
+        .result-total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #3498db;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: -5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        input.error-field {
+            border-color: #e74c3c;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Weightage Calculator -->
+<div class="container">
+    <h2>WBSSC 2025 Weightage Calculator</h2>
+    <div class="form-group">
+        <label for="classLevel">Select Class Level:</label>
+        <select id="classLevel" onchange="updateForm()">
+            <option value="">Select Class</option>
+            <option value="upperPrimary">Upper Primary</option>
+            <option value="ix-x">Classes IX-X</option>
+            <option value="xi-xii">Classes XI-XII</option>
+        </select>
+    </div>
+    <div id="formFields"></div>
+    <button onclick="validateAndCalculate()">Calculate Score</button>
+    <div id="resultWeightage" class="result"></div>
+</div>
+
+<div class="article">
+    <h2>Selection Criteria for Assistant Teacher Posts</h2>
+    <h3>Upper Primary Level</h3>
+    <p>Selection to the Post of Assistant Teacher for Upper Primary Level of Classes shall be made on the basis of marks obtained on academic score, TET weightage, marks in written examination and marks in oral interview, marks for lecture demonstration and marks for prior teaching experience, to be determined by the Central Commission in the following manner:</p>
+    <ul>
+        <li><strong>Academic Score:</strong> 10 marks (based on marks of Graduation)
+            <ul>
+                <li>Percentage obtained Merit Score:</li>
+                <li>60% and above: 10 marks</li>
+                <li>Below 60% to 50%: 8 marks</li>
+                <li>Below 50%: 6 marks</li>
+            </ul>
+        </li>
+        <li><strong>TET Weightage:</strong> 40 marks</li>
+        <li><strong>Written Examination (OMR-based):</strong> 25 marks</li>
+        <li><strong>Oral Interview:</strong> 15 marks</li>
+        <li><strong>Lecture Demonstration:</strong> 5 marks</li>
+        <li>[Appearance before the Interview Board for Oral Interview and Lecture Demonstration is compulsory]</li>
+        <li><strong>Prior Teaching Experience:</strong> 5 marks
+            <ul>
+                <li>[At the Upper Primary level in a government or government-aided or government-sponsored school, calculated on the basis of 1 mark for each year of service in a substantive post (as permanent or on contractual basis)]</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>Classes IX & X Level</h3>
+    <p>Selection to the post of Assistant Teacher for Classes IX & X shall be made on the basis of marks obtained in written examination, educational qualification, prior teaching experience, oral interview, and lecture demonstration, determined by the Central Commission, in the following manner:</p>
+    <ul>
+        <li><strong>Written Examination (OMR-based):</strong> 60 marks</li>
+        <li><strong>Academics</strong>
+            <ul>
+                <li><strong>Educational Qualification:</strong> 10 marks
+                    <ul>
+                        <li>[Based on marks of Graduation or Post Graduation in the subject for which applied, whichever is higher, according to the following formula:</li>
+                        <li>Percentage obtained Merit Score:</li>
+                        <li>60% and above: 10 marks</li>
+                        <li>Below 60% to 50%: 8 marks</li>
+                        <li>Below 50%: 6 marks</li>
+                        <li>No rounding off of percentage is allowed]</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li><strong>Prior Teaching Experience:</strong> 10 marks
+            <ul>
+                <li>[At the secondary level in a government or government-aided or government-sponsored school, calculated on the basis of 2 marks for each year of service in a substantive post (as permanent or on contractual basis)]</li>
+            </ul>
+        </li>
+        <li><strong>Oral Interview:</strong> 10 marks</li>
+        <li><strong>Lecture Demonstration:</strong> 10 marks</li>
+        <li>[Appearance before the Interview Board is compulsory]</li>
+    </ul>
+
+    <h3>Classes XI & XII Level</h3>
+    <p>Selection to the post of Assistant Teacher for Classes XI & XII shall be made on the basis of marks obtained in written examination, educational qualification, prior teaching experience, oral interview, and lecture demonstration, determined by the Central Commission, in the following manner:</p>
+    <ul>
+        <li><strong>Written Examination (OMR-based):</strong> 60 marks</li>
+        <li><strong>Academics</strong>
+            <ul>
+                <li><strong>Educational Qualification:</strong> 10 marks
+                    <ul>
+                        <li>[Based on marks of Post Graduation in the subject for which applied, according to the following formula:</li>
+                        <li>Percentage obtained Merit Score:</li>
+                        <li>60% and above: 10 marks</li>
+                        <li>Below 60% to 50%: 8 marks</li>
+                        <li>Below 50%: 6 marks</li>
+                        <li>No rounding off of percentage is allowed]</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li><strong>Note:</strong> A candidate applying for a subject must have passed at least the Graduation level examination with a minimum of 300 full marks in the relevant or concerned subject. Candidates without the subject as first, second, or third language at Secondary/Higher Secondary/Graduation/Post Graduation level will appear as General Candidates only without any corresponding concession/relaxation in respect of age, fees, and qualifying marks.</li>
+        <li><strong>Prior Teaching Experience:</strong> 10 marks
+            <ul>
+                <li>[At the secondary level in a government or government-aided or government-sponsored school, calculated on the basis of 2 marks for each year of service in a substantive post (as permanent or on contractual basis)]</li>
+            </ul>
+        </li>
+        <li><strong>Oral Interview:</strong> 10 marks</li>
+        <li><strong>Lecture Demonstration:</strong> 10 marks</li>
+        <li>[Appearance before the Interview Board is compulsory]</li>
+    </ul>
+    <p>Source: The Kolkata Gazette, Extraordinary, May 29, 2025 [Part I]</p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        updateForm();
+    });
+
+    // Weightage Calculator Functions
+    function updateForm() {
+        const classLevel = document.getElementById('classLevel').value;
+        const formFields = document.getElementById('formFields');
+        formFields.innerHTML = '';
+
+        if (classLevel === 'upperPrimary') {
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="academicScore">Graduation Percentage:</label>
+                    <input type="number" id="academicScore" min="0" max="100" step="0.01">
+                    <div class="error" id="academicScoreError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="tetWeightage">TET Score (out of 40):</label>
+                    <input type="number" id="tetWeightage" min="0" max="40" step="0.01">
+                    <div class="error" id="tetWeightageError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="writtenExam">Written Exam Score (out of 25):</label>
+                    <input type="number" id="writtenExam" min="0" max="25" step="0.01">
+                    <div class="error" id="writtenExamError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="oralInterview">Interview Score (out of 15):</label>
+                    <input type="number" id="oralInterview" min="0" max="15" step="0.01">
+                    <div class="error" id="oralInterviewError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="lectureDemo">Lecture Demo Score (out of 5):</label>
+                    <input type="number" id="lectureDemo" min="0" max="5" step="0.01">
+                    <div class="error" id="lectureDemoError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="teachingExperience">Teaching Experience (years, max 5):</label>
+                    <input type="number" id="teachingExperience" min="0" max="5" step="1">
+                    <div class="error" id="teachingExperienceError"></div>
+                </div>`;
+        }
+        else if (classLevel === 'ix-x' || classLevel === 'xi-xii') {
+            formFields.innerHTML = `
+                <div class="form-group">
+                    <label for="writtenExam">Written Exam Score (out of 60):</label>
+                    <input type="number" id="writtenExam" min="0" max="60" step="0.01">
+                    <div class="error" id="writtenExamError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="gradPercentage">Graduation/Post-Graduation Percentage:</label>
+                    <input type="number" id="gradPercentage" min="0" max="100" step="0.01">
+                    <div class="error" id="gradPercentageError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="teachingExperience">Teaching Experience (years, max 5):</label>
+                    <input type="number" id="teachingExperience" min="0" max="5" step="1">
+                    <div class="error" id="teachingExperienceError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="oralInterview">Interview Score (out of 10):</label>
+                    <input type="number" id="oralInterview" min="0" max="10" step="0.01">
+                    <div class="error" id="oralInterviewError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="lectureDemo">Lecture Demo Score (out of 10):</label>
+                    <input type="number" id="lectureDemo" min="0" max="10" step="0.01">
+                    <div class="error" id="lectureDemoError"></div>
+                </div>`;
+        }
+    }
+
+    function validateAndCalculate() {
+        // Clear previous errors
+        const errors = document.querySelectorAll('.error');
+        errors.forEach(error => {
+            error.style.display = 'none';
+            error.previousElementSibling.classList.remove('error-field');
+        });
+
+        const classLevel = document.getElementById('classLevel').value;
+        let isValid = true;
+
+        if (classLevel === 'upperPrimary') {
+            const fields = [
+                { id: 'academicScore', max: 100, errorId: 'academicScoreError' },
+                { id: 'tetWeightage', max: 40, errorId: 'tetWeightageError' },
+                { id: 'writtenExam', max: 25, errorId: 'writtenExamError' },
+                { id: 'oralInterview', max: 15, errorId: 'oralInterviewError' },
+                { id: 'lectureDemo', max: 5, errorId: 'lectureDemoError' },
+                { id: 'teachingExperience', max: 5, errorId: 'teachingExperienceError' }
+            ];
+
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const value = parseFloat(input.value) || 0;
+                if (value > field.max) {
+                    showError(input, field.errorId, `Maximum ${field.max} marks allowed`);
+                    isValid = false;
+                }
+            });
+        }
+        else if (classLevel === 'ix-x' || classLevel === 'xi-xii') {
+            const fields = [
+                { id: 'writtenExam', max: 60, errorId: 'writtenExamError' },
+                { id: 'gradPercentage', max: 100, errorId: 'gradPercentageError' },
+                { id: 'teachingExperience', max: 5, errorId: 'teachingExperienceError' },
+                { id: 'oralInterview', max: 10, errorId: 'oralInterviewError' },
+                { id: 'lectureDemo', max: 10, errorId: 'lectureDemoError' }
+            ];
+
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const value = parseFloat(input.value) || 0;
+                if (value > field.max) {
+                    showError(input, field.errorId, `Maximum ${field.max} marks allowed`);
+                    isValid = false;
+                }
+            });
+        }
+
+        if (isValid) {
+            calculateScore();
+        } else {
+            const resultWeightageDiv = document.getElementById('resultWeightage');
+            resultWeightageDiv.style.display = 'block';
+            resultWeightageDiv.className = 'result not-eligible';
+            resultWeightageDiv.innerHTML = 'Please correct the highlighted errors before calculating your score.';
+        }
+    }
+
+    function showError(inputElement, errorId, message) {
+        const errorElement = document.getElementById(errorId);
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        inputElement.classList.add('error-field');
+    }
+
+    function calculateScore() {
+        const classLevel = document.getElementById('classLevel').value;
+        const resultWeightageDiv = document.getElementById('resultWeightage');
+        resultWeightageDiv.style.display = 'block';
+
+        if (!classLevel) {
+            resultWeightageDiv.className = 'result not-eligible';
+            resultWeightageDiv.innerHTML = 'Please select a class level to calculate the score.';
+            return;
+        }
+
+        if (classLevel === 'upperPrimary') {
+            const academicScore = parseFloat(document.getElementById('academicScore').value) || 0;
+            const tetWeightage = parseFloat(document.getElementById('tetWeightage').value) || 0;
+            const writtenExam = parseFloat(document.getElementById('writtenExam').value) || 0;
+            const oralInterview = parseFloat(document.getElementById('oralInterview').value) || 0;
+            const lectureDemo = parseFloat(document.getElementById('lectureDemo').value) || 0;
+            const teachingExperience = parseInt(document.getElementById('teachingExperience').value) || 0;
+
+            const academicMerit = getMeritScore(academicScore);
+            const experienceScore = Math.min(teachingExperience, 5);
+
+            const totalScore = academicMerit + tetWeightage + writtenExam + oralInterview + lectureDemo + experienceScore;
+
+            resultWeightageDiv.className = 'result eligible';
+            resultWeightageDiv.innerHTML = `
+                <h3>Your Calculated Score</h3>
+                <div class="result-item">
+                    <span class="result-label">Academic Merit:</span>
+                    <span class="result-value">${academicMerit}/10</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">TET Weightage:</span>
+                    <span class="result-value">${tetWeightage}/40</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Written Exam:</span>
+                    <span class="result-value">${writtenExam}/25</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Interview:</span>
+                    <span class="result-value">${oralInterview}/15</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Lecture Demo:</span>
+                    <span class="result-value">${lectureDemo}/5</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Experience:</span>
+                    <span class="result-value">${experienceScore}/5</span>
+                </div>
+                <div class="result-total">
+                    <span class="result-label">Total Score:</span>
+                    <span class="result-value">${totalScore.toFixed(2)}/100</span>
+                </div>`;
+        } else {
+            const writtenExam = parseFloat(document.getElementById('writtenExam').value) || 0;
+            const gradPercentage = parseFloat(document.getElementById('gradPercentage').value) || 0;
+            const teachingExperience = parseInt(document.getElementById('teachingExperience').value) || 0;
+            const oralInterview = parseFloat(document.getElementById('oralInterview').value) || 0;
+            const lectureDemo = parseFloat(document.getElementById('lectureDemo').value) || 0;
+
+            const academicMerit = getMeritScore(gradPercentage);
+            const experienceScore = Math.min(teachingExperience * 2, 10);
+
+            const totalScore = writtenExam + academicMerit + experienceScore + oralInterview + lectureDemo;
+
+            resultWeightageDiv.className = 'result eligible';
+            resultWeightageDiv.innerHTML = `
+                <h3>Your Calculated Score</h3>
+                <div class="result-item">
+                    <span class="result-label">Written Exam:</span>
+                    <span class="result-value">${writtenExam}/60</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Academic Merit:</span>
+                    <span class="result-value">${academicMerit}/10</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Experience:</span>
+                    <span class="result-value">${experienceScore}/10</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Interview:</span>
+                    <span class="result-value">${oralInterview}/10</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Lecture Demo:</span>
+                    <span class="result-value">${lectureDemo}/10</span>
+                </div>
+                <div class="result-total">
+                    <span class="result-label">Total Score:</span>
+                    <span class="result-value">${totalScore.toFixed(2)}/100</span>
+                </div>`;
+        }
+    }
+
+    function getMeritScore(percentage) {
+        return percentage >= 60 ? 10 : percentage >= 50 ? 8 : 6;
+    }
+</script>
+</body>
+</html>

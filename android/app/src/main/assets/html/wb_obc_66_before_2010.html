@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WB OBC List Before 2010 (66 Valid Classes with Full Details)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Inter font and general layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light grey background */
+            display: flex;
+            flex-direction: column; /* Changed to column to stack app and tests */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Padding for mobile view */
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff; /* White background for the card */
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            padding: 30px;
+            width: 100%;
+            max-width: 600px; /* Increased max width for more info */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 40px; /* Space between app and tests */
+        }
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: #f7fafc; /* Lighter background for select */
+            border: 1px solid #d2d6dc; /* Light border */
+            border-radius: 8px;
+            padding: 12px 40px 12px 16px; /* Adjust padding for custom arrow */
+            font-size: 1rem;
+            width: 100%;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            color: #374151; /* Darker text for readability */
+        }
+        select:focus {
+            border-color: #6366f1; /* Indigo on focus */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .select-wrapper::after {
+            content: '▼'; /* Custom dropdown arrow */
+            font-size: 0.8rem;
+            color: #6b7280; /* Grey arrow */
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none; /* Make sure the arrow doesn't block clicks */
+        }
+        .info-note {
+            background-color: #e0f2f7; /* Light blue background for note */
+            border: 1px solid #b2ebf2; /* Light blue border */
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #263238; /* Darker text for note */
+            line-height: 1.5;
+            word-wrap: break-word; /* Ensure long text wraps */
+            transition: opacity 0.3s ease-in-out; /* Smooth transition for appearance */
+        }
+        .info-note strong {
+            color: #01579b; /* Darker blue for emphasis */
+        }
+
+        /* Styles for the testing instructions section */
+        .testing-instructions {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .testing-instructions h2 {
+            font-size: 1.75rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            color: #1f2937; /* text-gray-800 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            text-align: center;
+        }
+        .testing-instructions h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #374151; /* text-gray-700 */
+            margin-top: 1.5rem; /* mt-6 */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .testing-instructions ol, .testing-instructions ul {
+            list-style-type: decimal; /* For ordered lists */
+            padding-left: 25px; /* Indent list items */
+            margin-bottom: 1rem;
+        }
+        .testing-instructions ul {
+            list-style-type: disc; /* For unordered lists */
+        }
+        .testing-instructions li {
+            margin-bottom: 0.5rem;
+            color: #4b5563; /* text-gray-600 */
+            line-height: 1.6;
+        }
+        .testing-instructions strong {
+            color: #1f2937; /* Stronger text for emphasis */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-2xl font-bold text-gray-800 text-center">West Bengal OBC Categories (66 Valid Before 2010)</h1>
+
+    <div class="select-wrapper">
+        <label for="obc-category" class="block text-gray-700 text-sm font-medium mb-2">Select an OBC Category:</label>
+        <select id="obc-category" class="block w-full py-2 px-3 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <option value="">-- Select --</option>
+        </select>
+    </div>
+
+    <div id="selected-category-display" class="text-lg text-gray-700 font-semibold mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded-md w-full text-center hidden">
+        Selected Category: <span id="selected-category-name" class="text-indigo-700 font-bold"></span>
+    </div>
+
+    <div id="obc-info-note" class="info-note hidden">
+        <strong>Category Type:</strong> <span id="obc-category-type"></span><br>
+        <strong>Notification No.:</strong> <span id="obc-notification-no"></span>
+    </div>
+</div>
+
+<div class="testing-instructions container">
+    <h2 class="text-2xl font-bold text-gray-800 text-center">Testing Instructions</h2>
+    <h3 class="text-xl font-semibold text-gray-700">How to Test the West Bengal OBC Categories Application</h3>
+    <p class="text-gray-600 mb-4">Follow these steps to ensure the application is working as expected:</p>
+
+    <ol class="list-decimal pl-5 text-gray-600">
+        <li class="mb-2">
+            <strong>Initial Load Test:</strong>
+            <ul class="list-disc pl-5 mt-1">
+                <li><strong>Expected Behavior:</strong> When you first load the page, you should see a title "West Bengal OBC Categories (66 Valid Before 2010)" and a dropdown labeled "Select an OBC Category:".</li>
+                <li><strong>Expected Behavior:</strong> Below the dropdown, the "Selected Category:" display and the "Category Type:" and "Notification No.:" information note should <em>not</em> be visible. They should be hidden.</li>
+            </ul>
+        </li>
+        <li class="mb-2">
+            <strong>Dropdown Population Test:</strong>
+            <ul class="list-disc pl-5 mt-1">
+                <li><strong>Expected Behavior:</strong> Click on the dropdown. It should populate with a list of 66 OBC categories, each prefixed with a number (e.g., "1. Baishya Kapali", "2. Bansi Barman", etc.).</li>
+                <li><strong>Expected Behavior:</strong> The categories should be sorted alphabetically by their names.</li>
+            </ul>
+        </li>
+        <li class="mb-2">
+            <strong>Category Selection Test (Positive Case):</strong>
+            <ul class="list-disc pl-5 mt-1">
+                <li><strong>Action:</strong> Select any category from the dropdown, for example, "Kapali".</li>
+                <li><strong>Expected Behavior:</strong>
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>The "Selected Category:" display should immediately become visible and show "Selected Category: Kapali".</li>
+                        <li>The information note below it should also become visible.</li>
+                        <li>The "Category Type:" in the note should display "OBC-B".</li>
+                        <li>The "Notification No.:" in the note should display the full notification number associated with "Kapali".</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="mb-2">
+            <strong>Another Category Selection Test (Positive Case):</strong>
+            <ul class="list-disc pl-5 mt-1">
+                <li><strong>Action:</strong> Select a different category, for example, "Jolah (Ansari-Momin)*".</li>
+                <li><strong>Expected Behavior:</strong>
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>The "Selected Category:" display should update to "Selected Category: Jolah (Ansari-Momin)*".</li>
+                        <li>The "Category Type:" in the note should update to "OBC-A".</li>
+                        <li>The "Notification No.:" in the note should update to the full notification number for "Jolah (Ansari-Momin)*".</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="mb-2">
+            <strong>Re-selecting "-- Select --" Test (Negative Case):</strong>
+            <ul class="list-disc pl-5 mt-1">
+                <li><strong>Action:</strong> After selecting a category, re-select the initial "-- Select --" option from the dropdown.</li>
+                <li><strong>Expected Behavior:</strong>
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>The "Selected Category:" display should disappear (become hidden).</li>
+                        <li>The information note ("Category Type:" and "Notification No.:") should also disappear (become hidden).</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="mb-2">
+            <strong>Responsiveness Test:</strong>
+            <ul class="list-disc pl-5 mt-1">
+                <li><strong>Action:</strong> Resize your browser window to simulate different screen sizes (e.g., narrow it to mimic a mobile phone, then widen it for a desktop).</li>
+                <li><strong>Expected Behavior:</strong> The layout should adjust gracefully. The main card should center on the screen, and the dropdown and info note should scale to fit the available width without horizontal scrolling.</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // The exact list of 66 valid OBC categories, augmented with OBC-A/B classification and FULL Notification Numbers.
+        // This data is pre-defined and sorted alphabetically for better user experience.
+        const validObcCasteCategories = [
+            { name: "Baishya Kapali", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Bansi Barman", obcCategory: "OBC-B", notificationNo: "Notification No. 84-BCW/RC dt. 01.03.1999 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Barujibi", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Betkar (Bentkar)", obcCategory: "OBC-B", notificationNo: "Notification No. 183-TW/EC dt. 8th March, 1996 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Bhar", obcCategory: "OBC-B", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Bharbhuja", obcCategory: "OBC-B", notificationNo: "Notification No. 84-BCW/RC dt. 01.03.1999 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Bhujel", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Bungchheng", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Chitrakar", obcCategory: "OBC-B", notificationNo: "Notification No. 183-TW/EC dt. 8th March, 1996 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Chowduli (Muslim)*", obcCategory: "OBC-A", notificationNo: "Notification No. 485/BCW dt. 20-02-2009" },
+            { name: "Dhanuk", obcCategory: "OBC-A", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Devanga", obcCategory: "OBC-B", notificationNo: "Notification No. 861-BCW/MR-169/04" },
+            { name: "Dewan", obcCategory: "OBC-B", notificationNo: "Notification No. 2927-BCW/MR-436/99 dated the 10th July, 2001" },
+            { name: "Dhimal", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Dhunia*", obcCategory: "OBC-A", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Fakir, Sain*", obcCategory: "OBC-A", notificationNo: "Notification No. 183-TW/EC dt. 8th March, 1996 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Gangot", obcCategory: "OBC-B", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Goala, Gope (Pallav Gope, Ballav Gope, Yadav Gope, Gope, Ahir and Yadav)", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Hajjam (Muslim)*", obcCategory: "OBC-A", notificationNo: "Notification No.3230 – BCW dt 04-12-08 read with No. 264/BCW dt. 28-01-09" },
+            { name: "Hawari, Dhobi (other than those included in the list of Scheduled Castes)*", obcCategory: "OBC-A", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Hele / Halia / Chasi-Kaibartta, Das Kaibartta", obcCategory: "OBC-B", notificationNo: "Notification No. 1054-BCW/EC dt. 06.11.97" },
+            { name: "Jogi", obcCategory: "OBC-A", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Jolah (Ansari-Momin)*", obcCategory: "OBC-A", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Kahar", obcCategory: "OBC-B", notificationNo: "Notification No. 183-TW/EC dt. 8th March, 1996 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Kansari", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Kapali", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Karani", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Karmakar", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Kasai*", obcCategory: "OBC-A", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Keori/Koiri", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Khandait", obcCategory: "OBC-A", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Khen (Non-Bania category)", obcCategory: "OBC-B", notificationNo: "Notification No. 84-BCW/RC dt. 01.03.1999 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Kosta/Kostha", obcCategory: "OBC-A", notificationNo: "Notification No. 370-TW/EC dt 12..5. 1995 read with Notification No. 2109- BCW/MR-74/17 dated 14th October, 2020" },
+            { name: "Kumbhakar", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Kurmi", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Lakhera/Laahera", obcCategory: "OBC-A", notificationNo: "Notification No. 183-TW/EC dt. 8th March, 1996 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Malakar", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Mangar", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Moira (Halwai), Modak (Halwai)", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Napit", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Nagar", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Nashya-Sekh*", obcCategory: "OBC-A", notificationNo: "Notification No. 84-BCW/RC dt. 01.03.1999 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Nembang", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Newar", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Pahadia Muslim*", obcCategory: "OBC-A", notificationNo: "Notification No. 84-BCW/RC dt. 01.03.1999 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Patidar*", obcCategory: "OBC-A", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Rai (including Chamling)", obcCategory: "OBC-B", notificationNo: "Notification No. 2927-BCW/MR-436/99 dated the 10th July, 2001" },
+            { name: "Raju", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Rayeen (Kunjra)*", obcCategory: "OBC-A", notificationNo: "Notification No. 5001-BCW Dt.7-10-02 read with Notification No. 4283-BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Roniwar/Rauniyar", obcCategory: "OBC-A", notificationNo: "Notification No. 370-TW/EC dt 12..5. 1995 read with Notification No. 2109- BCW/MR-74/17 dated 14th October, 2020" },
+            { name: "Sarak", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Satchasi", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Scheduled Castes converts to Christianity and their progeny", obcCategory: "OBC-B", notificationNo: "Notification No. 370-TW/EC dt 12..5. 1995 read with Notification No. 2109- BCW/MR-74/17 dated 14th October, 2020" },
+            { name: "Sampang", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Shankakar", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Shershabadia*", obcCategory: "OBC-A", notificationNo: "Notification No. 5001-BCW Dt.7-10-02 read with Notification No. 4283-BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Sukli", obcCategory: "OBC-A", notificationNo: "Notification No. 84-BCW/RC dt. 01.03.1999 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Sunuwar", obcCategory: "OBC-B", notificationNo: "Notification No. 84-BCW/RC dt. 01.03.1999 read with Notification No. 4283- BCW/MR/209/11 (Pt.I) dated 26-12-2016" },
+            { name: "Sutradhar", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Swarnakar", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Tamboli/Tamali", obcCategory: "OBC-B", notificationNo: "Notification No. 370-TW/EC dt 12..5. 1995 read with Notification No. 2109- BCW/MR-74/17 dated 14th October, 2020" },
+            { name: "Tanti, Tantubaya", obcCategory: "OBC-B", notificationNo: "Notification No.705-TW/EC dt. 13.12.94" },
+            { name: "Teli, Kolu", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" },
+            { name: "Thami", obcCategory: "OBC-B", notificationNo: "Notification No. 1179-TW/EC dt. 01.12.1995" },
+            { name: "Turha", obcCategory: "OBC-B", notificationNo: "Notification No. 93-TW/EC dt. 01.02.1997 read with Notification No. 844-BCW/MR- 116/12 dated 15-03-2017" },
+            { name: "Yogi, Nath", obcCategory: "OBC-B", notificationNo: "Notification No.346-TW/EC dt. 13.07.94 read with Notification No. 92-TW/EC dt. 11-02-1997 read with Notification No. 267-TW/EC dt. 17-05-1996 and read with 881-BCW/MR-209/11 dated 03-03-2016 read with Notification No. 843- BCW/MR-116/12 dated 15-03-2017" }
+        ];
+
+        // Get references to the DOM elements
+        const selectElement = document.getElementById('obc-category');
+        const selectedCategoryDisplay = document.getElementById('selected-category-display');
+        const selectedCategoryName = document.getElementById('selected-category-name');
+        const obcInfoNote = document.getElementById('obc-info-note');
+        const obcCategoryType = document.getElementById('obc-category-type');
+        const obcNotificationNo = document.getElementById('obc-notification-no');
+
+        // Sort the categories alphabetically by name for a user-friendly dropdown
+        validObcCasteCategories.sort((a, b) => a.name.localeCompare(b.name));
+
+        let counter = 1; // Initialize a counter for numbering options
+
+        // Populate the dropdown list with sorted categories
+        validObcCasteCategories.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.name; // Use the category name as the option's value
+            option.textContent = `${counter}. ${item.name}`; // Display with a sequential number
+            // Store additional data (OBC category type and notification number) as data attributes
+            // This allows easy retrieval when an option is selected.
+            option.dataset.obcCategory = item.obcCategory;
+            option.dataset.notificationNo = item.notificationNo;
+            selectElement.appendChild(option);
+            counter++; // Increment counter for the next option
+        });
+
+        // Event listener for when the user selects a different category from the dropdown
+        selectElement.addEventListener('change', function() {
+            // Get the currently selected option element
+            const selectedOption = this.options[this.selectedIndex];
+            const selectedValue = selectedOption.value; // Get the value (category name) of the selected option
+
+            if (selectedValue) {
+                // If a valid category is selected (not the initial "-- Select --" option)
+                selectedCategoryName.textContent = selectedValue; // Update the displayed category name
+                selectedCategoryDisplay.classList.remove('hidden'); // Show the "Selected Category" div
+
+                // Retrieve the stored data attributes and update the info note
+                obcCategoryType.textContent = selectedOption.dataset.obcCategory;
+                obcNotificationNo.textContent = selectedOption.dataset.notificationNo;
+                obcInfoNote.classList.remove('hidden'); // Show the info note
+            } else {
+                // If the "-- Select --" option is chosen (or nothing is selected)
+                selectedCategoryName.textContent = ''; // Clear the displayed category name
+                selectedCategoryDisplay.classList.add('hidden'); // Hide the "Selected Category" div
+                obcInfoNote.classList.add('hidden'); // Hide the info note
+            }
+        });
+    });
+</script>
+</body>
+</html>

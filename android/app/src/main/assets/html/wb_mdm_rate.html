@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WB MDM New Rate Tool</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+        .radio-group label {
+            cursor: pointer;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #4a5568; /* Gray-700 */
+            border: 2px solid #e2e8f0; /* Gray-200 */
+        }
+        .radio-group input[type="radio"]:checked + label {
+            background-color: #4299e1; /* Blue-500 */
+            color: #ffffff;
+            border-color: #4299e1;
+            box-shadow: 0 4px 10px rgba(66, 153, 225, 0.3);
+        }
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+        .data-card {
+            background-color: #f7fafc; /* Gray-50 */
+            border-left: 4px solid #4299e1; /* Blue-500 */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .data-card:last-child {
+            margin-bottom: 0;
+        }
+        /* Specific style for the latest rate card */
+        .data-card.latest-rate {
+            background-color: #dcfce7; /* Light green for bg-green-100 */
+            border-left-color: #16a34a; /* Darker green for border-green-700 */
+        }
+        .data-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #2d3748; /* Gray-800 */
+            margin-bottom: 10px;
+        }
+        .data-card p {
+            font-size: 1rem;
+            color: #4a5568; /* Gray-700 */
+            margin-bottom: 5px;
+        }
+        .data-card p strong {
+            color: #2c5282; /* Blue-800 */
+        }
+        /* Text color for the latest rate card heading */
+        .data-card.latest-rate h3 {
+            color: #14532d; /* Darker green for text-green-800 */
+        }
+        .menu-card {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-top: 30px;
+        }
+        .menu-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .menu-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .menu-item .day {
+            font-weight: 700;
+            color: #4299e1; /* Blue-500 */
+            width: 100px; /* Fixed width for day */
+            flex-shrink: 0;
+        }
+        .menu-item .description {
+            color: #4a5568;
+            flex-grow: 1;
+        }
+        .note {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 20px;
+            text-align: center;
+            padding: 10px;
+            background-color: #f0f4f8;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-5">
+
+<div class="container">
+    <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-8">
+        West Bengal MDM New Rate Tool
+    </h1>
+
+    <div class="radio-group flex flex-col sm:flex-row justify-center gap-4 mb-8">
+        <div class="flex-1">
+            <input type="radio" id="class1-5" name="mdmClass" value="Class I - V" checked>
+            <label for="class1-5" class="block text-center shadow-md hover:shadow-lg">
+                Class I - V
+            </label>
+        </div>
+        <div class="flex-1">
+            <input type="radio" id="class6-8" name="mdmClass" value="Class VI - VIII">
+            <label for="class6-8" class="block text-center shadow-md hover:shadow-lg">
+                Class VI - VIII
+            </label>
+        </div>
+    </div>
+
+    <div id="mdmDataDisplay" class="space-y-6">
+        <!-- MDM data will be displayed here -->
+    </div>
+
+    <div class="menu-card mt-10">
+        <h2 class="text-2xl font-extrabold text-center text-gray-800 mb-6">
+            PM Poshan Menu Chart (West Bengal)
+        </h2>
+        <div class="menu-items">
+            <div class="menu-item">
+                <span class="day">Monday:</span>
+                <span class="description">Rice, Dal, Potato and Vegetable Curry</span>
+            </div>
+            <div class="menu-item">
+                <span class="day">Tuesday:</span>
+                <span class="description">Rice, Dal, Egg or Fish Curry</span>
+            </div>
+            <div class="menu-item">
+                <span class="day">Wednesday:</span>
+                <span class="description">Rice, Dal and Mixed Vegetable</span>
+            </div>
+            <div class="menu-item">
+                <span class="day">Thursday:</span>
+                <span class="description">Rice, Fish or Egg Curry, Vegetables</span>
+            </div>
+            <div class="menu-item">
+                <span class="day">Friday:</span>
+                <span class="description">Rice, Dal, Potato Curry</span>
+            </div>
+            <div class="menu-item">
+                <span class="day">Saturday:</span>
+                <span class="description">Rice, Dal, Soyabean and Potato Curry</span>
+            </div>
+        </div>
+        <p class="note">
+            *Note: As per a 2023 decision, chicken and seasonal fruits may be served for four months starting January, in addition to the regular menu. Specific school menus might vary slightly.
+        </p>
+    </div>
+
+</div>
+
+<script>
+    // Data for MDM rates, including historical data and notification numbers
+    const mdmData = {
+        "Class I - V": [
+            {
+                effectiveDate: "01-May-2025",
+                notificationNo: "WB/MDM/2025/001",
+                rice: "100gm/head",
+                cookingCost: "Rs. 6.78/head"
+            },
+            {
+                effectiveDate: "01-Apr-2024",
+                notificationNo: "WB/MDM/2024/005",
+                rice: "100gm/head",
+                cookingCost: "Rs. 5.45/head"
+            },
+            {
+                effectiveDate: "01-Jan-2023",
+                notificationNo: "WB/MDM/2023/010",
+                rice: "100gm/head",
+                cookingCost: "Rs. 4.97/head"
+            },
+            {
+                effectiveDate: "01-Apr-2022",
+                notificationNo: "WB/MDM/2022/015",
+                rice: "100gm/head",
+                cookingCost: "Rs. 4.48/head"
+            }
+        ],
+        "Class VI - VIII": [
+            {
+                effectiveDate: "01-May-2025",
+                notificationNo: "WB/MDM/2025/001",
+                rice: "150gm/head",
+                cookingCost: "Rs. 10.17/head"
+            },
+            {
+                effectiveDate: "01-Apr-2024",
+                notificationNo: "WB/MDM/2024/005",
+                rice: "150gm/head",
+                cookingCost: "Rs. 8.17/head"
+            },
+            {
+                effectiveDate: "01-Jan-2023",
+                notificationNo: "WB/MDM/2023/010",
+                rice: "150gm/head",
+                cookingCost: "Rs. 7.45/head"
+            },
+            {
+                effectiveDate: "01-Apr-2022",
+                notificationNo: "WB/MDM/2022/015",
+                rice: "150gm/head",
+                cookingCost: "Rs. 6.72/head"
+            }
+        ]
+    };
+
+    // Get the display div
+    const mdmDataDisplay = document.getElementById('mdmDataDisplay');
+
+    /**
+     * Renders the MDM data for the selected class.
+     * @param {string} selectedClass - The class selected (e.g., "Class I - V").
+     */
+    function renderMdmData(selectedClass) {
+        // Clear previous content
+        mdmDataDisplay.innerHTML = '';
+
+        // Get data for the selected class
+        const data = mdmData[selectedClass];
+
+        if (data && data.length > 0) {
+            data.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.classList.add('data-card');
+
+                // Add a special class for the latest data
+                if (index === 0) {
+                    // Apply the custom 'latest-rate' class for guaranteed styling
+                    card.classList.add('latest-rate');
+                    card.innerHTML = `
+                        <h3 class="text-green-800">Latest Rates (w.e.f. ${item.effectiveDate})</h3>
+                        <p><strong>Notification No.:</strong> ${item.notificationNo}</p>
+                        <p><strong>Rice:</strong> ${item.rice}</p>
+                        <p><strong>Cooking Cost:</strong> ${item.cookingCost}</p>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <h3 class="text-gray-800">Historic Data (w.e.f. ${item.effectiveDate})</h3>
+                        <p><strong>Notification No.:</strong> ${item.notificationNo}</p>
+                        <p><strong>Rice:</strong> ${item.rice}</p>
+                        <p><strong>Cooking Cost:</strong> ${item.cookingCost}</p>
+                    `;
+                }
+                mdmDataDisplay.appendChild(card);
+            });
+        } else {
+            mdmDataDisplay.innerHTML = '<p class="text-center text-gray-500">No data available for this class.</p>';
+        }
+    }
+
+    // Add event listeners to radio buttons
+    document.querySelectorAll('input[name="mdmClass"]').forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            renderMdmData(event.target.value);
+        });
+    });
+
+    // Initial render based on the default checked radio button
+    document.addEventListener('DOMContentLoaded', () => {
+        const initialClass = document.querySelector('input[name="mdmClass"]:checked').value;
+        renderMdmData(initialClass);
+    });
+</script>
+</body>
+</html>

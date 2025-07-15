@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>West Bengal Student Age Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%236B46C1' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79-4-4-4z'/></svg>">
+</head>
+<body class="bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 font-sans">
+<div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-lg border border-purple-300 hover:shadow-3xl transition-shadow duration-300">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-4 text-center text-indigo-600">West Bengal Student Age Calculator</h1>
+    <p class="text-sm text-center text-gray-600 mb-4">Not an official website. Follow govt. rules for admission.</p>
+
+    <div class="mb-6">
+        <label for="dob" class="block text-sm font-medium text-gray-800 mb-2">Date of Birth:</label>
+        <div class="grid grid-cols-3 gap-3">
+            <select id="dobDay" class="w-full border border-indigo-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 text-sm outline-none" required>
+                <option value="">Day</option>
+            </select>
+            <select id="dobMonth" class="w-full border border-indigo-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 text-sm outline-none" required>
+                <option value="">Month</option>
+            </select>
+            <select id="dobYear" class="w-full border border-indigo-300 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 text-sm outline-none" required>
+                <option value="">Year</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <label for="calcYear" class="block text-sm font-medium text-gray-800 mb-2">Calculation Year:</label>
+        <input type="text" id="calcYear" value="01/01/2025" class="w-full border border-indigo-300 rounded-lg p-3 bg-gray-100 text-sm cursor-not-allowed" readonly>
+    </div>
+
+    <button onclick="calcAge()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Calculate</button>
+
+    <div id="result" class="mt-6 hidden animate-fade-in">
+        <h2 class="text-lg sm:text-xl font-semibold mb-4 text-indigo-600">Eligibility</h2>
+        <div class="border border-indigo-200 rounded-lg overflow-hidden">
+            <table class="w-full text-sm text-left text-gray-700">
+                <thead class="text-xs text-white uppercase bg-indigo-600">
+                <tr>
+                    <th class="py-3 px-4">Years</th>
+                    <th class="py-3 px-4">Months</th>
+                    <th class="py-3 px-4">Days</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="bg-white hover:bg-indigo-50 transition-colors duration-150">
+                    <td id="ageYears" class="py-3 px-4 border-t border-indigo-200"></td>
+                    <td id="ageMonths" class="py-3 px-4 border-t border-indigo-200"></td>
+                    <td id="ageDays" class="py-3 px-4 border-t border-indigo-200"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="bg-indigo-50 p-4 border-t border-indigo-200">
+                <p class="text-sm text-gray-700"><strong>Eligible Class:</strong> <span id="eligibleClass" class="text-indigo-800 font-medium"></span></p>
+                <p class="text-sm text-gray-700 mt-2"><strong>Admission Year:</strong> <span id="admissionYear" class="text-indigo-800 font-medium"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-6 w-full max-w-lg bg-white p-6 rounded-2xl shadow-lg border border-purple-300">
+    <h2 class="text-lg sm:text-xl font-semibold mb-4 text-center text-indigo-600">Admission Rules (WB)</h2>
+    <ul class="list-disc list-inside text-sm text-gray-700 space-y-2">
+        <li>Class P.P: 5 to &lt;6 years</li>
+        <li>Class I: 6 to &lt;7 years</li>
+        <li>Class II: 7 to &lt;8 years</li>
+        <li>Class III: 8 to &lt;9 years</li>
+        <li>Class IV: 9 to &lt;10 years</li>
+        <li>Class V: 10 to &lt;11 years</li>
+        <li>Class VI: 11 to &lt;12 years</li>
+        <li>Class VII: 12 to &lt;13 years</li>
+        <li>Class VIII: 13 to &lt;14 years</li>
+    </ul>
+</div>
+
+<div id="messageBox" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+        <p id="messageBoxText" class="text-gray-800 text-lg mb-4"></p>
+        <button onclick="hideMessageBox()" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">OK</button>
+    </div>
+</div>
+
+<style>
+    /* Fade-in animation for results */
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-in forwards;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    // Get the current year for the fixed calculation date (Jan 1st of current year)
+    const currentYear = new Date().getFullYear();
+    document.getElementById('calcYear').value = new Date(currentYear, 0, 1).toLocaleDateString('en-GB').replace(/\//g, '/');
+
+    // Populate the dropdowns for Date of Birth
+    const dobDay = document.getElementById('dobDay');
+    const dobMonth = document.getElementById('dobMonth');
+    const dobYear = document.getElementById('dobYear');
+
+    // Populate Days (1-31)
+    for (let i = 1; i <= 31; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        dobDay.appendChild(option);
+    }
+
+    // Populate Months (1-12)
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    months.forEach((month, index) => {
+        const option = document.createElement('option');
+        option.value = index + 1; // Month values are 0-indexed in JavaScript Date, but we want 1-12 for display/input
+        option.textContent = month;
+        dobMonth.appendChild(option);
+    });
+
+    // Populate Years (e.g., from 1950 to current year)
+    const startYear = 1950;
+    for (let i = currentYear; i >= startYear; i--) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        dobYear.appendChild(option);
+    }
+
+    /**
+     * Shows a custom message box instead of the browser's alert.
+     * @param {string} message - The message to display.
+     */
+    function showMessageBox(message) {
+        document.getElementById('messageBoxText').textContent = message;
+        document.getElementById('messageBox').classList.remove('hidden');
+    }
+
+    /**
+     * Hides the custom message box.
+     */
+    function hideMessageBox() {
+        document.getElementById('messageBox').classList.add('hidden');
+    }
+
+    /**
+     * Calculates the age between a birth date and a target date.
+     * @param {Date} birthDate - The date of birth.
+     * @param {Date} targetDate - The date to calculate age up to.
+     * @returns {{years: number, months: number, days: number}} - Object containing years, months, and days.
+     */
+    function calculateAgeOnDate(birthDate, targetDate) {
+        let years = targetDate.getFullYear() - birthDate.getFullYear();
+        let months = targetDate.getMonth() - birthDate.getMonth();
+        let days = targetDate.getDate() - birthDate.getDate();
+
+        // Adjust for negative days (meaning target day is before birth day in the month)
+        if (days < 0) {
+            months--; // Borrow a month
+            // Add days of the previous month to the current days
+            days += new Date(targetDate.getFullYear(), targetDate.getMonth(), 0).getDate();
+        }
+
+        // Adjust for negative months (meaning target month is before birth month in the year)
+        if (months < 0) {
+            years--; // Borrow a year
+            months += 12; // Add 12 months
+        }
+        return { years, months, days };
+    }
+
+    /**
+     * Determines the "Admission Year" for a child, which is the year they would first be
+     * eligible for a class requiring a minimum age on January 1st of that year.
+     * This typically refers to the year they would start P.P (minimum 5 years old).
+     * @param {Date} dob - The child's date of birth.
+     * @param {number} minClassAgeYears - The minimum age required for the starting class (e.g., 5 for P.P).
+     * @returns {number} - The calculated admission year.
+     */
+    function getAdmissionYearForMinAge(dob, minClassAgeYears) {
+        // Start with a candidate year based on DOB + minimum required age
+        let admissionYearCandidate = dob.getFullYear() + minClassAgeYears;
+
+        // Calculate age on Jan 1st of the candidate year
+        let ageOnJan1 = calculateAgeOnDate(dob, new Date(admissionYearCandidate, 0, 1));
+
+        // If the child is not yet old enough on Jan 1st of the candidate year,
+        // they must wait until the next year to meet the age criteria.
+        if (ageOnJan1.years < minClassAgeYears) {
+            admissionYearCandidate++;
+        }
+
+        return admissionYearCandidate;
+    }
+
+    /**
+     * Main function to calculate the student's age and eligibility based on West Bengal rules.
+     */
+    function calcAge() {
+        const day = dobDay.value;
+        const month = dobMonth.value;
+        const year = dobYear.value;
+
+        // Validate dropdown inputs
+        if (!day || !month || !year) {
+            showMessageBox('Please select a valid Date of Birth (Day, Month, and Year).');
+            return;
+        }
+
+        // Create a Date object from the dropdown values
+        // Month is 0-indexed in Date constructor, so subtract 1
+        let birthDate = new Date(year, month - 1, day);
+
+        // Check for invalid dates (e.g., Feb 30th)
+        if (birthDate.getDate() != day || (birthDate.getMonth() + 1) != month || birthDate.getFullYear() != year) {
+            showMessageBox('The selected date of birth is invalid. Please select a valid date.');
+            return;
+        }
+
+        // The fixed calculation date is January 1st of the current year (e.g., 01/01/2025)
+        let calcDate = new Date(currentYear, 0, 1);
+
+        // Calculate the student's age on the fixed calculation date
+        let age = calculateAgeOnDate(birthDate, calcDate);
+
+        // Determine the eligible class based on the calculated age (on 01/01/currentYear)
+        let eligibleClass = '';
+        if (age.years >= 5 && age.years < 6) {
+            eligibleClass = 'Class P.P';
+        } else if (age.years >= 6 && age.years < 7) {
+            eligibleClass = 'Class I';
+        } else if (age.years >= 7 && age.years < 8) {
+            eligibleClass = 'Class II';
+        } else if (age.years >= 8 && age.years < 9) {
+            eligibleClass = 'Class III';
+        } else if (age.years >= 9 && age.years < 10) {
+            eligibleClass = 'Class IV';
+        } else if (age.years >= 10 && age.years < 11) {
+            eligibleClass = 'Class V';
+        } else if (age.years >= 11 && age.years < 12) {
+            eligibleClass = 'Class VI';
+        } else if (age.years >= 12 && age.years < 13) {
+            eligibleClass = 'Class VII';
+        } else if (age.years >= 13 && age.years < 14) {
+            eligibleClass = 'Class VIII';
+        } else {
+            eligibleClass = 'Not eligible for P.P-VIII';
+        }
+
+        // Calculate the ideal admission year for Class P.P (min age 5) based on DOB.
+        // This is the year they would have turned 5 by Jan 1st.
+        let ppAdmissionYear = getAdmissionYearForMinAge(birthDate, 5);
+
+        // Update the UI with the calculated results
+        document.getElementById('ageYears').textContent = age.years;
+        document.getElementById('ageMonths').textContent = age.months;
+        document.getElementById('ageDays').textContent = age.days;
+        document.getElementById('eligibleClass').textContent = eligibleClass;
+        document.getElementById('admissionYear').textContent = ppAdmissionYear; // Display the calculated P.P. admission year
+        document.getElementById('result').classList.remove('hidden'); // Show the results section
+    }
+</script>
+</body>
+</html>
