@@ -1082,6 +1082,15 @@ const TeachersDetails = () => {
                         </Text>
                       </View>
                       <Text selectable style={styles.text}>
+                        Date of Joining: {item.doj}
+                      </Text>
+                      <Text selectable style={styles.text}>
+                        Date of Joining to This School: {item.dojnow}
+                      </Text>
+                      <Text selectable style={styles.text}>
+                        Date of Retirement: {item.dor}
+                      </Text>
+                      <Text selectable style={styles.text}>
                         Address: {item.address}
                       </Text>
                       <TouchableOpacity
@@ -1090,7 +1099,7 @@ const TeachersDetails = () => {
                           flexDirection: 'row',
                           alignSelf: 'center',
                           justifyContent: 'center',
-                          marginBottom: responsiveHeight(0.5),
+                          marginVertical: responsiveHeight(0.5),
                         }}
                         onPress={() => {
                           showRestoreTeacherConfirmDialog(item);
@@ -1099,7 +1108,7 @@ const TeachersDetails = () => {
                       >
                         <FontAwesome5
                           name={'trash-restore'}
-                          size={40}
+                          size={20}
                           color={'green'}
                         />
                         <Text
@@ -1109,7 +1118,7 @@ const TeachersDetails = () => {
                             {
                               paddingLeft: responsiveWidth(2),
                               color: 'green',
-                              fontSize: responsiveFontSize(2.5),
+                              fontSize: responsiveFontSize(2),
                             },
                           ]}
                         >
@@ -2022,7 +2031,8 @@ const TeachersDetails = () => {
                           </Text>
                         </TouchableOpacity>
                       ) : user.circle === 'admin' ||
-                        user.question == 'admin' ? (
+                        user.question == 'admin' ||
+                        user.gender === 'female' ? (
                         <TouchableOpacity
                           onPress={() => makeCall(parseInt(item.phone))}
                         >
@@ -2069,9 +2079,11 @@ const TeachersDetails = () => {
                       <Text selectable style={styles.text}>
                         Service Life: {getServiceLife(item.doj)}
                       </Text>
-                      <Text selectable style={styles.text}>
-                        Address: {item.address}
-                      </Text>
+                      {user.circle === 'admin' && (
+                        <Text selectable style={styles.text}>
+                          Address: {item.address}
+                        </Text>
+                      )}
                       {noeditBtn
                         ? user.circle === 'admin' && (
                             <View

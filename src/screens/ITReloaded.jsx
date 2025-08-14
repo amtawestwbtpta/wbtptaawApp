@@ -68,11 +68,10 @@ export default function ITReloaded() {
       `https://raw.githubusercontent.com/amtawestwbtpta/salaryRemodified/main/Salary-${year}.json`,
     );
     const data = respronse.data;
-    const onlyWbtptaTeachers = data?.filter(
-      teacher => teacher?.association === 'WBTPTA',
-    );
-    setSalary(user.circle === 'admin' ? data : onlyWbtptaTeachers);
-    setFilteredData(user.circle === 'admin' ? data : onlyWbtptaTeachers);
+
+    const thisTeacher = data?.filter(teacher => teacher?.id === user.id);
+    setSalary(user.circle === 'admin' ? data : thisTeacher);
+    setFilteredData(user.circle === 'admin' ? data : thisTeacher);
     setLoader(false);
   };
 
@@ -129,108 +128,110 @@ export default function ITReloaded() {
             gap: responsiveHeight(2),
           }}
         >
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              alignSelf: 'center',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              marginVertical: responsiveHeight(2),
-              gap: responsiveWidth(2),
-            }}
-          >
-            <CustomButton
-              size={'medium'}
-              fontSize={responsiveFontSize(1.4)}
-              title={'Above Five Lakh'}
-              color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
-              onClick={() => {
-                const fData = filteredData.filter(
-                  salary => salary?.AllGross >= 500000,
-                );
-                if (fData.length !== 0) {
-                  setFilteredData(fData);
-                } else {
-                  setFilteredData(
-                    salary.filter(salary => salary?.AllGross >= 500000),
-                  );
-                }
-                setFilterClicked(true);
+          {user.circle === 'admin' && (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                marginVertical: responsiveHeight(2),
+                gap: responsiveWidth(2),
               }}
-            />
-            <CustomButton
-              size={'medium'}
-              fontSize={responsiveFontSize(1.4)}
-              title={'Below Five Lakh'}
-              color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
-              onClick={() => {
-                const fData = filteredData.filter(
-                  salary => salary?.AllGross <= 500000,
-                );
-                if (fData.length !== 0) {
-                  setFilteredData(fData);
-                } else {
-                  setFilteredData(
-                    salary.filter(salary => salary?.AllGross <= 500000),
-                  );
-                }
-                setFilterClicked(true);
-              }}
-            />
-            <CustomButton
-              size={'medium'}
-              fontSize={responsiveFontSize(1.4)}
-              title={'Taxable Teachers'}
-              color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
-              onClick={() => {
-                const fData = filteredData.filter(
-                  salary => salary?.NetTax !== 0,
-                );
-                if (fData.length !== 0) {
-                  setFilteredData(fData);
-                } else {
-                  setFilteredData(
-                    salary.filter(salary => salary?.NetTax !== 0),
-                  );
-                }
-                setFilterClicked(true);
-              }}
-            />
-            <CustomButton
-              size={'medium'}
-              fontSize={responsiveFontSize(1.4)}
-              title={'Only WBTPTA Teachers'}
-              color={'darkgreen'}
-              onClick={() => {
-                const fData = filteredData.filter(
-                  salary => salary?.association === 'WBTPTA',
-                );
-                if (fData.length !== 0) {
-                  setFilteredData(fData);
-                } else {
-                  setFilteredData(
-                    salary.filter(salary => salary?.association === 'WBTPTA'),
-                  );
-                }
-                setFilterClicked(true);
-              }}
-            />
-            {salary.length !== filteredData.length && (
+            >
               <CustomButton
                 size={'medium'}
                 fontSize={responsiveFontSize(1.4)}
-                title={'Clar Filter'}
-                color={'red'}
+                title={'Above Five Lakh'}
+                color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
                 onClick={() => {
-                  setFilteredData(salary);
-                  setFilterClicked(false);
-                  setSearch('');
-                  setSchSearch('');
+                  const fData = filteredData.filter(
+                    salary => salary?.AllGross >= 500000,
+                  );
+                  if (fData.length !== 0) {
+                    setFilteredData(fData);
+                  } else {
+                    setFilteredData(
+                      salary.filter(salary => salary?.AllGross >= 500000),
+                    );
+                  }
+                  setFilterClicked(true);
                 }}
               />
-            )}
-          </View>
+              <CustomButton
+                size={'medium'}
+                fontSize={responsiveFontSize(1.4)}
+                title={'Below Five Lakh'}
+                color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
+                onClick={() => {
+                  const fData = filteredData.filter(
+                    salary => salary?.AllGross <= 500000,
+                  );
+                  if (fData.length !== 0) {
+                    setFilteredData(fData);
+                  } else {
+                    setFilteredData(
+                      salary.filter(salary => salary?.AllGross <= 500000),
+                    );
+                  }
+                  setFilterClicked(true);
+                }}
+              />
+              <CustomButton
+                size={'medium'}
+                fontSize={responsiveFontSize(1.4)}
+                title={'Taxable Teachers'}
+                color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
+                onClick={() => {
+                  const fData = filteredData.filter(
+                    salary => salary?.NetTax !== 0,
+                  );
+                  if (fData.length !== 0) {
+                    setFilteredData(fData);
+                  } else {
+                    setFilteredData(
+                      salary.filter(salary => salary?.NetTax !== 0),
+                    );
+                  }
+                  setFilterClicked(true);
+                }}
+              />
+              <CustomButton
+                size={'medium'}
+                fontSize={responsiveFontSize(1.4)}
+                title={'Only WBTPTA Teachers'}
+                color={'darkgreen'}
+                onClick={() => {
+                  const fData = filteredData.filter(
+                    salary => salary?.association === 'WBTPTA',
+                  );
+                  if (fData.length !== 0) {
+                    setFilteredData(fData);
+                  } else {
+                    setFilteredData(
+                      salary.filter(salary => salary?.association === 'WBTPTA'),
+                    );
+                  }
+                  setFilterClicked(true);
+                }}
+              />
+              {salary.length !== filteredData.length && (
+                <CustomButton
+                  size={'medium'}
+                  fontSize={responsiveFontSize(1.4)}
+                  title={'Clar Filter'}
+                  color={'red'}
+                  onClick={() => {
+                    setFilteredData(salary);
+                    setFilterClicked(false);
+                    setSearch('');
+                    setSchSearch('');
+                  }}
+                />
+              )}
+            </View>
+          )}
           <View
             style={{
               justifyContent: 'center',
@@ -257,33 +258,39 @@ export default function ITReloaded() {
               marginVertical: responsiveHeight(5),
             }}
           >
-            <Text style={styles.title}>All Teacher IT Data</Text>
-            <CustomTextInput
-              title="Search by Teacher"
-              placeholder="Search by Teacher"
-              value={search}
-              onChangeText={e => {
-                setSearch(e);
-                setFilteredData(
-                  salary.filter(el =>
-                    el.tname.toLowerCase().includes(e.toLowerCase()),
-                  ),
-                );
-              }}
-            />
-            <CustomTextInput
-              title="Search by School"
-              placeholder="Search by School"
-              value={schSearch}
-              onChangeText={e => {
-                setSchSearch(e);
-                setFilteredData(
-                  salary.filter(el =>
-                    el.school.toLowerCase().includes(e.toLowerCase()),
-                  ),
-                );
-              }}
-            />
+            {user.circle === 'admin' ? (
+              <View>
+                <Text style={styles.title}>All Teacher IT Data</Text>
+                <CustomTextInput
+                  title="Search by Teacher"
+                  placeholder="Search by Teacher"
+                  value={search}
+                  onChangeText={e => {
+                    setSearch(e);
+                    setFilteredData(
+                      salary.filter(el =>
+                        el.tname.toLowerCase().includes(e.toLowerCase()),
+                      ),
+                    );
+                  }}
+                />
+                <CustomTextInput
+                  title="Search by School"
+                  placeholder="Search by School"
+                  value={schSearch}
+                  onChangeText={e => {
+                    setSchSearch(e);
+                    setFilteredData(
+                      salary.filter(el =>
+                        el.school.toLowerCase().includes(e.toLowerCase()),
+                      ),
+                    );
+                  }}
+                />
+              </View>
+            ) : (
+              <Text style={styles.title}>{user.tname}'s IT Data</Text>
+            )}
             <View
               style={{
                 justifyContent: 'center',

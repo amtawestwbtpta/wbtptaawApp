@@ -70,7 +70,7 @@ export const navTabs = [
   },
   {
     id: 'n10',
-    title: 'Download',
+    title: 'Downloads',
     iconFamily: 'Entypo',
     iconName: 'download',
   },

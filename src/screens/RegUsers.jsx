@@ -143,6 +143,7 @@ const RegUsers = () => {
             try {
               await delChats(user)
                 .then(() => {
+                  setFilteredName(filteredName.filter(el => el.id !== user.id));
                   setShowLoader(false);
                   showToast('success', 'User Deleted Successfully!');
                 })

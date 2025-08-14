@@ -17,7 +17,10 @@ import { THEME_COLOR } from '../utils/Colors';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
 import Loader from '../components/Loader';
-import { compareObjects } from '../modules/calculatefunctions';
+import {
+  compareObjects,
+  ordinal_suffix_of,
+} from '../modules/calculatefunctions';
 
 import {
   responsiveHeight,
@@ -454,10 +457,10 @@ const StudentTeacherData = () => {
                 return (
                   <TouchableOpacity style={styles.itemView} key={ind}>
                     <Text selectable style={styles.dropDownText}>
-                      Teacher: {ind + 1}
+                      {ordinal_suffix_of(ind + 1)} Teacher
                     </Text>
                     <Text selectable style={styles.dropDownText}>
-                      Teacher Name: {el.tname}
+                      Teacher's Name: {el.tname}
                     </Text>
                     <Text selectable style={styles.dropDownText}>
                       Designation: {el.desig}
@@ -475,7 +478,9 @@ const StudentTeacherData = () => {
                           Mobile: {el.phone}
                         </Text>
                       </TouchableOpacity>
-                    ) : user.circle === 'admin' || user.question == 'admin' ? (
+                    ) : user.circle === 'admin' ||
+                      user.question == 'admin' ||
+                      user.gender === 'female' ? (
                       <TouchableOpacity
                         onPress={() => makeCall(parseInt(el.phone))}
                       >
@@ -510,12 +515,12 @@ const StudentTeacherData = () => {
                         <Text selectable style={styles.dropDownText}>
                           Training: {el.training}
                         </Text>
+                        <Text selectable style={styles.dropDownText}>
+                          Address: {el.address}
+                        </Text>
                       </View>
                     ) : null}
 
-                    <Text selectable style={styles.dropDownText}>
-                      Address: {el.address}
-                    </Text>
                     {el.hoi === 'Yes' ? (
                       <Text
                         selectable

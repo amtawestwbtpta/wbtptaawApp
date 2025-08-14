@@ -23,9 +23,6 @@ import ViewDetails from '../screens/ViewDetails';
 import ComplainDetails from '../screens/ComplainDetails';
 import UpdateSlides from '../screens/UpdateSlides';
 import ITReloaded from '../screens/ITReloaded';
-import WebViewScreen from '../components/WebViewScreen';
-import FileListScreen from '../screens/FileListScreen';
-import Website from '../components/Website';
 
 const Stack = createStackNavigator();
 
@@ -225,33 +222,6 @@ function AppNavigator() {
         <Stack.Screen
           name="ITReloaded"
           component={ITReloaded}
-          options={{
-            headerShown: false,
-            drawerItemStyle: { height: 0 },
-            animation: 'reveal_from_bottom',
-          }}
-        />
-        <Stack.Screen
-          name="FileListScreen"
-          component={FileListScreen}
-          options={{
-            headerShown: false,
-            drawerItemStyle: { height: 0 },
-            animation: 'reveal_from_bottom',
-          }}
-        />
-        <Stack.Screen
-          name="WebViewScreen"
-          component={WebViewScreen}
-          options={{
-            headerShown: false,
-            drawerItemStyle: { height: 0 },
-            animation: 'reveal_from_bottom',
-          }}
-        />
-        <Stack.Screen
-          name="Website"
-          component={Website}
           options={{
             headerShown: false,
             drawerItemStyle: { height: 0 },

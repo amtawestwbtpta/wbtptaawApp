@@ -886,35 +886,8 @@ const Dashboard = () => {
                     color={'seagreen'}
                     onClick={() => setShowUpdModal(true)}
                   />
-
-                  <CustomButton
-                    size={'small'}
-                    fontSize={responsiveFontSize(1.4)}
-                    title={'IT Reloaded'}
-                    color={'cadetblue'}
-                    onClick={() => navigation.navigate('ITReloaded')}
-                  />
-                  {/* <CustomButton
-                    size={'small'}
-                    fontSize={responsiveFontSize(1.4)}
-                    title={'Leave Proposal'}
-                    color={'blue'}
-                    onClick={() => {
-                      navigation.navigate('LeaveProposal');
-                      setStateObject(teacher);
-                    }}
-                  /> */}
                 </View>
               ) : null}
-              {/* <CustomButton
-                size={'small'}
-                fontSize={responsiveFontSize(1.5)}
-                title={'Ask DeepSeek'}
-                color={'black'}
-                onClick={() => {
-                  navigation.navigate('AiChatBot');
-                }}
-              /> */}
 
               <View
                 style={{
@@ -925,6 +898,13 @@ const Dashboard = () => {
                   flexWrap: 'wrap',
                 }}
               >
+                <CustomButton
+                  size={'small'}
+                  fontSize={responsiveFontSize(1.4)}
+                  title={'IT Reloaded'}
+                  color={'cadetblue'}
+                  onClick={() => navigation.navigate('ITReloaded')}
+                />
                 <CustomButton
                   size={'small'}
                   fontSize={responsiveFontSize(1.4)}
@@ -977,7 +957,7 @@ const Dashboard = () => {
                   }}
                 />
 
-                <CustomButton
+                {/* <CustomButton
                   size={'small'}
                   fontSize={responsiveFontSize(1.5)}
                   title={'Telegram'}
@@ -985,7 +965,7 @@ const Dashboard = () => {
                   onClick={async () => {
                     await Linking.openURL(TelegramURL); // It will open the URL on browser.
                   }}
-                />
+                /> */}
                 <CustomButton
                   size={'small'}
                   fontSize={responsiveFontSize(1.5)}
@@ -993,24 +973,6 @@ const Dashboard = () => {
                   color={'navy'}
                   onClick={async () => {
                     setShowModal(true);
-                  }}
-                />
-                <CustomButton
-                  size={'small'}
-                  fontSize={responsiveFontSize(1.5)}
-                  title={'Inapp Website'}
-                  color={'blue'}
-                  onClick={async () => {
-                    navigation.navigate('Website');
-                  }}
-                />
-                <CustomButton
-                  size={'small'}
-                  fontSize={responsiveFontSize(1.5)}
-                  title={'Tools'}
-                  color={'purple'}
-                  onClick={async () => {
-                    navigation.navigate('FileListScreen');
                   }}
                 />
               </View>

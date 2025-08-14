@@ -212,7 +212,7 @@ const NavigationBarContainer = ({ children }) => {
       <TouchableOpacity
         style={{
           position: 'absolute',
-          bottom: responsiveHeight(15),
+          bottom: responsiveHeight(18),
           right: 20,
           zIndex: 5,
           opacity: 0.2,
