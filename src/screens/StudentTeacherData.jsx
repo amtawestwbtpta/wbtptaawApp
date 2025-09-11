@@ -455,7 +455,18 @@ const StudentTeacherData = () => {
             <ScrollView style={{ marginBottom: responsiveHeight(8) }}>
               {filteredData.map((el, ind) => {
                 return (
-                  <TouchableOpacity style={styles.itemView} key={ind}>
+                  <TouchableOpacity
+                    style={styles.itemView}
+                    key={ind}
+                    onPress={() => {
+                      if (user.circle === 'admin') {
+                        navigation.navigate('ViewDetails');
+                        setStateObject(el);
+                      } else {
+                        return;
+                      }
+                    }}
+                  >
                     <Text selectable style={styles.dropDownText}>
                       {ordinal_suffix_of(ind + 1)} Teacher
                     </Text>
@@ -539,16 +550,6 @@ const StudentTeacherData = () => {
                           flexWrap: 'wrap',
                         }}
                       >
-                        <CustomButton
-                          title={'View Details'}
-                          size={'small'}
-                          fontSize={responsiveFontSize(1.5)}
-                          color={'darkgreen'}
-                          onClick={() => {
-                            navigation.navigate('ViewDetails');
-                            setStateObject(el);
-                          }}
-                        />
                         <CustomButton
                           title={'Edit Details'}
                           size={'small'}

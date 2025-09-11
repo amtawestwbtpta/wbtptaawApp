@@ -24,7 +24,7 @@ import { useGlobalContext } from '../context/Store';
 import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { showToast } from '../modules/Toaster';
-import { getCollection } from '../firebase/firestoreHelper';
+import { updateDocument } from '../firebase/firestoreHelper';
 import NavigationBarContainer from '../navigation/NavigationBarContainer';
 const EditDetails = () => {
   const isFocused = useIsFocused();
@@ -75,120 +75,126 @@ const EditDetails = () => {
   const updateData = async () => {
     let equalObject = compareObjects(data, editMember);
     if (!equalObject) {
-      setShowLoader(true);
-      const url = `https://awwbtpta.vercel.app/api/updteacher`;
-      let response = await axios.post(url, editMember);
-      let record = response.data;
-      if (record.success) {
-        await getCollection('teachers', editMember?.id, editMember).then(
-          async () => {
-            if (teachersState.length > 0) {
-              let x = teachersState.filter(el => el.id !== editMember?.id);
-              x = [...x, editMember];
-              const newData = x.sort((a, b) => {
-                // First, compare the "school" keys
-                if (a.school < b.school) {
-                  return -1;
-                }
-                if (a.school > b.school) {
-                  return 1;
-                }
-                // If "school" keys are equal, compare the "rank" keys
-                return a.rank - b.rank;
-              });
-              setTeachersState(newData);
-              if (user.id === editMember?.id) {
-                await EncryptedStorage.setItem(
-                  'teacher',
-                  JSON.stringify(editMember),
-                );
-                await EncryptedStorage.setItem(
-                  'user',
-                  JSON.stringify({
-                    ...user,
-                    tname: editMember.tname,
-                    school: editMember.school,
-                    desig: editMember.desig,
-                    pan: editMember.pan,
-                    udise: editMember.udise,
-                    circle: editMember.circle,
-                    empid: editMember.empid,
-                    question: editMember.question,
-                    email: editMember.email,
-                    phone: editMember.phone,
-                  }),
-                );
-                setState({
-                  TEACHER: editMember,
-                  TOKEN: user.token,
-                  LOGGEDAT: user.loggedAt,
-                  USER: {
-                    ...user,
-                    tname: editMember.tname,
-                    school: editMember.school,
-                    desig: editMember.desig,
-                    pan: editMember.pan,
-                    udise: editMember.udise,
-                    circle: editMember.circle,
-                    empid: editMember.empid,
-                    question: editMember.question,
-                    email: editMember.email,
-                    phone: editMember.phone,
-                  },
+      try {
+        setShowLoader(true);
+        const url = `https://awwbtpta.vercel.app/api/updteacher`;
+        let response = await axios.post(url, editMember);
+        let record = response.data;
+        if (record.success) {
+          await updateDocument('teachers', editMember?.id, editMember).then(
+            async () => {
+              if (teachersState.length > 0) {
+                let x = teachersState.filter(el => el.id !== editMember?.id);
+                x = [...x, editMember];
+                const newData = x.sort((a, b) => {
+                  // First, compare the "school" keys
+                  if (a.school < b.school) {
+                    return -1;
+                  }
+                  if (a.school > b.school) {
+                    return 1;
+                  }
+                  // If "school" keys are equal, compare the "rank" keys
+                  return a.rank - b.rank;
                 });
+                setTeachersState(newData);
+                if (user.id === editMember?.id) {
+                  await EncryptedStorage.setItem(
+                    'teacher',
+                    JSON.stringify(editMember),
+                  );
+                  await EncryptedStorage.setItem(
+                    'user',
+                    JSON.stringify({
+                      ...user,
+                      tname: editMember.tname,
+                      school: editMember.school,
+                      desig: editMember.desig,
+                      pan: editMember.pan,
+                      udise: editMember.udise,
+                      circle: editMember.circle,
+                      empid: editMember.empid,
+                      question: editMember.question,
+                      email: editMember.email,
+                      phone: editMember.phone,
+                    }),
+                  );
+                  setState({
+                    TEACHER: editMember,
+                    TOKEN: user.token,
+                    LOGGEDAT: user.loggedAt,
+                    USER: {
+                      ...user,
+                      tname: editMember.tname,
+                      school: editMember.school,
+                      desig: editMember.desig,
+                      pan: editMember.pan,
+                      udise: editMember.udise,
+                      circle: editMember.circle,
+                      empid: editMember.empid,
+                      question: editMember.question,
+                      email: editMember.email,
+                      phone: editMember.phone,
+                    },
+                  });
+                }
+                setShowLoader(false);
+                showToast('success', 'Teacher Details Updated Successfully');
+                navigation.navigate('Home');
+              } else {
+                if (user.id === editMember?.id) {
+                  await EncryptedStorage.setItem(
+                    'teacher',
+                    JSON.stringify(editMember),
+                  );
+                  await EncryptedStorage.setItem(
+                    'user',
+                    JSON.stringify({
+                      ...user,
+                      tname: editMember.tname,
+                      school: editMember.school,
+                      desig: editMember.desig,
+                      pan: editMember.pan,
+                      udise: editMember.udise,
+                      circle: editMember.circle,
+                      empid: editMember.empid,
+                      question: editMember.question,
+                      email: editMember.email,
+                      phone: editMember.phone,
+                    }),
+                  );
+                  setState({
+                    TEACHER: editMember,
+                    LOGGEDAT: user.loggedAt,
+                    USER: {
+                      ...user,
+                      tname: editMember.tname,
+                      school: editMember.school,
+                      desig: editMember.desig,
+                      pan: editMember.pan,
+                      udise: editMember.udise,
+                      circle: editMember.circle,
+                      empid: editMember.empid,
+                      question: editMember.question,
+                      email: editMember.email,
+                      phone: editMember.phone,
+                    },
+                  });
+                }
+                setShowLoader(false);
+                showToast('success', 'Teacher Details Updated Successfully');
+                navigation.navigate('Home');
               }
-              setShowLoader(false);
-              showToast('success', 'Teacher Details Updated Successfully');
-              navigation.navigate('Home');
-            } else {
-              if (user.id === editMember?.id) {
-                await EncryptedStorage.setItem(
-                  'teacher',
-                  JSON.stringify(editMember),
-                );
-                await EncryptedStorage.setItem(
-                  'user',
-                  JSON.stringify({
-                    ...user,
-                    tname: editMember.tname,
-                    school: editMember.school,
-                    desig: editMember.desig,
-                    pan: editMember.pan,
-                    udise: editMember.udise,
-                    circle: editMember.circle,
-                    empid: editMember.empid,
-                    question: editMember.question,
-                    email: editMember.email,
-                    phone: editMember.phone,
-                  }),
-                );
-                setState({
-                  TEACHER: editMember,
-                  LOGGEDAT: user.loggedAt,
-                  USER: {
-                    ...user,
-                    tname: editMember.tname,
-                    school: editMember.school,
-                    desig: editMember.desig,
-                    pan: editMember.pan,
-                    udise: editMember.udise,
-                    circle: editMember.circle,
-                    empid: editMember.empid,
-                    question: editMember.question,
-                    email: editMember.email,
-                    phone: editMember.phone,
-                  },
-                });
-              }
-              setShowLoader(false);
-              showToast('success', 'Teacher Details Updated Successfully');
-              navigation.navigate('Home');
-            }
-          },
-        );
-      } else {
+            },
+          );
+        } else {
+          setShowLoader(false);
+          showToast('error', 'Axios Error: Something Went Wrong!');
+        }
+      } catch (error) {
+        console.log(error);
         setShowLoader(false);
-        showToast('error', 'Something Went Wrong!');
+        showToast('error', 'trycatchError: Something Went Wrong!');
       }
     } else {
       showToast('error', 'Data is Same, No need to Update.');
