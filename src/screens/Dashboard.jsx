@@ -35,7 +35,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import ImageView from 'react-native-image-viewing';
 import { downloadFile } from '../modules/downloadFile';
 import {
-  AppURL,
+  AndroidAppLink,
   appVersion,
   TelegramURL,
   VercelWeb,
@@ -230,13 +230,13 @@ const Dashboard = () => {
     let i = [];
 
     slideState.map(el => {
-      return i.push({ uri: el.url });
+      return i.push({ uri: el.githubUrl });
     });
     setImages(i);
     let p = [];
 
     slideState.map(el => {
-      return p.push({ fileName: el.fileName, url: el.url });
+      return p.push({ fileName: el.fileName, url: el.githubUrl });
     });
     setPhotoNames(p);
     let t = [];
@@ -394,7 +394,7 @@ const Dashboard = () => {
                   </Text>
                 </View>
                 <Image
-                  source={{ uri: item.url }}
+                  source={{ uri: item.githubUrl }}
                   style={{
                     width: responsiveWidth(100),
                     height: responsiveHeight(20),
@@ -953,7 +953,7 @@ const Dashboard = () => {
                   title={'Update App'}
                   color={'rebeccapurple'}
                   onClick={async () => {
-                    await Linking.openURL(AppURL); // It will open the URL on browser.
+                    await Linking.openURL(AndroidAppLink); // It will open the URL on browser.
                   }}
                 />
 

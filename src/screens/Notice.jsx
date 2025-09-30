@@ -41,6 +41,10 @@ import {
 } from '../firebase/firestoreHelper';
 import { showToast } from '../modules/Toaster';
 const { width, height } = Dimensions.get('window');
+import {
+  deleteFileFromGithub,
+  uploadFileToGithub,
+} from '../modules/gitFileHndler';
 const Notice = () => {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -82,9 +86,8 @@ const Notice = () => {
     if (title !== '' && noticeText !== '') {
       setShowLoader(true);
       if (photoName) {
-        const reference = storage().ref(
-          `/noticeImages/${docId + '-' + photoName}`,
-        );
+        const uploadableFileName = docId + '-' + photoName;
+        const reference = storage().ref(`/noticeImages/${uploadableFileName}`);
         const result = await Img.compress(uri, {
           progressDivider: 10,
           downloadProgress: progress => {
@@ -94,9 +97,14 @@ const Notice = () => {
 
         const pathToFile = type.split('/')[0] === 'image' ? result : uri;
         // uploads file
+        const githubUrl = await uploadFileToGithub(
+          pathToFile,
+          uploadableFileName,
+          'noticeImages',
+        );
         await reference.putFile(pathToFile);
         const url = await storage()
-          .ref(`/noticeImages/${docId + '-' + photoName}`)
+          .ref(`/noticeImages/${uploadableFileName}`)
           .getDownloadURL();
         await setDocument('notices', docId, {
           id: docId,
@@ -105,7 +113,8 @@ const Notice = () => {
           title: title,
           noticeText: noticeText,
           url: url,
-          photoName: docId + '-' + photoName,
+          githubUrl,
+          photoName: uploadableFileName,
           type: type,
         })
           .then(async () => {
@@ -118,7 +127,8 @@ const Notice = () => {
                 title: title,
                 noticeText: noticeText,
                 url: url,
-                photoName: docId + '-' + photoName,
+                githubUrl,
+                photoName: uploadableFileName,
                 type: type,
               },
             ];
@@ -148,6 +158,7 @@ const Notice = () => {
           title: title,
           noticeText: noticeText,
           url: '',
+          githubUrl: '',
           photoName: '',
           type: '',
         })
@@ -161,6 +172,7 @@ const Notice = () => {
                 title: title,
                 noticeText: noticeText,
                 url: '',
+                githubUrl: '',
                 photoName: '',
                 type: '',
               },
@@ -230,6 +242,15 @@ const Notice = () => {
         setAllNotices(allNotices.filter(item => item.id !== el.id));
         setNoticeUpdateTime(Date.now());
         try {
+          const isDelFromGithub = await deleteFileFromGithub(
+            el.photoName,
+            'noticeImages',
+          );
+          if (isDelFromGithub) {
+            showToast('success', 'File deleted successfully From Github!');
+          } else {
+            showToast('error', 'Error Deleting File From Github!');
+          }
           await storage()
             .ref('/noticeImages/' + el.photoName)
             .delete();
@@ -715,10 +736,10 @@ const Notice = () => {
                           paddingRight: responsiveWidth(5),
                         }}
                       >
-                        {el.url ? (
+                        {el.githubUrl ? (
                           el.type.split('/')[0] === 'image' ? (
                             <Image
-                              source={{ uri: el.url }}
+                              source={{ uri: el.githubUrl }}
                               style={{
                                 width: responsiveWidth(15),
                                 height: responsiveWidth(15),

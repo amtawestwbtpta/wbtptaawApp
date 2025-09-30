@@ -104,7 +104,7 @@ const MemoDetails = () => {
         </View>
 
         <View style={styles.itemImageView}>
-          {data.url ? (
+          {data.githubUrl ? (
             <ScrollView
               style={{ marginTop: responsiveHeight(2) }}
               contentContainerStyle={{
@@ -116,7 +116,7 @@ const MemoDetails = () => {
               {(data.type === 'image/jpeg' || data.type === 'image/png') && (
                 <TouchableOpacity onPress={() => setIsVisible(true)}>
                   <AutoHeightImage
-                    src={data.url}
+                    src={data.githubUrl}
                     style={{
                       borderRadius: responsiveWidth(2),
                       width: responsiveWidth(90),
@@ -130,7 +130,7 @@ const MemoDetails = () => {
                     ref={pdfRef}
                     trustAllCerts={false}
                     source={{
-                      uri: data.url,
+                      uri: data.githubUrl,
                       cache: false,
                     }}
                     page={pageNo}
@@ -223,7 +223,7 @@ const MemoDetails = () => {
             />
           )}
         </View>
-        {data.url !== '' && (
+        {data.githubUrl !== '' && (
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -231,7 +231,9 @@ const MemoDetails = () => {
               alignSelf: 'center',
               margin: responsiveHeight(2),
             }}
-            onPress={async () => await downloadFile(data.url, data.photoName)}
+            onPress={async () =>
+              await downloadFile(data.githubUrl, data.photoName)
+            }
           >
             <MaterialIcons
               name="download-for-offline"
@@ -297,7 +299,7 @@ const MemoDetails = () => {
       </ScrollView>
       {data.type === 'image/jpeg' && (
         <ImageView
-          images={[{ uri: data.url }]}
+          images={[{ uri: data.githubUrl }]}
           imageIndex={0}
           visible={visible}
           // presentationStyle={'overFullScreen'}
@@ -314,7 +316,7 @@ const MemoDetails = () => {
                   // width: responsiveWidth(10),
                 }}
                 onPress={async () =>
-                  await downloadFile(data.url, data.photoName)
+                  await downloadFile(data.githubUrl, data.photoName)
                 }
               >
                 <MaterialIcons

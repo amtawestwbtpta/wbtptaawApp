@@ -18,7 +18,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useGlobalContext } from '../context/Store';
-import { AppURL, appVersion } from '../modules/constants';
+import { AndroidAppLink, appVersion } from '../modules/constants';
 import CustomButton from '../components/CustomButton';
 import RNExitApp from 'react-native-exit-app';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -296,7 +296,7 @@ const Splash = () => {
                 color={'darkgreen'}
                 onClick={async () => {
                   await EncryptedStorage.clear();
-                  await Linking.openURL(AppURL);
+                  await Linking.openURL(AndroidAppLink);
                 }}
               />
 

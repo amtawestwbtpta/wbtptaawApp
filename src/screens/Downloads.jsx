@@ -29,7 +29,7 @@ import { pick, types } from '@react-native-documents/picker';
 import uuid from 'react-native-uuid';
 import CustomTextInput from '../components/CustomTextInput';
 import { useGlobalContext } from '../context/Store';
-import { AppURL } from '../modules/constants';
+import { AndroidAppLink } from '../modules/constants';
 import {
   deleteDocument,
   getCollection,
@@ -37,6 +37,10 @@ import {
   updateDocument,
 } from '../firebase/firestoreHelper';
 import { showToast } from '../modules/Toaster';
+import {
+  deleteFileFromGithub,
+  uploadFileToGithub,
+} from '../modules/gitFileHndler';
 const Downloads = () => {
   const isFocused = useIsFocused();
 
@@ -82,6 +86,11 @@ const Downloads = () => {
       });
   };
   const uploadFile = async () => {
+    const githubUrl = await uploadFileToGithub(
+      pathToFile,
+      documentName,
+      'files',
+    );
     setShowLoader(true);
     const reference = storage().ref(`/files/${documentName}`);
     const pathToFile = documentUri;
@@ -97,6 +106,7 @@ const Downloads = () => {
       date: Date.now(),
       addedBy: user.tname,
       url: url,
+      githubUrl,
       fileName: uploadedFileName,
       fileType: fileType,
       originalFileName: originalFileName,
@@ -159,6 +169,15 @@ const Downloads = () => {
   const delFile = async item => {
     setShowLoader(true);
     try {
+      const isDelFromGithub = await deleteFileFromGithub(
+        item.originalFileName,
+        'files',
+      );
+      if (isDelFromGithub) {
+        showToast('success', 'File deleted successfully From Github!');
+      } else {
+        showToast('error', 'Error Deleting File From Github!');
+      }
       await storage()
         .ref('/files/' + item.originalFileName)
         .delete()
@@ -307,9 +326,9 @@ const Downloads = () => {
               >
                 <TouchableOpacity
                   onPress={async () => {
-                    const supported = await Linking.canOpenURL(AppURL); //To check if URL is supported or not.
+                    const supported = await Linking.canOpenURL(AndroidAppLink); //To check if URL is supported or not.
                     if (supported) {
-                      await Linking.openURL(AppURL); // It will open the URL on browser.
+                      await Linking.openURL(AndroidAppLink); // It will open the URL on browser.
                     }
                   }}
                 >
@@ -340,33 +359,35 @@ const Downloads = () => {
                         {el.fileType === 'application/pdf'
                           ? 'PDF'
                           : el.fileType === 'application/msword'
-                          ? 'WORD'
-                          : el.fileType ===
-                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                          ? 'WORD'
-                          : el.fileType ===
-                            'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-                          ? 'POWERPOINT'
-                          : el.fileType === 'application/vnd.ms-excel'
-                          ? 'EXCEL'
-                          : el.fileType ===
-                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                          ? 'EXCEL'
-                          : el.fileType ===
-                            'application/vnd.ms-excel.sheet.macroEnabled.12'
-                          ? 'EXCEL'
-                          : el.fileType === 'application/vnd.ms-powerpoint'
-                          ? 'EXCEL'
-                          : el.fileType === 'application/zip'
-                          ? 'ZIP'
-                          : el.fileType === 'application/vnd.rar'
-                          ? 'RAR'
-                          : el.fileType === 'text/csv'
-                          ? 'CSV'
-                          : el.fileType ===
-                            'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-                          ? 'POWERPOINT'
-                          : ''}
+                            ? 'WORD'
+                            : el.fileType ===
+                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                              ? 'WORD'
+                              : el.fileType ===
+                                  'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                                ? 'POWERPOINT'
+                                : el.fileType === 'application/vnd.ms-excel'
+                                  ? 'EXCEL'
+                                  : el.fileType ===
+                                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                    ? 'EXCEL'
+                                    : el.fileType ===
+                                        'application/vnd.ms-excel.sheet.macroEnabled.12'
+                                      ? 'EXCEL'
+                                      : el.fileType ===
+                                          'application/vnd.ms-powerpoint'
+                                        ? 'EXCEL'
+                                        : el.fileType === 'application/zip'
+                                          ? 'ZIP'
+                                          : el.fileType ===
+                                              'application/vnd.rar'
+                                            ? 'RAR'
+                                            : el.fileType === 'text/csv'
+                                              ? 'CSV'
+                                              : el.fileType ===
+                                                  'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                                                ? 'POWERPOINT'
+                                                : ''}
                       </Text>
 
                       <View
@@ -378,7 +399,9 @@ const Downloads = () => {
                         }}
                       >
                         <TouchableOpacity
-                          onPress={() => downloadFile(el.url, el.fileName)}
+                          onPress={() =>
+                            downloadFile(el.githubUrl, el.fileName)
+                          }
                         >
                           <Text
                             selectable

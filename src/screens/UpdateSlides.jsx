@@ -32,6 +32,10 @@ import {
 } from '../firebase/firestoreHelper';
 import { showToast } from '../modules/Toaster';
 import NavigationBarContainer from '../navigation/NavigationBarContainer';
+import {
+  deleteFileFromGithub,
+  uploadFileToGithub,
+} from '../modules/gitFileHndler';
 const UpdateSlides = () => {
   const isFocused = useIsFocused();
 
@@ -83,7 +87,7 @@ const UpdateSlides = () => {
       },
     });
     const pathToFile = result;
-
+    const githubUrl = await uploadFileToGithub(pathToFile, photoName, 'slides');
     // uploads file
     await reference
       .putFile(pathToFile)
@@ -95,6 +99,7 @@ const UpdateSlides = () => {
       date: Date.now(),
       addedBy: user.tname,
       url: url,
+      githubUrl,
       fileName: photoName,
       fileType: fileType,
       title: title,
@@ -111,6 +116,7 @@ const UpdateSlides = () => {
             date: Date.now(),
             addedBy: user.tname,
             url: url,
+            githubUrl,
             fileName: photoName,
             fileType: fileType,
             title: title,
@@ -152,6 +158,15 @@ const UpdateSlides = () => {
   const delImage = async item => {
     setShowLoader(true);
     try {
+      const isDelFromGithub = await deleteFileFromGithub(
+        item.fileName,
+        'slides',
+      );
+      if (isDelFromGithub) {
+        showToast('success', 'File deleted successfully From Github!');
+      } else {
+        showToast('error', 'Error Deleting File From Github!');
+      }
       await storage()
         .ref('/slides/' + item.fileName)
         .delete()
@@ -213,6 +228,15 @@ const UpdateSlides = () => {
           });
       } else {
         try {
+          const isDelFromGithub = await deleteFileFromGithub(
+            originalPhotoName,
+            'slides',
+          );
+          if (isDelFromGithub) {
+            showToast('success', 'File deleted successfully From Github!');
+          } else {
+            showToast('error', 'Error Deleting File From Github!');
+          }
           await storage()
             .ref('/slides/' + originalPhotoName)
             .delete()
@@ -227,6 +251,11 @@ const UpdateSlides = () => {
               const pathToFile = result;
 
               // uploads file
+              const githubUrl = await uploadFileToGithub(
+                pathToFile,
+                editPhotoName,
+                'slides',
+              );
               await reference
                 .putFile(pathToFile)
                 .then(task => console.log(task))
@@ -237,6 +266,7 @@ const UpdateSlides = () => {
               await updateDocument('slides', editPhotoID, {
                 addedBy: user.tname,
                 url: url,
+                githubUrl,
                 fileName: editPhotoName,
                 fileType: eidtFileType,
                 title: editTitle,
@@ -251,6 +281,7 @@ const UpdateSlides = () => {
                     {
                       addedBy: user.tname,
                       url: url,
+                      githubUrl,
                       fileName: editPhotoName,
                       fileType: eidtFileType,
                       title: editTitle,
@@ -382,7 +413,7 @@ const UpdateSlides = () => {
                         ]}
                       >
                         <Image
-                          source={{ uri: el.url }}
+                          source={{ uri: el.githubUrl }}
                           style={{
                             width: responsiveWidth(30),
                             height: responsiveHeight(10),
@@ -406,7 +437,9 @@ const UpdateSlides = () => {
                           }}
                         >
                           <TouchableOpacity
-                            onPress={() => downloadFile(el.url, el.fileName)}
+                            onPress={() =>
+                              downloadFile(el.githubUrl, el.fileName)
+                            }
                           >
                             <Text
                               selectable

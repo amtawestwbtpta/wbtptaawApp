@@ -101,7 +101,7 @@ const NoticeDetails = () => {
         </View>
 
         <View style={styles.itemImageView}>
-          {data.url ? (
+          {data.githubUrl ? (
             <ScrollView
               style={{ marginTop: responsiveHeight(2) }}
               contentContainerStyle={{
@@ -113,7 +113,7 @@ const NoticeDetails = () => {
               {(data.type === 'image/jpeg' || data.type === 'image/png') && (
                 <TouchableOpacity onPress={() => setIsVisible(true)}>
                   <AutoHeightImage
-                    src={data.url}
+                    src={data.githubUrl}
                     style={{
                       borderRadius: responsiveWidth(2),
                       width: responsiveWidth(90),
@@ -127,7 +127,7 @@ const NoticeDetails = () => {
                     ref={pdfRef}
                     trustAllCerts={false}
                     source={{
-                      uri: data.url,
+                      uri: data.githubUrl,
                       cache: false,
                     }}
                     page={pageNo}
@@ -209,7 +209,7 @@ const NoticeDetails = () => {
                 </View>
               )}
 
-              {data.url !== '' && (
+              {data.githubUrl !== '' && (
                 <TouchableOpacity
                   style={{
                     margin: responsiveHeight(2),
@@ -218,7 +218,7 @@ const NoticeDetails = () => {
                     alignSelf: 'center',
                   }}
                   onPress={async () =>
-                    await downloadFile(data.url, data.photoName)
+                    await downloadFile(data.githubUrl, data.photoName)
                   }
                 >
                   <MaterialIcons
@@ -274,9 +274,9 @@ const NoticeDetails = () => {
           </View>
         )}
       </ScrollView>
-      {data.url !== '' && data.type.split('/')[0] === 'image' && (
+      {data.githubUrl !== '' && data.type.split('/')[0] === 'image' && (
         <ImageView
-          images={[{ uri: data.url }]}
+          images={[{ uri: data.githubUrl }]}
           imageIndex={0}
           visible={visible}
           // presentationStyle={'overFullScreen'}
@@ -293,7 +293,7 @@ const NoticeDetails = () => {
                   // width: responsiveWidth(10),
                 }}
                 onPress={async () =>
-                  await downloadFile(data.url, data.photoName)
+                  await downloadFile(data.githubUrl, data.photoName)
                 }
               >
                 <MaterialIcons

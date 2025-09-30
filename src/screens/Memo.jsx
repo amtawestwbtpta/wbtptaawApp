@@ -47,6 +47,10 @@ import {
   updateDocument,
 } from '../firebase/firestoreHelper';
 import { showToast } from '../modules/Toaster';
+import {
+  deleteFileFromGithub,
+  uploadFileToGithub,
+} from '../modules/gitFileHndler';
 const Memo = () => {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -111,9 +115,9 @@ const Memo = () => {
     if (title !== '' && memoText !== '') {
       setShowLoader(true);
       if (photoName) {
-        const reference = storage().ref(
-          `/memoImages/${docId + '-' + photoName}`,
-        );
+        const uploadableFileName = docId + '-' + photoName;
+
+        const reference = storage().ref(`/memoImages/${uploadableFileName}`);
         const result = await Img.compress(uri, {
           progressDivider: 10,
           downloadProgress: progress => {
@@ -123,9 +127,14 @@ const Memo = () => {
 
         const pathToFile = type.split('/')[0] === 'image' ? result : uri;
         // uploads file
+        const githubUrl = await uploadFileToGithub(
+          pathToFile,
+          uploadableFileName,
+          'memoFiles',
+        );
         await reference.putFile(pathToFile);
         const url = await storage()
-          .ref(`/memoImages/${docId + '-' + photoName}`)
+          .ref(`/memoImages/${uploadableFileName}`)
           .getDownloadURL();
         await setDocument('memos', docId, {
           id: docId,
@@ -136,7 +145,8 @@ const Memo = () => {
           memoDate: dateObjToDateFormat(date),
           memoText: memoText,
           url: url,
-          photoName: docId + '-' + photoName,
+          githubUrl,
+          photoName: uploadableFileName,
           type: type,
         })
           .then(async () => {
@@ -152,7 +162,8 @@ const Memo = () => {
                 memoDate: dateObjToDateFormat(date),
                 memoText: memoText,
                 url: url,
-                photoName: docId + '-' + photoName,
+                githubUrl,
+                photoName: uploadableFileName,
                 type: type,
               },
             ];
@@ -188,6 +199,7 @@ const Memo = () => {
           memoDate: dateObjToDateFormat(date),
           memoText: memoText,
           url: '',
+          githubUrl,
           photoName: '',
           type: '',
         })
@@ -204,6 +216,7 @@ const Memo = () => {
                 memoDate: dateObjToDateFormat(date),
                 memoText: memoText,
                 url: '',
+                githubUrl,
                 photoName: '',
                 type: '',
               },
@@ -279,6 +292,15 @@ const Memo = () => {
         setMemoUpdateTime(Date.now());
         showToast('success', `Reply Memo Deleted Successfully`);
         try {
+          const isDelFromGithub = await deleteFileFromGithub(
+            el.photoName,
+            'memoImages',
+          );
+          if (isDelFromGithub) {
+            showToast('success', 'File deleted successfully From Github!');
+          } else {
+            showToast('error', 'Error Deleting File From Github!');
+          }
           await storage()
             .ref('/memoImages/' + el.photoName)
             .delete();
@@ -845,17 +867,17 @@ const Memo = () => {
                             paddingRight: responsiveWidth(5),
                           }}
                         >
-                          {el.url !== '' &&
+                          {el.githubUrl !== '' &&
                           el.type.split('/')[0] === 'image' ? (
                             <Image
-                              source={{ uri: el.url }}
+                              source={{ uri: el.githubUrl }}
                               style={{
                                 width: responsiveWidth(15),
                                 height: responsiveWidth(15),
                                 borderRadius: responsiveWidth(5),
                               }}
                             />
-                          ) : el.url === '' ? (
+                          ) : el.githubUrl === '' ? (
                             <Image
                               source={require('../assets/images/memo.png')}
                               style={{
