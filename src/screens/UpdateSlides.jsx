@@ -129,7 +129,6 @@ const UpdateSlides = () => {
               ];
               setSlideState(x);
               setFilteredData(x);
-              getphotos();
               setUri('');
               setPhotoName('');
               setFileType('');
@@ -197,7 +196,6 @@ const UpdateSlides = () => {
               setFilteredData(y);
               setShowLoader(false);
               showToast('success', 'File Deleted Successfully!');
-              getphotos();
             })
             .catch(e => console.log(e));
         })
@@ -234,7 +232,6 @@ const UpdateSlides = () => {
             y = [...y, x];
             setSlideState(y);
             setFilteredData(y);
-            getphotos();
             setEditUri('');
             setEditPhotoName('');
             setEditFileType('');
