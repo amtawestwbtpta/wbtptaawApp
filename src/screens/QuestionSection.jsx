@@ -55,6 +55,8 @@ const QuestionSection = () => {
     setQuestionRateUpdateTime,
     schoolState,
     setSchoolState,
+    schoolUpdateTime,
+    setSchoolUpdateTime,
   } = useGlobalContext();
   const user = state.USER;
   const navigation = useNavigation();
@@ -662,7 +664,11 @@ const QuestionSection = () => {
       });
   };
   useEffect(() => {
-    getSchoolStateData();
+    const schDifference = (Date.now() - schoolUpdateTime) / 1000 / 60 / 15;
+    if (schDifference >= 1 || schoolState.length === 0) {
+      setSchoolUpdateTime(Date.now());
+      getSchoolStateData();
+    }
   }, []);
   return (
     <NavigationBarContainer>
