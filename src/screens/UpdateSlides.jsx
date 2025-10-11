@@ -6,6 +6,7 @@ import {
   View,
   ScrollView,
   BackHandler,
+  Alert,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import storage from '@react-native-firebase/storage';
@@ -80,38 +81,24 @@ const UpdateSlides = () => {
   const uploadFile = async () => {
     setShowLoader(true);
     const reference = storage().ref(`/slides/${photoName}`);
-    const result = await Img.compress(path, {
+    const result = await Img.compress(uri, {
       progressDivider: 10,
       downloadProgress: progress => {
         console.log('downloadProgress: ', progress);
       },
     });
-    const pathToFile = result;
-    const githubUrl = await uploadFileToGithub(pathToFile, photoName, 'slides');
-    // uploads file
-    await reference
-      .putFile(pathToFile)
-      .then(task => console.log(task))
-      .catch(e => console.log(e));
-    let url = await storage().ref(`/slides/${photoName}`).getDownloadURL();
-    await setDocument('slides', docId, {
-      id: docId,
-      date: Date.now(),
-      addedBy: user.tname,
-      url: url,
-      githubUrl,
-      fileName: photoName,
-      fileType: fileType,
-      title: title,
-      description: description,
-    })
-      .then(async () => {
-        setShowLoader(false);
-        showToast('success', 'Image Uploaded Successfully!');
-        let x = slideState;
-        x = [
-          ...x,
-          {
+
+    try {
+      await uploadFileToGithub(result, photoName, 'slides').then(
+        async githubUrl => {
+          await reference
+            .putFile(result)
+            .then(task => console.log(task))
+            .catch(e => console.log(e));
+          let url = await storage()
+            .ref(`/slides/${photoName}`)
+            .getDownloadURL();
+          await setDocument('slides', docId, {
             id: docId,
             date: Date.now(),
             addedBy: user.tname,
@@ -121,22 +108,54 @@ const UpdateSlides = () => {
             fileType: fileType,
             title: title,
             description: description,
-          },
-        ];
-        setSlideState(x);
-        getphotos();
-        setUri('');
-        setPhotoName('');
-        setFileType('');
-        setAddFile(true);
-        setTitle('');
-        setDescription('');
-      })
-      .catch(e => {
-        setShowLoader(false);
-        showToast('error', 'Image Addition Failed!');
-        console.log(e);
-      });
+          })
+            .then(async () => {
+              setShowLoader(false);
+              showToast('success', 'Image Uploaded Successfully!');
+              let x = slideState;
+              x = [
+                ...x,
+                {
+                  id: docId,
+                  date: Date.now(),
+                  addedBy: user.tname,
+                  url: url,
+                  githubUrl,
+                  fileName: photoName,
+                  fileType: fileType,
+                  title: title,
+                  description: description,
+                },
+              ];
+              setSlideState(x);
+              setFilteredData(x);
+              getphotos();
+              setUri('');
+              setPhotoName('');
+              setFileType('');
+              setAddFile(true);
+              setTitle('');
+              setDescription('');
+              await ImagePicker.clean()
+                .then(() => {
+                  console.log('removed all tmp images from tmp directory');
+                })
+                .catch(e => {
+                  console.log(e);
+                });
+            })
+            .catch(e => {
+              setShowLoader(false);
+              showToast('error', 'Image Addition Failed!');
+              console.log(e);
+            });
+        },
+      );
+    } catch (error) {
+      console.log(error);
+      setShowLoader(false);
+      showToast('error', 'Image Addition Failed!');
+    }
   };
   const showConfirmDialog = el => {
     return Alert.alert('Hold On!', 'Are You Sure To Delete This Image?', [
@@ -175,6 +194,7 @@ const UpdateSlides = () => {
             .then(() => {
               let y = slideState.filter(el => el.id !== item.id);
               setSlideState(y);
+              setFilteredData(y);
               setShowLoader(false);
               showToast('success', 'File Deleted Successfully!');
               getphotos();
@@ -213,6 +233,7 @@ const UpdateSlides = () => {
             let y = slideState.filter(el => el.id !== editPhotoID);
             y = [...y, x];
             setSlideState(y);
+            setFilteredData(y);
             getphotos();
             setEditUri('');
             setEditPhotoName('');
@@ -290,7 +311,7 @@ const UpdateSlides = () => {
                     },
                   ];
                   setSlideState(y);
-                  getphotos();
+                  setFilteredData(y);
                   setEditUri('');
                   setEditPhotoName('');
                   setEditFileType('');

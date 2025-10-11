@@ -1,6 +1,6 @@
 import { myAPIKey, githubUsername } from './constants';
 import { decryptData } from './encryption';
-
+import RNFS from 'react-native-fs';
 const token = decryptData(myAPIKey);
 
 export const viewGithubFiles = async repoName => {
@@ -20,20 +20,28 @@ export const viewGithubFiles = async repoName => {
 };
 
 export const uploadFileToGithub = async (uploadFile, fileName, repoName) => {
-  const buf = await uploadFile.arrayBuffer();
-  const content = Buffer.from(buf).toString('base64');
+  // Suppose uploadFile.uri looks like "file:///storage/emulated/0/Download/test.pdf"
+  const filePath = uploadFile.startsWith('file://')
+    ? uploadFile.replace('file://', '')
+    : uploadFile.replace('content://', '');
+
+  // Read the file as base64
+  const content = await RNFS.readFile(filePath, 'base64');
+
   const url = `https://api.github.com/repos/${githubUsername}/${repoName}/contents/${fileName}`;
   let sha = null;
+
   try {
     const check = await fetch(url, {
       headers: { Authorization: `token ${token}` },
     });
+
     if (check.ok) {
       const data = await check.json();
       sha = data.sha;
     }
   } catch (error) {
-    console.log(error);
+    console.log('Error checking file existence:', error);
   }
 
   const res = await fetch(url, {
@@ -44,8 +52,8 @@ export const uploadFileToGithub = async (uploadFile, fileName, repoName) => {
     },
     body: JSON.stringify({
       message: sha
-        ? 'Edit file via Next.js app'
-        : 'Upload file via Next.js app',
+        ? 'Edit file via React Native app'
+        : 'Upload file via React Native app',
       branch: 'main',
       content: content,
       sha: sha || undefined,
@@ -53,9 +61,10 @@ export const uploadFileToGithub = async (uploadFile, fileName, repoName) => {
   });
 
   const data = await res.json();
-  const { html_url } = data.content; // Download url of the uploaded file
-  return html_url;
+  const download_url = data?.content?.download_url;
+  return download_url;
 };
+
 export const deleteFileFromGithub = async (fileName, repoName) => {
   const url = `https://api.github.com/repos/${githubUsername}/${repoName}/contents/${fileName}`;
   let data = { sha: null };

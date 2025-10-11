@@ -112,7 +112,7 @@ const Memo = () => {
   };
 
   const addmemo = async () => {
-    if (title !== '' && memoText !== '') {
+    if (title !== '' || memoText !== '' || memoNumber !== '') {
       setShowLoader(true);
       if (photoName) {
         const uploadableFileName = docId + '-' + photoName;
@@ -769,6 +769,7 @@ const Memo = () => {
               marginTop={responsiveHeight(2)}
               marginBottom={responsiveHeight(1)}
               title={'Add memo'}
+              disabled={title === '' || memoText === '' || memoNumber === ''}
               onClick={addmemo}
             />
 
