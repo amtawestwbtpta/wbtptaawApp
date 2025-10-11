@@ -76,11 +76,8 @@ const StudentTeacherData = () => {
     iii: 0,
     iv: 0,
     v: 0,
-    student_prev2: 0,
     id: '',
     school: '',
-    total_student: 0,
-    student: 0,
     gp: '',
     year: 2025,
     udise: '',
@@ -95,11 +92,8 @@ const StudentTeacherData = () => {
     iii: 0,
     iv: 0,
     v: 0,
-    student_prev2: 0,
     id: '',
     school: '',
-    total_student: 0,
-    student: 0,
     gp: '',
     year: 2025,
     udise: '',
@@ -107,7 +101,7 @@ const StudentTeacherData = () => {
     student_2024: 0,
     student_2025: 0,
   });
-
+  const [total_student, setTotal_student] = useState(0);
   const scrollToTop = () => {
     ref.current?.scrollTo({
       y: 0,
@@ -118,10 +112,23 @@ const StudentTeacherData = () => {
     let equalObject = compareObjects(editSchool, uneditedSchool);
     if (!equalObject) {
       setShowLoader(true);
-      await updateDocument('schools', editSchool.id, editSchool).then(
+      const editedData = {
+        ...editSchool,
+        pp: parseInt(editSchool.pp),
+        i: parseInt(editSchool.i),
+        ii: parseInt(editSchool.ii),
+        iii: parseInt(editSchool.iii),
+        iv: parseInt(editSchool.iv),
+        v: parseInt(editSchool.v),
+        student_2023: parseInt(editSchool.student_2023),
+        student_2024: parseInt(editSchool.student_2024),
+        student_2025: parseInt(editSchool.student_2025),
+        year: parseInt(editSchool.year),
+      };
+      await updateDocument('schools', editedData.id, editedData).then(
         async () => {
-          let x = schoolState.filter(el => el.id !== editSchool.id);
-          x = [...x, editSchool];
+          let x = schoolState.filter(el => el.id !== editedData.id);
+          x = [...x, editedData];
           const newData = x.sort((a, b) => a.school.localeCompare(b.school));
           try {
             // Ensure we upload valid JSON content to GitHub
@@ -378,6 +385,17 @@ const StudentTeacherData = () => {
                         setFilteredSchool(
                           schoolData.filter(el => el.udise.match(item.udise)),
                         );
+                        const data = schoolData.filter(el =>
+                          el.udise.match(item.udise),
+                        )[0];
+                        const totalStudents =
+                          parseInt(data.pp) +
+                          parseInt(data.i) +
+                          parseInt(data.ii) +
+                          parseInt(data.iii) +
+                          parseInt(data.iv) +
+                          parseInt(data.v);
+                        setTotal_student(totalStudents);
                       }}
                     >
                       <Text selectable style={styles.dropDownText}>{`${
@@ -419,7 +437,7 @@ const StudentTeacherData = () => {
               </Text>
               <Text selectable style={styles.dropDownText}>
                 Total Student {filteredSchool[0]?.year}:{' '}
-                {filteredSchool[0]?.total_student}
+                {total_student}
               </Text> */}
                   <StudentCount info={filteredSchool[0]} />
                   {user.circle === 'admin' && (
@@ -436,56 +454,37 @@ const StudentTeacherData = () => {
                 </View>
                 <View style={styles.itemView}>
                   {(filteredData.length > 2 &&
-                    filteredSchool[0]?.total_student >= 100 &&
-                    Math.floor(
-                      filteredSchool[0]?.total_student / filteredData.length,
-                    ) >= 40) ||
+                    total_student >= 100 &&
+                    Math.floor(total_student / filteredData.length) >= 40) ||
                   (filteredData.length > 2 &&
-                    filteredSchool[0]?.total_student < 100 &&
-                    Math.floor(
-                      filteredSchool[0]?.total_student / filteredData.length,
-                    ) > 35) ||
+                    total_student < 100 &&
+                    Math.floor(total_student / filteredData.length) > 35) ||
                   (filteredData.length <= 2 &&
-                    Math.floor(
-                      filteredSchool[0]?.total_student / filteredData.length,
-                    ) > 35) ? (
+                    Math.floor(total_student / filteredData.length) > 35) ? (
                     <View>
                       <Text selectable style={styles.dropDownText}>
                         Student Teacher Ratio is{' '}
-                        {Math.floor(
-                          filteredSchool[0]?.total_student /
-                            filteredData.length,
-                        )}
-                        , Less Teacher
+                        {Math.floor(total_student / filteredData.length)}, Less
+                        Teacher
                       </Text>
                     </View>
                   ) : (filteredData.length > 2 &&
-                      Math.floor(
-                        filteredSchool[0]?.total_student / filteredData.length,
-                      ) >= 30) ||
+                      Math.floor(total_student / filteredData.length) >= 30) ||
                     filteredData.length <= 2 ||
-                    Math.floor(
-                      filteredSchool[0]?.total_student / filteredData.length,
-                    ) <= 30 ? (
+                    Math.floor(total_student / filteredData.length) <= 30 ? (
                     <View>
                       <Text selectable style={styles.dropDownText}>
                         Student Teacher Ratio is{' '}
-                        {Math.floor(
-                          filteredSchool[0]?.total_student /
-                            filteredData.length,
-                        )}
-                        , Normal
+                        {Math.floor(total_student / filteredData.length)},
+                        Normal
                       </Text>
                     </View>
                   ) : (
                     <View>
                       <Text selectable style={styles.dropDownText}>
                         Student Teacher Ratio is{' '}
-                        {Math.floor(
-                          filteredSchool[0]?.total_student /
-                            filteredData.length,
-                        )}
-                        , Excess Teacher
+                        {Math.floor(total_student / filteredData.length)},
+                        Excess Teacher
                       </Text>
                     </View>
                   )}

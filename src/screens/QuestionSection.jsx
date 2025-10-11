@@ -40,6 +40,7 @@ import {
   setDocument,
   updateDocument,
 } from '../firebase/firestoreHelper';
+import { Picker } from '@react-native-picker/picker';
 const QuestionSection = () => {
   const isFocused = useIsFocused();
   const {
@@ -52,6 +53,8 @@ const QuestionSection = () => {
     setQuestionRateState,
     questionRateUpdateTime,
     setQuestionRateUpdateTime,
+    schoolState,
+    setSchoolState,
   } = useGlobalContext();
   const user = state.USER;
   const navigation = useNavigation();
@@ -74,29 +77,13 @@ const QuestionSection = () => {
   const [selectedSchool, setSelectedSchool] = useState('Select School Name');
   const [visible, setVisible] = useState(false);
   const [addSchoolVisible, setAddSchoolVisible] = useState(false);
-  const [addInputField, setAddInputField] = useState({
-    id: docId,
-    school: '',
-    gp: '',
-    udise: '',
-    cl_pp_student: '',
-    cl_1_student: '',
-    cl_2_student: '',
-    cl_3_student: '',
-    cl_4_student: '',
-    cl_5_student: '',
-    payment: 'Due',
-    paid: '0',
-    total_student: '',
-    total_rate: '',
-  });
   const [indexNumber, setIndexNumber] = useState(0);
   const [selectTerm, setSelectTerm] = useState([
     { term: '1st', selected: false },
     { term: '2nd', selected: false },
     { term: '3rd', selected: false },
   ]);
-
+  const [pickerSchoolName, setPickerSchoolName] = useState('');
   const onSelect = index => {
     let tempTerm = selectTerm;
     tempTerm.map((item, ind) => {
@@ -114,11 +101,10 @@ const QuestionSection = () => {
     setSelectTerm(x);
     let term = x.filter(el => el.selected === true)[0].term;
 
-    setQuestionInputField({ ...questionInputField, term: term });
     setSubmitQuestionInputField({ ...submitQuestionInputField, term: term });
   };
 
-  const [submitAddInputField, setSubmitAddInputField] = useState({
+  const [addInputField, setAddInputField] = useState({
     id: docId,
     school: '',
     gp: '',
@@ -171,17 +157,6 @@ const QuestionSection = () => {
 
   const [showEditView, setShowEditView] = useState(false);
 
-  const [questionInputField, setQuestionInputField] = useState({
-    id: '',
-    pp_rate: 0,
-    i_rate: 0,
-    ii_rate: 0,
-    iii_rate: 0,
-    iv_rate: 0,
-    v_rate: 0,
-    term: '',
-    year: new Date().getFullYear(),
-  });
   const [originalQuestionInputField, setOriginalQuestionInputField] = useState({
     id: '',
     pp_rate: 0,
@@ -204,30 +179,6 @@ const QuestionSection = () => {
     term: '',
     year: new Date().getFullYear(),
   });
-  const [gp, setGp] = useState([
-    { gp: 'Select GP Name' },
-    { gp: 'AMORAGORI' },
-    { gp: 'BKBATI' },
-    { gp: 'GAZIPUR' },
-    { gp: 'JHAMTIA' },
-    { gp: 'JHIKIRA' },
-    { gp: 'JOYPUR' },
-    { gp: 'NOWPARA' },
-    { gp: 'THALIA' },
-  ]);
-  const [unfgp, setUnfGp] = useState([
-    { gp: 'Select GP Name' },
-    { gp: 'AMORAGORI' },
-    { gp: 'BKBATI' },
-    { gp: 'GAZIPUR' },
-    { gp: 'JHAMTIA' },
-    { gp: 'JHIKIRA' },
-    { gp: 'JOYPUR' },
-    { gp: 'NOWPARA' },
-    { gp: 'THALIA' },
-  ]);
-
-  const [selectedGp, setSelectedGp] = useState('Select GP From Below');
 
   const [showData, setShowData] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
@@ -263,22 +214,6 @@ const QuestionSection = () => {
       setQuestionUpdateTime(Date.now());
       setDocId(`questions${data.length + 101}-${uuid.v4().split('-')[0]}`);
       setAddInputField({
-        id: docId,
-        school: '',
-        gp: '',
-        udise: '',
-        cl_pp_student: '',
-        cl_1_student: '',
-        cl_2_student: '',
-        cl_3_student: '',
-        cl_4_student: '',
-        cl_5_student: '',
-        payment: 'Due',
-        paid: '0',
-        total_student: '',
-        total_rate: '',
-      });
-      setSubmitAddInputField({
         id: docId,
         school: '',
         gp: '',
@@ -356,34 +291,34 @@ const QuestionSection = () => {
     }
   };
   const addNewSchool = async () => {
-    if (!findEmptyValues(submitAddInputField)) {
+    if (!findEmptyValues(addInputField)) {
       setShowLoader(true);
       let total_rate = round2dec(
-        submitAddInputField.cl_pp_student * submitQuestionInputField.pp_rate +
-          submitAddInputField.cl_1_student * submitQuestionInputField.i_rate +
-          submitAddInputField.cl_2_student * submitQuestionInputField.ii_rate +
-          submitAddInputField.cl_3_student * submitQuestionInputField.iii_rate +
-          submitAddInputField.cl_4_student * submitQuestionInputField.iv_rate +
-          submitAddInputField.cl_5_student * submitQuestionInputField.v_rate,
+        addInputField.cl_pp_student * submitQuestionInputField.pp_rate +
+          addInputField.cl_1_student * submitQuestionInputField.i_rate +
+          addInputField.cl_2_student * submitQuestionInputField.ii_rate +
+          addInputField.cl_3_student * submitQuestionInputField.iii_rate +
+          addInputField.cl_4_student * submitQuestionInputField.iv_rate +
+          addInputField.cl_5_student * submitQuestionInputField.v_rate,
       );
       let total_student =
-        submitAddInputField.cl_pp_student +
-        submitAddInputField.cl_1_student +
-        submitAddInputField.cl_2_student +
-        submitAddInputField.cl_3_student +
-        submitAddInputField.cl_4_student +
-        submitAddInputField.cl_5_student;
+        addInputField.cl_pp_student +
+        addInputField.cl_1_student +
+        addInputField.cl_2_student +
+        addInputField.cl_3_student +
+        addInputField.cl_4_student +
+        addInputField.cl_5_student;
       await setDocument('questions', docId, {
         id: docId,
-        school: submitAddInputField.school,
-        gp: submitAddInputField.gp,
-        udise: submitAddInputField.udise,
-        cl_pp_student: submitAddInputField.cl_pp_student,
-        cl_1_student: submitAddInputField.cl_1_student,
-        cl_2_student: submitAddInputField.cl_2_student,
-        cl_3_student: submitAddInputField.cl_3_student,
-        cl_4_student: submitAddInputField.cl_4_student,
-        cl_5_student: submitAddInputField.cl_5_student,
+        school: addInputField.school,
+        gp: addInputField.gp,
+        udise: addInputField.udise,
+        cl_pp_student: addInputField.cl_pp_student,
+        cl_1_student: addInputField.cl_1_student,
+        cl_2_student: addInputField.cl_2_student,
+        cl_3_student: addInputField.cl_3_student,
+        cl_4_student: addInputField.cl_4_student,
+        cl_5_student: addInputField.cl_5_student,
         payment: 'Due',
         paid: 0,
         total_student: total_student,
@@ -394,15 +329,15 @@ const QuestionSection = () => {
             ...questionState,
             {
               id: docId,
-              school: submitAddInputField.school,
-              gp: submitAddInputField.gp,
-              udise: submitAddInputField.udise,
-              cl_pp_student: submitAddInputField.cl_pp_student,
-              cl_1_student: submitAddInputField.cl_1_student,
-              cl_2_student: submitAddInputField.cl_2_student,
-              cl_3_student: submitAddInputField.cl_3_student,
-              cl_4_student: submitAddInputField.cl_4_student,
-              cl_5_student: submitAddInputField.cl_5_student,
+              school: addInputField.school,
+              gp: addInputField.gp,
+              udise: addInputField.udise,
+              cl_pp_student: addInputField.cl_pp_student,
+              cl_1_student: addInputField.cl_1_student,
+              cl_2_student: addInputField.cl_2_student,
+              cl_3_student: addInputField.cl_3_student,
+              cl_4_student: addInputField.cl_4_student,
+              cl_5_student: addInputField.cl_5_student,
               payment: 'Due',
               paid: 0,
               total_student: total_student,
@@ -658,7 +593,7 @@ const QuestionSection = () => {
         `questions${questionState.length + 101}-${uuid.v4().split('-')[0]}`,
       );
 
-      setSubmitAddInputField({
+      setAddInputField({
         id: docId,
         school: '',
         gp: '',
@@ -697,26 +632,8 @@ const QuestionSection = () => {
       otherTerms.push(tempTerm);
 
       setSelectTerm(otherTerms);
-
-      setQuestionInputField(questionRateState);
       setOriginalQuestionInputField(questionRateState);
       setSubmitQuestionInputField(questionRateState);
-      setAddInputField({
-        id: docId,
-        school: '',
-        gp: '',
-        udise: '',
-        cl_pp_student: '',
-        cl_1_student: '',
-        cl_2_student: '',
-        cl_3_student: '',
-        cl_4_student: '',
-        cl_5_student: '',
-        payment: 'Due',
-        paid: '0',
-        total_student: '',
-        total_rate: '',
-      });
     }
   };
   useEffect(() => {
@@ -724,7 +641,7 @@ const QuestionSection = () => {
   }, [isFocused]);
   useEffect(() => {}, [
     submitQuestionInputField,
-    submitAddInputField,
+    addInputField,
     originalQuestionInputField,
     docId,
     selectTerm,
@@ -732,6 +649,21 @@ const QuestionSection = () => {
     qData,
     qRateData,
   ]);
+  const getSchoolStateData = async () => {
+    setShowLoader(true);
+    await getCollection('schools')
+      .then(data => {
+        setSchoolState(data);
+        setShowLoader(false);
+      })
+      .catch(e => {
+        console.log('error', e);
+        setShowLoader(false);
+      });
+  };
+  useEffect(() => {
+    getSchoolStateData();
+  }, []);
   return (
     <NavigationBarContainer>
       <ScrollView nestedScrollEnabled={true}>
@@ -1298,7 +1230,6 @@ const QuestionSection = () => {
                 color={'purple'}
                 onClick={() => {
                   setShowEditView(false);
-                  setGpClicked(false);
                   setSelectShow(true);
                 }}
               />
@@ -1324,15 +1255,10 @@ const QuestionSection = () => {
               <CustomTextInput
                 placeholder={'PP Rate'}
                 type={'number-pad'}
-                value={questionInputField.pp_rate.toString()}
+                value={submitQuestionInputField.pp_rate}
                 onChangeText={text => {
-                  setQuestionInputField({
-                    ...questionInputField,
-                    pp_rate: text,
-                  });
                   setSubmitQuestionInputField({
                     ...submitQuestionInputField,
-
                     pp_rate: parseFloat(text),
                   });
                 }}
@@ -1340,12 +1266,8 @@ const QuestionSection = () => {
               <CustomTextInput
                 placeholder={'Class I Rate'}
                 type={'number-pad'}
-                value={questionInputField.i_rate.toString()}
+                value={submitQuestionInputField.i_rate}
                 onChangeText={text => {
-                  setQuestionInputField({
-                    ...questionInputField,
-                    i_rate: text,
-                  });
                   setSubmitQuestionInputField({
                     ...submitQuestionInputField,
                     i_rate: parseFloat(text),
@@ -1355,12 +1277,8 @@ const QuestionSection = () => {
               <CustomTextInput
                 placeholder={'Class II Rate'}
                 type={'number-pad'}
-                value={questionInputField.ii_rate.toString()}
+                value={submitQuestionInputField.ii_rate}
                 onChangeText={text => {
-                  setQuestionInputField({
-                    ...questionInputField,
-                    ii_rate: text,
-                  });
                   setSubmitQuestionInputField({
                     ...submitQuestionInputField,
                     ii_rate: parseFloat(text),
@@ -1370,12 +1288,8 @@ const QuestionSection = () => {
               <CustomTextInput
                 placeholder={'Class III Rate'}
                 type={'number-pad'}
-                value={questionInputField.iii_rate.toString()}
+                value={submitQuestionInputField.iii_rate}
                 onChangeText={text => {
-                  setQuestionInputField({
-                    ...questionInputField,
-                    iii_rate: text,
-                  });
                   setSubmitQuestionInputField({
                     ...submitQuestionInputField,
                     iii_rate: parseFloat(text),
@@ -1385,12 +1299,8 @@ const QuestionSection = () => {
               <CustomTextInput
                 placeholder={'Class IV Rate'}
                 type={'number-pad'}
-                value={questionInputField.iv_rate.toString()}
+                value={submitQuestionInputField.iv_rate}
                 onChangeText={text => {
-                  setQuestionInputField({
-                    ...questionInputField,
-                    iv_rate: text,
-                  });
                   setSubmitQuestionInputField({
                     ...submitQuestionInputField,
                     iv_rate: parseFloat(text),
@@ -1400,12 +1310,8 @@ const QuestionSection = () => {
               <CustomTextInput
                 placeholder={'Class V Rate'}
                 type={'number-pad'}
-                value={questionInputField.v_rate.toString()}
+                value={submitQuestionInputField.v_rate}
                 onChangeText={text => {
-                  setQuestionInputField({
-                    ...questionInputField,
-                    v_rate: text,
-                  });
                   setSubmitQuestionInputField({
                     ...submitQuestionInputField,
                     v_rate: parseFloat(text),
@@ -1415,12 +1321,8 @@ const QuestionSection = () => {
               <CustomTextInput
                 placeholder={'Year'}
                 type={'number-pad'}
-                value={questionInputField.year.toString()}
+                value={submitQuestionInputField.year}
                 onChangeText={text => {
-                  setQuestionInputField({
-                    ...questionInputField,
-                    year: text,
-                  });
                   setSubmitQuestionInputField({
                     ...submitQuestionInputField,
                     year: parseInt(text),
@@ -1534,22 +1436,73 @@ const QuestionSection = () => {
               >
                 Add New School
               </Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  style={styles.picker}
+                  selectedValue={pickerSchoolName}
+                  onValueChange={value => {
+                    setPickerSchoolName(value);
+                    if (value) {
+                      const selectedSchool = schoolState.filter(
+                        item => item.udise === value,
+                      )[0];
+                      setAddInputField({
+                        ...addInputField,
+                        school: selectedSchool.school,
+                        udise: selectedSchool.udise,
+                        gp: selectedSchool.gp,
+                        cl_pp_student: parseInt(selectedSchool.pp),
+                        cl_1_student: parseInt(selectedSchool.i),
+                        cl_2_student: parseInt(selectedSchool.ii),
+                        cl_3_student: parseInt(selectedSchool.iii),
+                        cl_4_student: parseInt(selectedSchool.iv),
+                        cl_5_student: parseInt(selectedSchool.v),
+                        total_student:
+                          parseInt(selectedSchool.pp) +
+                          parseInt(selectedSchool.i) +
+                          parseInt(selectedSchool.ii) +
+                          parseInt(selectedSchool.iii) +
+                          parseInt(selectedSchool.iv) +
+                          parseInt(selectedSchool.v),
+                      });
+                    }
+                  }}
+                >
+                  <Picker.Item
+                    style={{
+                      color: 'black',
+                      backgroundColor: 'white',
+                    }}
+                    label="Select School Name"
+                    value=""
+                  />
+                  {schoolState.map((item, ind) => (
+                    <Picker.Item
+                      style={{
+                        color: 'black',
+                        backgroundColor: 'white',
+                      }}
+                      label={item.school}
+                      value={item.udise}
+                      key={ind}
+                    />
+                  ))}
+                </Picker>
+              </View>
               <CustomTextInput
                 placeholder={'School Name'}
+                title={'School Name'}
                 value={addInputField.school}
                 onChangeText={text => {
                   setAddInputField({
                     ...addInputField,
                     school: text,
                   });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
-                    school: text,
-                  });
                 }}
               />
               <CustomTextInput
                 placeholder={'UDISE'}
+                title={'UDISE'}
                 type={'number-pad'}
                 value={addInputField.udise}
                 onChangeText={text => {
@@ -1557,162 +1510,102 @@ const QuestionSection = () => {
                     ...addInputField,
                     udise: text,
                   });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
-                    udise: text,
+                }}
+              />
+              <CustomTextInput
+                placeholder={'GP'}
+                title={'GP'}
+                type={'number-pad'}
+                value={addInputField.gp}
+                onChangeText={text => {
+                  setAddInputField({
+                    ...addInputField,
+                    gp: text,
                   });
                 }}
               />
 
-              <TouchableOpacity
-                style={[styles.gpDropDownnSelector, { marginTop: 5 }]}
-                onPress={() => {
-                  setGpClicked(!gpClicked);
-                  setGp(unfgp);
-                }}
-              >
-                {gpClicked ? (
-                  <AntDesign name="up" size={30} color={THEME_COLOR} />
-                ) : (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Text
-                      selectable
-                      style={[
-                        styles.dropDownText,
-                        { paddingRight: responsiveWidth(2) },
-                      ]}
-                    >
-                      {selectedGp}
-                    </Text>
-
-                    <AntDesign name="down" size={30} color={THEME_COLOR} />
-                  </View>
-                )}
-              </TouchableOpacity>
-              {gpClicked ? (
-                <View style={styles.gpDropDowArea}>
-                  {gp.map((item, index) => {
-                    return (
-                      <TouchableOpacity
-                        key={index}
-                        style={styles.gpAdminName}
-                        onPress={() => {
-                          setGpClicked(false);
-                          setSelectedGp(
-                            gp.filter(el => el.gp.match(item.gp))[0].gp,
-                          );
-                          setAddInputField({
-                            ...addInputField,
-                            gp: gp.filter(el => el.gp.match(item.gp))[0].gp,
-                          });
-                          setSubmitAddInputField({
-                            ...submitAddInputField,
-                            gp: gp.filter(el => el.gp.match(item.gp))[0].gp,
-                          });
-                          setGp(gp.filter(el => el.gp.match(item.gp)));
-                        }}
-                      >
-                        <Text selectable style={styles.dropDownText}>
-                          {item.gp}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              ) : null}
-
               <CustomTextInput
                 placeholder={'PP Student'}
+                title={'PP Student'}
                 type={'number-pad'}
                 value={addInputField.cl_pp_student}
                 onChangeText={text => {
                   setAddInputField({
                     ...addInputField,
-                    cl_pp_student: text,
-                  });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
                     cl_pp_student: parseInt(text),
                   });
                 }}
               />
               <CustomTextInput
                 placeholder={'Class I Student'}
+                title={'Class I Student'}
                 type={'number-pad'}
                 value={addInputField.cl_1_student}
                 onChangeText={text => {
                   setAddInputField({
                     ...addInputField,
-                    cl_1_student: text,
-                  });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
                     cl_1_student: parseInt(text),
                   });
                 }}
               />
               <CustomTextInput
                 placeholder={'Class II Student'}
+                title={'Class II Student'}
                 type={'number-pad'}
                 value={addInputField.cl_2_student}
                 onChangeText={text => {
                   setAddInputField({
                     ...addInputField,
-                    cl_2_student: text,
-                  });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
                     cl_2_student: parseInt(text),
                   });
                 }}
               />
               <CustomTextInput
                 placeholder={'Class III Student'}
+                title={'Class III Student'}
                 type={'number-pad'}
                 value={addInputField.cl_3_student}
                 onChangeText={text => {
                   setAddInputField({
                     ...addInputField,
-                    cl_3_student: text,
-                  });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
                     cl_3_student: parseInt(text),
                   });
                 }}
               />
               <CustomTextInput
                 placeholder={'Class IV Student'}
+                title={'Class IV Student'}
                 type={'number-pad'}
                 value={addInputField.cl_4_student}
                 onChangeText={text => {
                   setAddInputField({
                     ...addInputField,
-                    cl_4_student: text,
-                  });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
                     cl_4_student: parseInt(text),
                   });
                 }}
               />
               <CustomTextInput
                 placeholder={'Class V Student'}
+                title={'Class V Student'}
                 type={'number-pad'}
                 value={addInputField.cl_5_student}
                 onChangeText={text => {
                   setAddInputField({
                     ...addInputField,
-                    cl_5_student: text,
-                  });
-                  setSubmitAddInputField({
-                    ...submitAddInputField,
                     cl_5_student: parseInt(text),
+                  });
+                }}
+              />
+              <CustomTextInput
+                placeholder={'Total Student'}
+                title={'Total Student'}
+                type={'number-pad'}
+                value={addInputField.total_student}
+                onChangeText={text => {
+                  setAddInputField({
+                    ...addInputField,
+                    total_student: parseInt(text),
                   });
                 }}
               />
@@ -1730,7 +1623,6 @@ const QuestionSection = () => {
                 color={'purple'}
                 onClick={() => {
                   setAddSchoolVisible(false);
-                  setGpClicked(false);
                   setSelectShow(true);
                 }}
               />
@@ -1890,5 +1782,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginVertical: responsiveHeight(2),
+    width: responsiveWidth(90),
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  picker: {
+    width: responsiveWidth(80),
+    borderRadius: 10,
   },
 });

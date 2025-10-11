@@ -76,7 +76,12 @@ const StudentInput = ({
                 {key !== 'v' ? (
                   <CustomTextInput
                     value={
-                      value === undefined || value === null ? '' : String(value)
+                      value === undefined ||
+                      value === null ||
+                      value === '' ||
+                      Number.isNaN(value)
+                        ? ''
+                        : String(value)
                     }
                     onChangeText={text => handleChange(key, text)}
                     placeholder={labelText}

@@ -663,13 +663,19 @@ const QuestionRequisition = () => {
                                     gp: item.gp,
                                     id: docId,
                                     sl: serial,
-                                    cl_pp_student: item.pp,
-                                    cl_1_student: item.i,
-                                    cl_2_student: item.ii,
-                                    cl_3_student: item.iii,
-                                    cl_4_student: item.iv,
-                                    cl_5_student: item.v,
-                                    total_student: item.total_student,
+                                    cl_pp_student: parseInt(item.pp),
+                                    cl_1_student: parseInt(item.i),
+                                    cl_2_student: parseInt(item.ii),
+                                    cl_3_student: parseInt(item.iii),
+                                    cl_4_student: parseInt(item.iv),
+                                    cl_5_student: parseInt(item.v),
+                                    total_student:
+                                      parseInt(item.pp) +
+                                      parseInt(item.i) +
+                                      parseInt(item.ii) +
+                                      parseInt(item.iii) +
+                                      parseInt(item.iv) +
+                                      parseInt(item.v),
                                     total_rate: round5(
                                       item.pp * questionRateState.pp_rate +
                                         item.i * questionRateState.i_rate +

@@ -6,9 +6,7 @@ import { THEME_COLOR } from '../utils/Colors';
 export default function StudentCount({ info }) {
   // Filter all keys that start with "student_"
   const studentEntries = Object.entries(info)
-    .filter(
-      ([key]) => key.startsWith('student_') && !key.includes('student_prev2'),
-    )
+    .filter(([key]) => key.startsWith('student_'))
     .map(([key, value]) => ({
       year: key.split('_')[1], // Extract the year part
       count: value,

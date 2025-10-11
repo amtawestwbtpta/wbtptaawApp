@@ -54,64 +54,28 @@ const CustomTextInput = ({
         return;
       }
 
-      // Handle negative numbers and decimals
-      let newText = '';
-      let hasDecimal = false;
-      let hasMinus = false;
+      // Clean up and validate number input
+      let newText = text.replace(/[^0-9.-]/g, '');
 
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-
-        // Allow minus sign only at the beginning
-        if (char === '-' && newText === '') {
-          newText += char;
-          hasMinus = true;
-        }
-        // Allow digits
-        else if (char >= '0' && char <= '9') {
-          newText += char;
-        }
-        // Allow decimal point only once
-        else if (char === '.' && !hasDecimal) {
-          // If decimal is first character, prepend '0'
-          if (newText === '' || newText === '-') {
-            newText = newText === '-' ? '-0.' : '0.';
-          } else {
-            newText += '.';
-          }
-          hasDecimal = true;
-        }
+      // Handle multiple '-' or '.' characters
+      const parts = newText.split('.');
+      if (parts.length > 2) {
+        newText = parts[0] + '.' + parts.slice(1).join('');
+      }
+      if ((newText.match(/-/g) || []).length > 1) {
+        newText = newText.replace(/-/g, '');
+      }
+      if (newText.length > 1 && newText.startsWith('00')) {
+        newText = '0';
       }
 
-      // Handle cases where only minus sign was entered
-      if (newText === '-') {
-        onChangeText('-');
-        return;
-      }
-
-      // Handle cases like "0." where we want to keep the decimal
-      if (newText.endsWith('.') && !hasDecimal) {
-        hasDecimal = true;
-      }
-
-      // Prevent multiple leading zeros
-      if (newText.startsWith('00') && !newText.startsWith('0.')) {
-        newText = '0' + newText.substring(2).replace(/^0+/, '');
-      }
-
-      // Handle special cases for decimal values
-      if (newText === '0.') {
-        onChangeText('0.');
-        return;
-      }
-
-      // Validate the final number
+      // Convert safely
       const numValue = Number(newText);
-      if (isNaN(numValue)) {
-        onChangeText('');
-      } else {
-        // Return the string representation as-is for decimal inputs
+      if (newText === '-' || newText === '.' || isNaN(numValue)) {
+        // keep user typing state (not valid number yet)
         onChangeText(newText);
+      } else {
+        onChangeText(numValue);
       }
     } else {
       onChangeText(text);
@@ -163,7 +127,14 @@ const CustomTextInput = ({
       >
         <TextInput
           placeholder={placeholder}
-          value={value}
+          value={
+            value === undefined ||
+            value === null ||
+            value === '' ||
+            Number.isNaN(value)
+              ? ''
+              : String(value)
+          }
           editable={isEditable}
           onChangeText={handleTextChange}
           keyboardType={getKeyboardType()}
