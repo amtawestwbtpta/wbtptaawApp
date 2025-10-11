@@ -4,7 +4,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Modal,
   BackHandler,
   Platform,
   Linking,
@@ -33,8 +32,13 @@ import AnimatedSeacrch from '../components/AnimatedSeacrch';
 import { useGlobalContext } from '../context/Store';
 import { getCollection, updateDocument } from '../firebase/firestoreHelper';
 import { showToast } from '../modules/Toaster';
-import { DownloadWeb } from '../modules/constants';
+import { DownloadWeb, myAPIKey } from '../modules/constants';
+import StudentCount from '../components/StudentCount';
+import StudentInput from '../components/StudentInput';
+import { decryptData } from '../modules/encryption';
+import { Buffer } from 'buffer';
 const StudentTeacherData = () => {
+  const token = decryptData(myAPIKey);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const ref = useRef();
@@ -66,32 +70,42 @@ const StudentTeacherData = () => {
 
   const [visible, setVisible] = useState(false);
   const [editSchool, setEditSchool] = useState({
-    id: 'schools101',
-    school: 'Select School Name',
-    udise: '19160210302',
-    gp: 'AMORAGORI',
-    student: 40,
-    pp: 1,
-    i: 4,
-    ii: 6,
-    iii: 3,
-    iv: 4,
+    pp: 0,
+    i: 0,
+    ii: 0,
+    iii: 0,
+    iv: 0,
     v: 0,
-    total_student: 18,
+    student_prev2: 0,
+    id: '',
+    school: '',
+    total_student: 0,
+    student: 0,
+    gp: '',
+    year: 2025,
+    udise: '',
+    student_2023: 0,
+    student_2024: 0,
+    student_2025: 0,
   });
   const [uneditedSchool, setUneditedSchool] = useState({
-    id: 'schools101',
-    school: 'Select School Name',
-    udise: '19160210302',
-    gp: 'AMORAGORI',
-    student: 40,
-    pp: 1,
-    i: 4,
-    ii: 6,
-    iii: 3,
-    iv: 4,
+    pp: 0,
+    i: 0,
+    ii: 0,
+    iii: 0,
+    iv: 0,
     v: 0,
-    total_student: 18,
+    student_prev2: 0,
+    id: '',
+    school: '',
+    total_student: 0,
+    student: 0,
+    gp: '',
+    year: 2025,
+    udise: '',
+    student_2023: 0,
+    student_2024: 0,
+    student_2025: 0,
   });
 
   const scrollToTop = () => {
@@ -109,6 +123,45 @@ const StudentTeacherData = () => {
           let x = schoolState.filter(el => el.id !== editSchool.id);
           x = [...x, editSchool];
           const newData = x.sort((a, b) => a.school.localeCompare(b.school));
+          try {
+            // Ensure we upload valid JSON content to GitHub
+            const jsonContent = JSON.stringify(newData, null, 2);
+            const content = Buffer.from(jsonContent, 'utf-8').toString(
+              'base64',
+            );
+            const url =
+              'https://api.github.com/repos/amtawestwbtpta/awwbtptadata/contents/schools.json';
+            let sha = null;
+            try {
+              const check = await fetch(url, {
+                headers: { Authorization: `token ${token}` },
+              });
+              if (check.ok) {
+                const data = await check.json();
+                sha = data.sha;
+              }
+            } catch (error) {
+              console.log(error);
+            }
+            await fetch(url, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `token ${token}`,
+              },
+              body: JSON.stringify({
+                message: 'Update school data',
+                content: content,
+                branch: 'main',
+                sha,
+              }),
+            });
+          } catch (error) {
+            console.log(error);
+            showToast('error', 'Failed to update data on GitHub');
+            setVisible(false);
+          }
+
           setSchoolState(newData);
           setschoolData(newData);
           setFilteredSchool(newData);
@@ -212,138 +265,151 @@ const StudentTeacherData = () => {
   }, []);
   return (
     <View style={styles.container}>
-      <ScrollView ref={ref}>
-        {showData && (
-          <Text selectable style={styles.desc}>
-            Select School Name
-          </Text>
-        )}
-
-        <TouchableOpacity
-          style={[styles.dropDownnSelector, { marginTop: 5 }]}
-          onPress={() => {
-            setIsClicked(!isClicked);
-            setFilteredData(teacherData);
-            setSelectedSchool('Select School Name');
-            setFilteredSchool(schoolData);
-            setShowData(false);
-            setSchoolName('');
-          }}
-        >
-          {isClicked ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: '100%',
-              }}
-            >
-              <Text
-                style={[
-                  styles.dropDownText,
-                  { paddingRight: responsiveWidth(2) },
-                ]}
-              >
-                {selectedSchool}
-              </Text>
-
-              <AntDesign name="up" size={30} color={THEME_COLOR} />
-            </View>
-          ) : (
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: '100%',
-              }}
-            >
-              <Text
-                style={[
-                  styles.dropDownText,
-                  { paddingRight: responsiveWidth(2) },
-                ]}
-              >
-                {selectedSchool}
-              </Text>
-
-              <AntDesign name="down" size={30} color={THEME_COLOR} />
-            </View>
-          )}
-        </TouchableOpacity>
-        {isClicked ? (
-          <ScrollView style={styles.dropDowArea}>
-            <AnimatedSeacrch
-              value={schoolName}
-              placeholder={'Search School Name'}
-              onChangeText={text => {
-                setSchoolName(text);
-                if (text.length) {
-                  setFilteredSchool(
-                    schoolData.filter(el =>
-                      el.school
-                        .toString()
-                        .toLowerCase()
-                        .match(text.toLowerCase()),
-                    ),
-                  );
-                } else {
-                  setFilteredSchool(schoolData);
-                }
-              }}
-              func={() => {
-                setSchoolName('');
-                setFilteredSchool(schoolData);
-              }}
-            />
-            {filteredSchool.map((item, index) => {
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.AdminName}
-                  onPress={() => {
-                    setIsClicked(false);
-                    scrollToTop();
-                    setSchoolName('');
-                    setShowData(true);
-                    setFilteredData(
-                      teacherData.filter(el => el.udise.match(item.udise)),
-                    );
-                    setSelectedSchool(item.school);
-                    setFilteredSchool(
-                      schoolData.filter(el => el.udise.match(item.udise)),
-                    );
-                  }}
-                >
-                  <Text selectable style={styles.dropDownText}>{`${
-                    index + 1
-                  }. ${item.school}`}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        ) : null}
-        {showData ? (
+      <ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {!visible ? (
           <ScrollView
-            style={{
-              marginTop: 5,
-              alignSelf: 'center',
-              width: responsiveWidth(94),
+            ref={ref}
+            contentContainerStyle={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            <View style={styles.itemView}>
-              <Text selectable style={styles.dropDownText}>
-                SCHOOL NAME: {filteredSchool[0]?.school}
+            {showData && (
+              <Text selectable style={styles.desc}>
+                Select School Name
               </Text>
-              <Text selectable style={styles.dropDownText}>
-                GP NAME: {filteredSchool[0]?.gp}
-              </Text>
-              <Text selectable style={styles.dropDownText}>
-                UDISE: {filteredSchool[0]?.udise}
-              </Text>
-              <Text selectable style={styles.dropDownText}>
-                Total Teacher: {filteredData.length}
-              </Text>
-              <Text selectable style={styles.dropDownText}>
+            )}
+
+            <TouchableOpacity
+              style={[styles.dropDownnSelector, { marginTop: 5 }]}
+              onPress={() => {
+                setIsClicked(!isClicked);
+                setFilteredData(teacherData);
+                setSelectedSchool('Select School Name');
+                setFilteredSchool(schoolData);
+                setShowData(false);
+                setSchoolName('');
+              }}
+            >
+              {isClicked ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.dropDownText,
+                      { paddingRight: responsiveWidth(2) },
+                    ]}
+                  >
+                    {selectedSchool}
+                  </Text>
+
+                  <AntDesign name="up" size={30} color={THEME_COLOR} />
+                </View>
+              ) : (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.dropDownText,
+                      { paddingRight: responsiveWidth(2) },
+                    ]}
+                  >
+                    {selectedSchool}
+                  </Text>
+
+                  <AntDesign name="down" size={30} color={THEME_COLOR} />
+                </View>
+              )}
+            </TouchableOpacity>
+            {isClicked ? (
+              <ScrollView style={styles.dropDowArea}>
+                <AnimatedSeacrch
+                  value={schoolName}
+                  placeholder={'Search School Name'}
+                  onChangeText={text => {
+                    setSchoolName(text);
+                    if (text.length) {
+                      setFilteredSchool(
+                        schoolData.filter(el =>
+                          el.school
+                            .toString()
+                            .toLowerCase()
+                            .match(text.toLowerCase()),
+                        ),
+                      );
+                    } else {
+                      setFilteredSchool(schoolData);
+                    }
+                  }}
+                  func={() => {
+                    setSchoolName('');
+                    setFilteredSchool(schoolData);
+                  }}
+                />
+                {filteredSchool.map((item, index) => {
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.AdminName}
+                      onPress={() => {
+                        setIsClicked(false);
+                        scrollToTop();
+                        setSchoolName('');
+                        setShowData(true);
+                        setFilteredData(
+                          teacherData.filter(el => el.udise.match(item.udise)),
+                        );
+                        setSelectedSchool(item.school);
+                        setFilteredSchool(
+                          schoolData.filter(el => el.udise.match(item.udise)),
+                        );
+                      }}
+                    >
+                      <Text selectable style={styles.dropDownText}>{`${
+                        index + 1
+                      }. ${item.school}`}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            ) : null}
+            {showData ? (
+              <ScrollView
+                style={{
+                  marginTop: 5,
+                  alignSelf: 'center',
+                  width: responsiveWidth(94),
+                }}
+              >
+                <View style={styles.itemView}>
+                  <Text selectable style={styles.dropDownText}>
+                    SCHOOL NAME: {filteredSchool[0]?.school}
+                  </Text>
+                  <Text selectable style={styles.dropDownText}>
+                    GP NAME: {filteredSchool[0]?.gp}
+                  </Text>
+                  <Text selectable style={styles.dropDownText}>
+                    UDISE: {filteredSchool[0]?.udise}
+                  </Text>
+                  <Text selectable style={styles.dropDownText}>
+                    Total Teacher: {filteredData.length}
+                  </Text>
+                  {/* <Text selectable style={styles.dropDownText}>
                 Total Student {filteredSchool[0]?.year - 2}:{' '}
                 {filteredSchool[0]?.student_prev2}
               </Text>
@@ -354,263 +420,268 @@ const StudentTeacherData = () => {
               <Text selectable style={styles.dropDownText}>
                 Total Student {filteredSchool[0]?.year}:{' '}
                 {filteredSchool[0]?.total_student}
-              </Text>
-              {user.circle === 'admin' && (
-                <TouchableOpacity
-                  onPress={() => {
-                    setEditSchool(filteredSchool[0]);
-                    setUneditedSchool(filteredSchool[0]);
-                    setVisible(true);
-                  }}
-                >
-                  <FontAwesome5 name="edit" size={25} color="blue" />
-                </TouchableOpacity>
-              )}
-            </View>
-            <View style={styles.itemView}>
-              {(filteredData.length > 2 &&
-                filteredSchool[0]?.total_student >= 100 &&
-                Math.floor(
-                  filteredSchool[0]?.total_student / filteredData.length,
-                ) >= 40) ||
-              (filteredData.length > 2 &&
-                filteredSchool[0]?.total_student < 100 &&
-                Math.floor(
-                  filteredSchool[0]?.total_student / filteredData.length,
-                ) > 35) ||
-              (filteredData.length <= 2 &&
-                Math.floor(
-                  filteredSchool[0]?.total_student / filteredData.length,
-                ) > 35) ? (
-                <View>
-                  <Text selectable style={styles.dropDownText}>
-                    Student Teacher Ratio is{' '}
-                    {Math.floor(
-                      filteredSchool[0]?.total_student / filteredData.length,
-                    )}
-                    , Less Teacher
-                  </Text>
+              </Text> */}
+                  <StudentCount info={filteredSchool[0]} />
+                  {user.circle === 'admin' && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setEditSchool(filteredSchool[0]);
+                        setUneditedSchool(filteredSchool[0]);
+                        setVisible(true);
+                      }}
+                    >
+                      <FontAwesome5 name="edit" size={25} color="blue" />
+                    </TouchableOpacity>
+                  )}
                 </View>
-              ) : (filteredData.length > 2 &&
-                  Math.floor(
-                    filteredSchool[0]?.total_student / filteredData.length,
-                  ) >= 30) ||
-                filteredData.length <= 2 ||
-                Math.floor(
-                  filteredSchool[0]?.total_student / filteredData.length,
-                ) <= 30 ? (
-                <View>
-                  <Text selectable style={styles.dropDownText}>
-                    Student Teacher Ratio is{' '}
-                    {Math.floor(
+                <View style={styles.itemView}>
+                  {(filteredData.length > 2 &&
+                    filteredSchool[0]?.total_student >= 100 &&
+                    Math.floor(
                       filteredSchool[0]?.total_student / filteredData.length,
-                    )}
-                    , Normal
-                  </Text>
-                </View>
-              ) : (
-                <View>
-                  <Text selectable style={styles.dropDownText}>
-                    Student Teacher Ratio is{' '}
-                    {Math.floor(
+                    ) >= 40) ||
+                  (filteredData.length > 2 &&
+                    filteredSchool[0]?.total_student < 100 &&
+                    Math.floor(
                       filteredSchool[0]?.total_student / filteredData.length,
-                    )}
-                    , Excess Teacher
-                  </Text>
-                </View>
-              )}
-            </View>
-            <View style={styles.itemView}>
-              <Text selectable style={styles.dropDownText}>
-                No. of Pre Primary Students: {filteredSchool[0]?.pp}
-              </Text>
-              <Text selectable style={styles.dropDownText}>
-                No. of Class I Students: {filteredSchool[0]?.i}
-              </Text>
-              <Text selectable style={styles.dropDownText}>
-                No. of Class II Students: {filteredSchool[0]?.ii}
-              </Text>
-              <Text selectable style={styles.dropDownText}>
-                No. of Class III Students: {filteredSchool[0]?.iii}
-              </Text>
-              <Text selectable style={styles.dropDownText}>
-                No. of Class IV Students: {filteredSchool[0]?.iv}
-              </Text>
-              {filteredSchool[0]?.v > 0 ? (
-                <Text selectable style={styles.dropDownText}>
-                  No. of Class V Students: {filteredSchool[0]?.v}
-                </Text>
-              ) : null}
-            </View>
-            {user.circle === 'admin' ||
-            user.school === filteredSchool[0]?.school ? (
-              <CustomButton
-                title={'All Teachers Salary'}
-                onClick={() => {
-                  navigation.navigate('AllTeachersSalary');
-                  setStateArray(filteredData.sort((a, b) => a.rank - b.rank));
-                }}
-              />
-            ) : null}
-            <ScrollView style={{ marginBottom: responsiveHeight(8) }}>
-              {filteredData.map((el, ind) => {
-                return (
-                  <TouchableOpacity
-                    style={styles.itemView}
-                    key={ind}
-                    onPress={() => {
-                      if (user.circle === 'admin') {
-                        navigation.navigate('ViewDetails');
-                        setStateObject(el);
-                      } else {
-                        return;
-                      }
-                    }}
-                  >
-                    <Text selectable style={styles.dropDownText}>
-                      {ordinal_suffix_of(ind + 1)} Teacher
-                    </Text>
-                    <Text selectable style={styles.dropDownText}>
-                      Teacher's Name: {el.tname}
-                    </Text>
-                    <Text selectable style={styles.dropDownText}>
-                      Designation: {el.desig}
-                    </Text>
-                    {el.gender === 'male' && el.association === 'WBTPTA' ? (
-                      <TouchableOpacity
-                        onPress={() => makeCall(parseInt(el.phone))}
-                      >
-                        <Text selectable style={styles.dropDownText}>
-                          <Feather
-                            name="phone-call"
-                            size={18}
-                            color={THEME_COLOR}
-                          />{' '}
-                          Mobile: {el.phone}
-                        </Text>
-                      </TouchableOpacity>
-                    ) : user.circle === 'admin' ||
-                      user.question == 'admin' ||
-                      user.gender === 'female' ? (
-                      <TouchableOpacity
-                        onPress={() => makeCall(parseInt(el.phone))}
-                      >
-                        <Text selectable style={styles.dropDownText}>
-                          <Feather
-                            name="phone-call"
-                            size={18}
-                            color={THEME_COLOR}
-                          />{' '}
-                          Mobile: {el.phone}
-                        </Text>
-                      </TouchableOpacity>
-                    ) : null}
-
-                    <Text selectable style={styles.dropDownText}>
-                      Association: {el.association}
-                    </Text>
-                    {user.circle === 'admin' ? (
-                      <View>
-                        <Text selectable style={styles.dropDownText}>
-                          DOB: {el.dob}
-                        </Text>
-                        <Text selectable style={styles.dropDownText}>
-                          DOJ: {el.doj}
-                        </Text>
-                        <Text selectable style={styles.dropDownText}>
-                          DOJ in This School: {el.dojnow}
-                        </Text>
-                        <Text selectable style={styles.dropDownText}>
-                          DOR: {el.dor}
-                        </Text>
-                        <Text selectable style={styles.dropDownText}>
-                          Training: {el.training}
-                        </Text>
-                        <Text selectable style={styles.dropDownText}>
-                          Address: {el.address}
-                        </Text>
-                      </View>
-                    ) : null}
-
-                    {el.hoi === 'Yes' ? (
-                      <Text
-                        selectable
-                        style={[styles.dropDownText, { color: 'green' }]}
-                      >
-                        Head of The Institute
+                    ) > 35) ||
+                  (filteredData.length <= 2 &&
+                    Math.floor(
+                      filteredSchool[0]?.total_student / filteredData.length,
+                    ) > 35) ? (
+                    <View>
+                      <Text selectable style={styles.dropDownText}>
+                        Student Teacher Ratio is{' '}
+                        {Math.floor(
+                          filteredSchool[0]?.total_student /
+                            filteredData.length,
+                        )}
+                        , Less Teacher
                       </Text>
-                    ) : null}
-                    {user.circle === 'admin' ? (
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignSelf: 'center',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
+                    </View>
+                  ) : (filteredData.length > 2 &&
+                      Math.floor(
+                        filteredSchool[0]?.total_student / filteredData.length,
+                      ) >= 30) ||
+                    filteredData.length <= 2 ||
+                    Math.floor(
+                      filteredSchool[0]?.total_student / filteredData.length,
+                    ) <= 30 ? (
+                    <View>
+                      <Text selectable style={styles.dropDownText}>
+                        Student Teacher Ratio is{' '}
+                        {Math.floor(
+                          filteredSchool[0]?.total_student /
+                            filteredData.length,
+                        )}
+                        , Normal
+                      </Text>
+                    </View>
+                  ) : (
+                    <View>
+                      <Text selectable style={styles.dropDownText}>
+                        Student Teacher Ratio is{' '}
+                        {Math.floor(
+                          filteredSchool[0]?.total_student /
+                            filteredData.length,
+                        )}
+                        , Excess Teacher
+                      </Text>
+                    </View>
+                  )}
+                </View>
+                <View style={styles.itemView}>
+                  <Text selectable style={styles.dropDownText}>
+                    No. of Pre Primary Students: {filteredSchool[0]?.pp}
+                  </Text>
+                  <Text selectable style={styles.dropDownText}>
+                    No. of Class I Students: {filteredSchool[0]?.i}
+                  </Text>
+                  <Text selectable style={styles.dropDownText}>
+                    No. of Class II Students: {filteredSchool[0]?.ii}
+                  </Text>
+                  <Text selectable style={styles.dropDownText}>
+                    No. of Class III Students: {filteredSchool[0]?.iii}
+                  </Text>
+                  <Text selectable style={styles.dropDownText}>
+                    No. of Class IV Students: {filteredSchool[0]?.iv}
+                  </Text>
+                  {filteredSchool[0]?.v > 0 ? (
+                    <Text selectable style={styles.dropDownText}>
+                      No. of Class V Students: {filteredSchool[0]?.v}
+                    </Text>
+                  ) : null}
+                </View>
+                {user.circle === 'admin' ||
+                user.school === filteredSchool[0]?.school ? (
+                  <CustomButton
+                    title={'All Teachers Salary'}
+                    onClick={() => {
+                      navigation.navigate('AllTeachersSalary');
+                      setStateArray(
+                        filteredData.sort((a, b) => a.rank - b.rank),
+                      );
+                    }}
+                  />
+                ) : null}
+                <ScrollView style={{ marginBottom: responsiveHeight(8) }}>
+                  {filteredData.map((el, ind) => {
+                    return (
+                      <TouchableOpacity
+                        style={styles.itemView}
+                        key={ind}
+                        onPress={() => {
+                          if (user.circle === 'admin') {
+                            navigation.navigate('ViewDetails');
+                            setStateObject(el);
+                          } else {
+                            return;
+                          }
                         }}
                       >
-                        <CustomButton
-                          title={'Edit Details'}
-                          size={'small'}
-                          fontSize={responsiveFontSize(1.5)}
-                          color={'chocolate'}
-                          onClick={() => {
-                            navigation.navigate('EditDetails');
-                            setStateObject(el);
-                          }}
-                        />
-                        <CustomButton
-                          title={`Leave`}
-                          size={'small'}
-                          fontSize={responsiveFontSize(1.5)}
-                          color={'blueviolet'}
-                          onClick={async () => {
-                            const url = `${DownloadWeb}/LeaveProposal?data=${JSON.stringify(
-                              { pan: el.pan },
-                            )}`;
-                            await Linking.openURL(url);
-                          }}
-                        >
-                          <MaterialIcons
-                            name="download-for-offline"
-                            color={'white'}
-                            size={30}
-                          />
-                        </CustomButton>
+                        <Text selectable style={styles.dropDownText}>
+                          {ordinal_suffix_of(ind + 1)} Teacher
+                        </Text>
+                        <Text selectable style={styles.dropDownText}>
+                          Teacher's Name: {el.tname}
+                        </Text>
+                        <Text selectable style={styles.dropDownText}>
+                          Designation: {el.desig}
+                        </Text>
+                        {el.gender === 'male' && el.association === 'WBTPTA' ? (
+                          <TouchableOpacity
+                            onPress={() => makeCall(parseInt(el.phone))}
+                          >
+                            <Text selectable style={styles.dropDownText}>
+                              <Feather
+                                name="phone-call"
+                                size={18}
+                                color={THEME_COLOR}
+                              />{' '}
+                              Mobile: {el.phone}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : user.circle === 'admin' ||
+                          user.question == 'admin' ||
+                          user.gender === 'female' ? (
+                          <TouchableOpacity
+                            onPress={() => makeCall(parseInt(el.phone))}
+                          >
+                            <Text selectable style={styles.dropDownText}>
+                              <Feather
+                                name="phone-call"
+                                size={18}
+                                color={THEME_COLOR}
+                              />{' '}
+                              Mobile: {el.phone}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : null}
 
-                        <CustomButton
-                          title={`HRA`}
-                          size={'small'}
-                          fontSize={responsiveFontSize(1.5)}
-                          color={'darkgreen'}
-                          onClick={async () => {
-                            const url = `${DownloadWeb}/HRA?data=${JSON.stringify(
-                              { pan: el.pan },
-                            )}`;
-                            await Linking.openURL(url);
-                          }}
-                        >
-                          <MaterialIcons
-                            name="download-for-offline"
-                            color={'white'}
-                            size={30}
-                          />
-                        </CustomButton>
-                      </View>
-                    ) : null}
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+                        <Text selectable style={styles.dropDownText}>
+                          Association: {el.association}
+                        </Text>
+                        {user.circle === 'admin' ? (
+                          <View>
+                            <Text selectable style={styles.dropDownText}>
+                              DOB: {el.dob}
+                            </Text>
+                            <Text selectable style={styles.dropDownText}>
+                              DOJ: {el.doj}
+                            </Text>
+                            <Text selectable style={styles.dropDownText}>
+                              DOJ in This School: {el.dojnow}
+                            </Text>
+                            <Text selectable style={styles.dropDownText}>
+                              DOR: {el.dor}
+                            </Text>
+                            <Text selectable style={styles.dropDownText}>
+                              Training: {el.training}
+                            </Text>
+                            <Text selectable style={styles.dropDownText}>
+                              Address: {el.address}
+                            </Text>
+                          </View>
+                        ) : null}
+
+                        {el.hoi === 'Yes' ? (
+                          <Text
+                            selectable
+                            style={[styles.dropDownText, { color: 'green' }]}
+                          >
+                            Head of The Institute
+                          </Text>
+                        ) : null}
+                        {user.circle === 'admin' ? (
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignSelf: 'center',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              flexWrap: 'wrap',
+                            }}
+                          >
+                            <CustomButton
+                              title={'Edit Details'}
+                              size={'small'}
+                              fontSize={responsiveFontSize(1.5)}
+                              color={'chocolate'}
+                              onClick={() => {
+                                navigation.navigate('EditDetails');
+                                setStateObject(el);
+                              }}
+                            />
+                            <CustomButton
+                              title={`Leave`}
+                              size={'small'}
+                              fontSize={responsiveFontSize(1.5)}
+                              color={'blueviolet'}
+                              onClick={async () => {
+                                const url = `${DownloadWeb}/LeaveProposal?data=${JSON.stringify(
+                                  { pan: el.pan },
+                                )}`;
+                                await Linking.openURL(url);
+                              }}
+                            >
+                              <MaterialIcons
+                                name="download-for-offline"
+                                color={'white'}
+                                size={30}
+                              />
+                            </CustomButton>
+
+                            <CustomButton
+                              title={`HRA`}
+                              size={'small'}
+                              fontSize={responsiveFontSize(1.5)}
+                              color={'darkgreen'}
+                              onClick={async () => {
+                                const url = `${DownloadWeb}/HRA?data=${JSON.stringify(
+                                  { pan: el.pan },
+                                )}`;
+                                await Linking.openURL(url);
+                              }}
+                            >
+                              <MaterialIcons
+                                name="download-for-offline"
+                                color={'white'}
+                                size={30}
+                              />
+                            </CustomButton>
+                          </View>
+                        ) : null}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </ScrollView>
+            ) : null}
           </ScrollView>
-        ) : null}
-      </ScrollView>
-      <Modal animationType="slide" visible={visible} transparent>
-        <View style={styles.modalView}>
-          <ScrollView
-            style={styles.mainView}
-            contentContainerStyle={{
+        ) : (
+          <View
+            style={{
+              flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
             }}
@@ -627,7 +698,7 @@ const StudentTeacherData = () => {
               Edit School Details
             </Text>
 
-            <CustomTextInput
+            {/* <CustomTextInput
               placeholder={'Enter School Name'}
               value={editSchool.school}
               onChangeText={text => {
@@ -705,7 +776,6 @@ const StudentTeacherData = () => {
                 setEditSchool({ ...editSchool, iv: text });
               }}
             />
-            <View style={{ marginBottom: responsiveHeight(2) }}>
               <CustomTextInput
                 placeholder={'Enter Class V Student'}
                 type={'number-pad'}
@@ -713,18 +783,24 @@ const StudentTeacherData = () => {
                 onChangeText={text => {
                   setEditSchool({ ...editSchool, v: text });
                 }}
-              />
+              /> */}
+            <StudentInput info={editSchool} onInfoChange={setEditSchool} />
+            <View style={{ marginBottom: responsiveHeight(2) }}>
               <CustomButton title={'Update'} onClick={updateData} />
               <CustomButton
                 title={'Close'}
                 color={'purple'}
-                onClick={() => setVisible(false)}
+                onClick={() => {
+                  setVisible(false);
+                  scrollToTop();
+                }}
               />
             </View>
-          </ScrollView>
-        </View>
-      </Modal>
-      <Loader visible={showLoader} />
+          </View>
+        )}
+
+        <Loader visible={showLoader} />
+      </ScrollView>
     </View>
   );
 };
