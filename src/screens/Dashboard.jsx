@@ -67,6 +67,7 @@ const Dashboard = () => {
   const [slides, setSlides] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
   const [showProfilePhoto, setShowProfilePhoto] = useState(false);
+  const [playCarousel, setPlayCarousel] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [titles, setTitles] = useState([]);
   const [photoNames, setPhotoNames] = useState([]);
@@ -339,6 +340,35 @@ const Dashboard = () => {
             { flex: 1, shadowColor: 'black', elevation: 5 },
           ]}
         >
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: responsiveHeight(28),
+              right: responsiveWidth(4),
+              justifyContent: 'center',
+              alignItems: 'center',
+              // backgroundColor: 'rgba(0,0,0,0.5)',
+              borderRadius: responsiveWidth(5),
+              padding: responsiveWidth(1),
+              zIndex: 1,
+              opacity: 0.1,
+            }}
+            onPress={() => setPlayCarousel(!playCarousel)}
+          >
+            {playCarousel ? (
+              <MaterialIcons
+                name="pause-circle-outline"
+                color={'white'}
+                size={30}
+              />
+            ) : (
+              <MaterialIcons
+                name="play-circle-outline"
+                color={'white'}
+                size={30}
+              />
+            )}
+          </TouchableOpacity>
           <Carousel
             loop
             mode="parallax"
@@ -348,87 +378,101 @@ const Dashboard = () => {
             }}
             width={responsiveWidth(100)}
             height={responsiveHeight(35)}
-            autoPlay={true}
+            autoPlay={playCarousel}
             autoPlayInterval={1000}
             pagingEnabled={true}
             snapEnabled={true}
             data={slides}
             scrollAnimationDuration={1000}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  // borderWidth: 1,
-                  justifyContent: 'center',
-                }}
-                onPress={() => {
-                  setCurrentIndex(index);
-                  setIsVisible(true);
-                }}
-              >
-                <View
+            renderItem={({ item, index }) => {
+              const isTileBengali = /^[\u0980-\u09FF\s]+$/.test(item.title);
+              const isDescriptionBengali = /^[\u0980-\u09FF\s]+$/.test(
+                item.description,
+              );
+              return (
+                <TouchableOpacity
                   style={{
-                    width: responsiveWidth(100),
-                    height: responsiveHeight(8),
+                    flex: 1,
+                    // borderWidth: 1,
                     justifyContent: 'center',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                    backgroundColor: 'darkorange',
-                    borderTopLeftRadius: responsiveHeight(2),
-                    borderTopRightRadius: responsiveHeight(2),
+                  }}
+                  onPress={() => {
+                    setCurrentIndex(index);
+                    setIsVisible(true);
                   }}
                 >
-                  <Text
-                    selectable
-                    style={[
-                      styles.dataText,
-                      {
-                        fontSize: responsiveFontSize(2.5),
-                        color: 'white',
-                        fontWeight: '700',
-                        fontFamily: 'Roboto',
-                      },
-                    ]}
+                  <View
+                    style={{
+                      width: responsiveWidth(100),
+                      height: responsiveHeight(8),
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      alignSelf: 'center',
+                      backgroundColor: 'darkorange',
+                      borderTopLeftRadius: responsiveHeight(2),
+                      borderTopRightRadius: responsiveHeight(2),
+                    }}
                   >
-                    {item.title}
-                  </Text>
-                </View>
-                <Image
-                  source={{ uri: item.githubUrl }}
-                  style={{
-                    width: responsiveWidth(100),
-                    height: responsiveHeight(20),
-                    alignSelf: 'center',
-                  }}
-                />
-                <View
-                  style={{
-                    width: responsiveWidth(100),
-                    height: responsiveHeight(8),
-                    borderBottomLeftRadius: responsiveWidth(4),
-                    borderBottomRightRadius: responsiveWidth(4),
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                    backgroundColor: 'green',
-                  }}
-                >
-                  <Text
-                    selectable
-                    style={[
-                      styles.dataText,
-                      {
-                        fontSize: responsiveFontSize(1.8),
-                        color: 'white',
-                        fontWeight: '700',
-                      },
-                    ]}
+                    <Text
+                      selectable
+                      style={[
+                        styles.dataText,
+                        {
+                          fontSize: isTileBengali
+                            ? responsiveFontSize(2)
+                            : responsiveFontSize(2.5),
+                          color: 'white',
+                          fontWeight: isTileBengali ? '400' : '700',
+                          fontFamily: isTileBengali ? 'kalpurush' : 'times',
+                        },
+                      ]}
+                    >
+                      {item.title}
+                    </Text>
+                  </View>
+                  <Image
+                    source={{ uri: item.githubUrl }}
+                    style={{
+                      width: responsiveWidth(100),
+                      height: responsiveHeight(20),
+                      alignSelf: 'center',
+                    }}
+                  />
+
+                  <View
+                    style={{
+                      width: responsiveWidth(100),
+                      height: responsiveHeight(8),
+                      borderBottomLeftRadius: responsiveWidth(4),
+                      borderBottomRightRadius: responsiveWidth(4),
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      alignSelf: 'center',
+                      backgroundColor: 'green',
+                    }}
                   >
-                    {item.description}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
+                    <Text
+                      selectable
+                      style={[
+                        styles.dataText,
+                        {
+                          fontSize: isDescriptionBengali
+                            ? responsiveFontSize(1.3)
+                            : responsiveFontSize(1.8),
+                          color: 'white',
+                          fontWeight: isDescriptionBengali ? '400' : '700',
+                          fontFamily: isDescriptionBengali
+                            ? 'kalpurush'
+                            : 'times',
+                        },
+                      ]}
+                    >
+                      {item.description}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
           />
           <ImageView
             images={images}
@@ -465,8 +509,8 @@ const Dashboard = () => {
                       justifyContent: 'center',
                       alignItems: 'center',
                       position: 'absolute',
-                      top: -responsiveHeight(85),
-                      left: responsiveWidth(65),
+                      top: -responsiveHeight(80),
+                      left: responsiveWidth(89),
                     }}
                     onPress={async () => {
                       await downloadFile(
@@ -482,7 +526,7 @@ const Dashboard = () => {
                       color={'white'}
                       size={30}
                     />
-                    <Text
+                    {/* <Text
                       selectable
                       style={[
                         styles.dataText,
@@ -490,7 +534,7 @@ const Dashboard = () => {
                       ]}
                     >
                       Download
-                    </Text>
+                    </Text> */}
                   </TouchableOpacity>
                 </View>
               );
@@ -620,6 +664,8 @@ const Dashboard = () => {
 
           <CustomButton
             title={btnText}
+            size={'medium'}
+            fontSize={responsiveFontSize(1.3)}
             color={btnText === 'Show Your Data' ? 'darkgreen' : 'chocolate'}
             onClick={() => {
               setShowData(!showData);
@@ -809,6 +855,8 @@ const Dashboard = () => {
               </View>
               <CustomButton
                 title={btnText}
+                size={'medium'}
+                fontSize={responsiveFontSize(1.3)}
                 color={btnText === 'Show Your Data' ? 'darkgreen' : 'chocolate'}
                 onClick={() => {
                   setShowData(!showData);

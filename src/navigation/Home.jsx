@@ -31,7 +31,8 @@ const Home = () => {
   const getSlides = async () => {
     try {
       const data = await getCollection('slides');
-      setSlideState(data);
+      const sortedData = data.sort((a, b) => b.date - a.date);
+      setSlideState(sortedData);
     } catch (e) {
       showToast('error', e);
     }

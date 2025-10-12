@@ -50,6 +50,10 @@ const AllTeachersSalary = () => {
   const [showDownloadBtn, setShowDownloadBtn] = useState(true);
   const [teacherData, setTeacherData] = useState([]);
   const [school, setSchool] = useState('');
+  const yearArray = [];
+  for (let i = 2023; i <= new Date().getFullYear(); i++) {
+    yearArray.push(i);
+  }
   const thisYear = new Date().getFullYear();
   const preYear = thisYear - 1;
   const pre2ndYear = thisYear - 2;
@@ -192,6 +196,50 @@ const AllTeachersSalary = () => {
 
   const viewShotRef = useRef();
 
+  // Base month names used to generate month-year strings dynamically
+  const monthsBase = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  // Prepare months to show for the selected year. For the current year,
+  // non-admin users see months up to lastMonthIndex. For past years show all months.
+  const monthsForSelectedYear = (() => {
+    let base = monthsBase.map(m => `${m}-${year}`);
+    if (year === thisYear) {
+      base = user.circle === 'admin' ? base : base.slice(0, lastMonthIndex);
+    }
+    return base.reverse();
+  })();
+
+  // When the selected year changes, choose the most recent available month
+  // for that year and fetch salary data for it.
+  React.useEffect(() => {
+    if (monthsForSelectedYear && monthsForSelectedYear.length > 0) {
+      const latest = monthsForSelectedYear[0]; // already reversed: newest first
+      const parts = latest.split('-');
+      const m = parts[0];
+      const y = parseInt(parts[1], 10);
+      // Update month state and fetch data for the selected year-month
+      setMonth(m);
+      // Fire-and-forget; getSalary manages loader state
+      getSalary(m, y).catch(e =>
+        console.log('getSalary error on year change', e),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [year]);
+
   const handleShare = async () => {
     setShowDownloadBtn(false);
     setTimeout(async () => {
@@ -216,7 +264,18 @@ const AllTeachersSalary = () => {
     getMainData();
   }, [isFocused]);
   useEffect(() => {
-    getSalary(month, year);
+    // When the screen becomes focused, ensure we show the current month/year data.
+    if (isFocused) {
+      const currentMonth = GetMonthName(today.getMonth());
+      const currentYear = thisYear;
+      setYear(currentYear);
+      setMonth(currentMonth);
+      // fetch current month/year salary explicitly
+      getSalary(currentMonth, currentYear).catch(e =>
+        console.log('getSalary error on focus', e),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -246,72 +305,57 @@ const AllTeachersSalary = () => {
           >
             <View style={styles.dataView}>
               <Text selectable style={styles.bankDataText}>
+                Select Year
+              </Text>
+            </View>
+            <View style={styles.dataView}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 6,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  width: responsiveWidth(95),
+                  alignSelf: 'center',
+                  gap: responsiveWidth(2),
+                }}
+              >
+                {yearArray.map(el => (
+                  <CustomButton
+                    key={el}
+                    title={`${el}`}
+                    size={'xsmall'}
+                    color={year === el ? 'green' : null}
+                    fontColor={year === el ? 'seashell' : null}
+                    onClick={() => setYear(el)}
+                    style={{ marginHorizontal: 6 }}
+                    fontSize={responsiveFontSize(1.2)}
+                  />
+                ))}
+              </ScrollView>
+            </View>
+            <View style={styles.dataView}>
+              <Text selectable style={styles.bankDataText}>
                 Select Month
               </Text>
             </View>
-
-            <Text selectable style={styles.dataText}>
-              Year {thisYear}
-            </Text>
-            <View
-              style={{
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                alignSelf: 'center',
-                flexDirection: 'row',
-                margin: responsiveWidth(1),
-                flexWrap: 'wrap',
-                width: responsiveWidth(95),
-              }}
-            >
-              {(user.circle === 'admin'
-                ? thisYearMonths
-                : thisYearMonths.slice(0, lastMonthIndex)
-              )
-                .reverse()
-                .map((el, ind) => {
-                  return (
-                    <CustomButton
-                      key={ind}
-                      title={el}
-                      color={
-                        month === el?.split('-')[0] &&
-                        year === parseInt(el?.split('-')[1])
-                          ? 'green'
-                          : null
-                      }
-                      fontColor={
-                        month === el?.split('-')[0] &&
-                        year === parseInt(el?.split('-')[1])
-                          ? 'seashell'
-                          : null
-                      }
-                      size={'small'}
-                      fontSize={responsiveFontSize(1.1)}
-                      onClick={() => {
-                        handleChange(el);
-                        console.log(el);
-                      }}
-                    />
-                  );
-                })}
-            </View>
-            <Text selectable style={styles.dataText}>
-              Year {preYear}
-            </Text>
-            <View
-              style={{
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                alignSelf: 'center',
-                flexDirection: 'row',
-                margin: responsiveWidth(1),
-                flexWrap: 'wrap',
-                width: responsiveWidth(95),
-              }}
-            >
-              {preYearMonths.reverse().map((el, ind) => {
-                return (
+            <View style={[styles.dataView, { paddingBottom: 10 }]}>
+              <View
+                style={{
+                  justifyContent: 'space-evenly',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                  flexDirection: 'row',
+                  margin: responsiveWidth(1),
+                  flexWrap: 'wrap',
+                  width: responsiveWidth(95),
+                }}
+              >
+                {monthsForSelectedYear.map((el, ind) => (
                   <CustomButton
                     key={ind}
                     title={el}
@@ -334,49 +378,8 @@ const AllTeachersSalary = () => {
                       console.log(el);
                     }}
                   />
-                );
-              })}
-            </View>
-            <Text selectable style={styles.dataText}>
-              Year {pre2ndYear}
-            </Text>
-            <View
-              style={{
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                alignSelf: 'center',
-                flexDirection: 'row',
-                margin: responsiveWidth(1),
-                flexWrap: 'wrap',
-                width: responsiveWidth(95),
-              }}
-            >
-              {pre2ndYearMonths.reverse().map((el, ind) => {
-                return (
-                  <CustomButton
-                    key={ind}
-                    title={el}
-                    color={
-                      month === el?.split('-')[0] &&
-                      year === parseInt(el?.split('-')[1])
-                        ? 'green'
-                        : null
-                    }
-                    fontColor={
-                      month === el?.split('-')[0] &&
-                      year === parseInt(el?.split('-')[1])
-                        ? 'seashell'
-                        : null
-                    }
-                    size={'small'}
-                    fontSize={responsiveFontSize(1.1)}
-                    onClick={() => {
-                      handleChange(el);
-                      console.log(el);
-                    }}
-                  />
-                );
-              })}
+                ))}
+              </View>
             </View>
             <View
               style={{

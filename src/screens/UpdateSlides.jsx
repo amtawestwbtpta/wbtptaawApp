@@ -39,14 +39,12 @@ import {
 } from '../modules/gitFileHndler';
 const UpdateSlides = () => {
   const isFocused = useIsFocused();
-
   const navigation = useNavigation();
   const docId = uuid.v4().split('-')[0];
   const [showLoader, setShowLoader] = useState(false);
   const { state, slideState, setSlideState } = useGlobalContext();
   const user = state.USER;
   const [addFile, setAddFile] = useState(true);
-  const [filteredData, setFilteredData] = useState([]);
   const [firstData, setFirstData] = useState(0);
   const [visibleItems, setVisibleItems] = useState(10);
   const [title, setTitle] = useState('');
@@ -75,9 +73,6 @@ const UpdateSlides = () => {
     setFirstData(firstData + 10);
   };
 
-  const getphotos = async () => {
-    setFilteredData(slideState);
-  };
   const uploadFile = async () => {
     setShowLoader(true);
     const reference = storage().ref(`/slides/${photoName}`);
@@ -127,8 +122,8 @@ const UpdateSlides = () => {
                   description: description,
                 },
               ];
+              x = x.sort((a, b) => b.date - a.date);
               setSlideState(x);
-              setFilteredData(x);
               setUri('');
               setPhotoName('');
               setFileType('');
@@ -193,7 +188,6 @@ const UpdateSlides = () => {
             .then(() => {
               let y = slideState.filter(el => el.id !== item.id);
               setSlideState(y);
-              setFilteredData(y);
               setShowLoader(false);
               showToast('success', 'File Deleted Successfully!');
             })
@@ -230,8 +224,8 @@ const UpdateSlides = () => {
             x = { ...x, title: editTitle, description: editDescription };
             let y = slideState.filter(el => el.id !== editPhotoID);
             y = [...y, x];
+            y = y.sort((a, b) => b.date - a.date);
             setSlideState(y);
-            setFilteredData(y);
             setEditUri('');
             setEditPhotoName('');
             setEditFileType('');
@@ -308,7 +302,6 @@ const UpdateSlides = () => {
                     },
                   ];
                   setSlideState(y);
-                  setFilteredData(y);
                   setEditUri('');
                   setEditPhotoName('');
                   setEditFileType('');
@@ -344,9 +337,7 @@ const UpdateSlides = () => {
     );
     return () => backHandler.remove();
   }, []);
-  useEffect(() => {
-    getphotos();
-  }, [isFocused]);
+  useEffect(() => {}, [isFocused]);
 
   return (
     <NavigationBarContainer>
@@ -406,7 +397,7 @@ const UpdateSlides = () => {
                     />
                   </View>
                 )}
-                {visibleItems < filteredData.length && (
+                {visibleItems < slideState.length && (
                   <View style={{ marginBottom: 10 }}>
                     <CustomButton
                       title={'Next'}
@@ -417,8 +408,8 @@ const UpdateSlides = () => {
                   </View>
                 )}
               </View>
-              {filteredData.length > 0 ? (
-                filteredData.slice(firstData, visibleItems).map((el, ind) => {
+              {slideState.length > 0 ? (
+                slideState.slice(firstData, visibleItems).map((el, ind) => {
                   return (
                     <ScrollView key={ind}>
                       <View
@@ -533,7 +524,7 @@ const UpdateSlides = () => {
                     />
                   </View>
                 )}
-                {visibleItems < filteredData.length && (
+                {visibleItems < slideState.length && (
                   <View style={{ marginBottom: 10 }}>
                     <CustomButton
                       title={'Next'}
