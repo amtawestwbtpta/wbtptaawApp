@@ -27,7 +27,8 @@ import { navTabs } from '../navigation/NavItems';
 import CustomIcon from '../components/CustomIcon';
 import { useNavigation, useRoute } from '@react-navigation/native';
 const NavigationBarContainer = ({ children }) => {
-  const { navState, setNavState, setActiveTab, activeTab } = useGlobalContext();
+  const { navState, setNavState, setActiveTab, activeTab, setState } =
+    useGlobalContext();
   const spinAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -344,6 +345,12 @@ const NavigationBarContainer = ({ children }) => {
               onPress={async () => {
                 setNavState(false);
                 setActiveTab(0);
+                setState({
+                  USER: '',
+                  TEACHER: '',
+                  LOGGEDAT: '',
+                  TOKEN: '',
+                });
                 await EncryptedStorage.clear();
                 resetAndNavigate('Login');
               }}

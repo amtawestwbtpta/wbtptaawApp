@@ -55,6 +55,7 @@ const Dashboard = () => {
     setNavState,
     setActiveTab,
     setStateArray,
+    setState,
   } = useGlobalContext();
   const user = state.USER;
   const navigation = useNavigation();
@@ -665,8 +666,8 @@ const Dashboard = () => {
           <CustomButton
             title={btnText}
             size={'medium'}
-            fontSize={responsiveFontSize(1.3)}
-            color={btnText === 'Show Your Data' ? 'darkgreen' : 'chocolate'}
+            fontSize={responsiveFontSize(1.5)}
+            color={btnText === 'Show Your Data' ? 'royalblue' : 'chocolate'}
             onClick={() => {
               setShowData(!showData);
               if (btnText === 'Show Your Data') {
@@ -856,8 +857,8 @@ const Dashboard = () => {
               <CustomButton
                 title={btnText}
                 size={'medium'}
-                fontSize={responsiveFontSize(1.3)}
-                color={btnText === 'Show Your Data' ? 'darkgreen' : 'chocolate'}
+                fontSize={responsiveFontSize(1.5)}
+                color={btnText === 'Show Your Data' ? 'royalblue' : 'chocolate'}
                 onClick={() => {
                   setShowData(!showData);
 
@@ -1083,6 +1084,12 @@ const Dashboard = () => {
                         onPress: async () => {
                           setNavState(false);
                           setActiveTab(0);
+                          setState({
+                            USER: '',
+                            TEACHER: '',
+                            LOGGEDAT: '',
+                            TOKEN: '',
+                          });
                           await EncryptedStorage.clear();
                           resetAndNavigate('Login');
                         },

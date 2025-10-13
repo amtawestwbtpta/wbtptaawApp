@@ -9,7 +9,7 @@ import {
   Alert,
   Switch,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { THEME_COLOR } from '../utils/Colors';
 import CustomTextInput from '../components/CustomTextInput';
@@ -118,9 +118,9 @@ const QuestionSection = () => {
     cl_4_student: '',
     cl_5_student: '',
     payment: 'Due',
-    paid: '0',
-    total_student: '0',
-    total_rate: '0',
+    paid: 0,
+    total_student: 0,
+    total_rate: 0,
   });
 
   const [editInputField, setEditInputField] = useState({
@@ -135,9 +135,9 @@ const QuestionSection = () => {
     cl_4_student: '',
     cl_5_student: '',
     payment: 'Due',
-    paid: '0',
-    total_student: '0',
-    total_rate: '0',
+    paid: 0,
+    total_student: 0,
+    total_rate: 0,
   });
 
   const [orgSchoolField, setOrgSchoolField] = useState({
@@ -152,9 +152,9 @@ const QuestionSection = () => {
     cl_4_student: '',
     cl_5_student: '',
     payment: 'Due',
-    paid: '0',
-    total_student: '0',
-    total_rate: '0',
+    paid: 0,
+    total_student: 0,
+    total_rate: 0,
   });
 
   const [showEditView, setShowEditView] = useState(false);
@@ -184,7 +184,6 @@ const QuestionSection = () => {
 
   const [showData, setShowData] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-  const [gpClicked, setGpClicked] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [selectShow, setSelectShow] = useState(true);
   const getData = async () => {
@@ -227,9 +226,9 @@ const QuestionSection = () => {
         cl_4_student: '',
         cl_5_student: '',
         payment: 'Due',
-        paid: '0',
-        total_student: '0',
-        total_rate: '0',
+        paid: 0,
+        total_student: 0,
+        total_rate: 0,
       });
       setShowLoader(false);
       setShowData(false);
@@ -394,7 +393,7 @@ const QuestionSection = () => {
         cl_4_student: editInputField.cl_4_student,
         cl_5_student: editInputField.cl_5_student,
         payment: 'Due',
-        paid: '0',
+        paid: 0,
         total_student:
           parseInt(editInputField.cl_pp_student) +
           parseInt(editInputField.cl_1_student) +
@@ -428,7 +427,7 @@ const QuestionSection = () => {
               cl_4_student: editInputField.cl_4_student,
               cl_5_student: editInputField.cl_5_student,
               payment: 'Due',
-              paid: '0',
+              paid: 0,
               total_student:
                 parseInt(editInputField.cl_pp_student) +
                 parseInt(editInputField.cl_1_student) +
@@ -584,6 +583,11 @@ const QuestionSection = () => {
     );
     return () => backHandler.remove();
   }, [isFocused]);
+  useEffect(() => {
+    if (user.question !== 'admin') {
+      navigation.navigate('Home');
+    }
+  }, [isFocused]);
   const getQuestionData = () => {
     const difference = (Date.now() - questionUpdateTime) / 1000 / 60 / 15;
     if (questionState.length === 0 || difference >= 1) {
@@ -607,9 +611,9 @@ const QuestionSection = () => {
         cl_4_student: '',
         cl_5_student: '',
         payment: 'Due',
-        paid: '0',
-        total_student: '0',
-        total_rate: '0',
+        paid: 0,
+        total_student: 0,
+        total_rate: 0,
       });
       setShowLoader(false);
       setShowData(false);
@@ -680,76 +684,86 @@ const QuestionSection = () => {
             alignSelf: 'center',
           }}
         >
-          {!isClicked && !showData && selectShow && user.circle === 'admin' && (
-            <View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  alignSelf: 'center',
-                }}
-              >
-                <CustomButton
-                  title={'Add School'}
-                  size={'small'}
-                  color={'darkgreen'}
-                  fontSize={12}
-                  onClick={() => {
-                    setShowData(false);
-                    setAddSchoolVisible(true);
-                    setVisible(false);
-                    setSelectShow(false);
+          {!isClicked &&
+            !showData &&
+            selectShow &&
+            user.question === 'admin' && (
+              <View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignSelf: 'center',
                   }}
-                />
-                <CustomButton
-                  title={'Update Rate'}
-                  size={'small'}
-                  fontSize={12}
-                  onClick={() => {
-                    setShowData(false);
-                    setAddSchoolVisible(false);
-                    setVisible(true);
-                    setSelectShow(false);
-                  }}
-                />
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignSelf: 'center',
-                  marginTop: responsiveHeight(1),
-                  marginBottom: responsiveHeight(1),
-                }}
-              >
-                <Text
-                  selectable
-                  style={[styles.label, { paddingRight: responsiveWidth(1.5) }]}
                 >
-                  Close Requisition
-                </Text>
-                <Switch
-                  trackColor={{ false: '#767577', true: '#81b0ff' }}
-                  thumbColor={
-                    questionRateState.isAccepting ? '#f5dd4b' : '#f4f3f4'
-                  }
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={() => {
-                    if (questionRateState.isAccepting) {
-                      closeAccepting();
-                    } else {
-                      openAccepting();
-                    }
-                  }}
-                  value={questionRateState.isAccepting}
-                />
+                  <CustomButton
+                    title={'Add School'}
+                    size={'small'}
+                    color={'darkgreen'}
+                    fontSize={12}
+                    onClick={() => {
+                      setShowData(false);
+                      setAddSchoolVisible(true);
+                      setVisible(false);
+                      setSelectShow(false);
+                    }}
+                  />
+                  {user.circle === 'admin' && (
+                    <CustomButton
+                      title={'Update Rate'}
+                      size={'small'}
+                      fontSize={12}
+                      onClick={() => {
+                        setShowData(false);
+                        setAddSchoolVisible(false);
+                        setVisible(true);
+                        setSelectShow(false);
+                      }}
+                    />
+                  )}
+                </View>
+                {user.circle === 'admin' && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignSelf: 'center',
+                      marginTop: responsiveHeight(1),
+                      marginBottom: responsiveHeight(1),
+                    }}
+                  >
+                    <Text
+                      selectable
+                      style={[
+                        styles.label,
+                        { paddingRight: responsiveWidth(1.5) },
+                      ]}
+                    >
+                      Close Requisition
+                    </Text>
+                    <Switch
+                      trackColor={{ false: '#767577', true: '#81b0ff' }}
+                      thumbColor={
+                        questionRateState.isAccepting ? '#f5dd4b' : '#f4f3f4'
+                      }
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={() => {
+                        if (questionRateState.isAccepting) {
+                          closeAccepting();
+                        } else {
+                          openAccepting();
+                        }
+                      }}
+                      value={questionRateState.isAccepting}
+                    />
 
-                <Text selectable style={[styles.label, { paddingLeft: 5 }]}>
-                  Open Requisition
-                </Text>
+                    <Text selectable style={[styles.label, { paddingLeft: 5 }]}>
+                      Open Requisition
+                    </Text>
+                  </View>
+                )}
               </View>
-            </View>
-          )}
+            )}
           {!isClicked && selectShow && !showData && (
             <CustomButton
               title={'Show All Data'}
@@ -1137,6 +1151,7 @@ const QuestionSection = () => {
               </Text>
               <CustomTextInput
                 placeholder={'School Name'}
+                title={'School Name'}
                 value={editInputField.school.toString()}
                 onChangeText={text => {
                   setEditInputField({
@@ -1147,6 +1162,7 @@ const QuestionSection = () => {
               />
               <CustomTextInput
                 placeholder={'UDISE'}
+                title={'UDISE'}
                 type={'number-pad'}
                 value={editInputField.udise.toString()}
                 onChangeText={text => {
@@ -1159,6 +1175,7 @@ const QuestionSection = () => {
 
               <CustomTextInput
                 placeholder={'PP Student'}
+                title={'PP Student'}
                 type={'number-pad'}
                 value={editInputField.cl_pp_student.toString()}
                 onChangeText={text => {
@@ -1170,6 +1187,7 @@ const QuestionSection = () => {
               />
               <CustomTextInput
                 placeholder={'Class I Student'}
+                title={'Class I Student'}
                 type={'number-pad'}
                 value={editInputField.cl_1_student.toString()}
                 onChangeText={text => {
@@ -1181,6 +1199,7 @@ const QuestionSection = () => {
               />
               <CustomTextInput
                 placeholder={'Class II Student'}
+                title={'Class II Student'}
                 type={'number-pad'}
                 value={editInputField.cl_2_student.toString()}
                 onChangeText={text => {
@@ -1192,6 +1211,7 @@ const QuestionSection = () => {
               />
               <CustomTextInput
                 placeholder={'Class III Student'}
+                title={'Class III Student'}
                 type={'number-pad'}
                 value={editInputField.cl_3_student.toString()}
                 onChangeText={text => {
@@ -1203,6 +1223,7 @@ const QuestionSection = () => {
               />
               <CustomTextInput
                 placeholder={'Class IV Student'}
+                title={'Class IV Student'}
                 type={'number-pad'}
                 value={editInputField.cl_4_student.toString()}
                 onChangeText={text => {
@@ -1214,6 +1235,7 @@ const QuestionSection = () => {
               />
               <CustomTextInput
                 placeholder={'Class V Student'}
+                title={'Class V Student'}
                 type={'number-pad'}
                 value={editInputField.cl_5_student.toString()}
                 onChangeText={text => {
@@ -1226,6 +1248,7 @@ const QuestionSection = () => {
 
               <CustomButton
                 title={'Submit'}
+                disabled={compareObjects(editInputField, orgSchoolField)}
                 onClick={() => {
                   setShowEditView(false);
                   updateSchool();
@@ -1448,31 +1471,94 @@ const QuestionSection = () => {
                   selectedValue={pickerSchoolName}
                   onValueChange={value => {
                     setPickerSchoolName(value);
-                    if (value) {
-                      const selectedSchool = schoolState.filter(
+                    if (value && value !== 'Other') {
+                      const existedSchool = questionState.filter(
                         item => item.udise === value,
                       )[0];
-                      setAddInputField({
-                        ...addInputField,
-                        school: selectedSchool.school,
-                        udise: selectedSchool.udise,
-                        gp: selectedSchool.gp,
-                        cl_pp_student: parseInt(selectedSchool.pp),
-                        cl_1_student: parseInt(selectedSchool.i),
-                        cl_2_student: parseInt(selectedSchool.ii),
-                        cl_3_student: parseInt(selectedSchool.iii),
-                        cl_4_student: parseInt(selectedSchool.iv),
-                        cl_5_student: parseInt(selectedSchool.v),
-                        total_student:
-                          parseInt(selectedSchool.pp) +
-                          parseInt(selectedSchool.i) +
-                          parseInt(selectedSchool.ii) +
-                          parseInt(selectedSchool.iii) +
-                          parseInt(selectedSchool.iv) +
-                          parseInt(selectedSchool.v),
-                      });
+
+                      if (existedSchool) {
+                        Alert.alert(
+                          'Warning',
+                          'This school data already exists. You can edit the existing data.',
+                          [
+                            {
+                              text: 'OK / Cancel',
+                              onPress: () => {
+                                setPickerSchoolName('');
+                                setSelectShow(true);
+                                setAddInputField({
+                                  id: docId,
+                                  school: '',
+                                  gp: '',
+                                  udise: '',
+                                  cl_pp_student: '',
+                                  cl_1_student: '',
+                                  cl_2_student: '',
+                                  cl_3_student: '',
+                                  cl_4_student: '',
+                                  cl_5_student: '',
+                                  payment: 'Due',
+                                  paid: 0,
+                                  total_student: 0,
+                                  total_rate: 0,
+                                });
+                              },
+                            },
+                            {
+                              text: 'Edit',
+                              onPress: () => {
+                                setPickerSchoolName('');
+                                setAddSchoolVisible(false);
+                                setEditInputField(existedSchool);
+                                setOrgSchoolField(existedSchool);
+                                setShowEditView(true);
+                                setAddInputField({
+                                  id: docId,
+                                  school: '',
+                                  gp: '',
+                                  udise: '',
+                                  cl_pp_student: '',
+                                  cl_1_student: '',
+                                  cl_2_student: '',
+                                  cl_3_student: '',
+                                  cl_4_student: '',
+                                  cl_5_student: '',
+                                  payment: 'Due',
+                                  paid: 0,
+                                  total_student: 0,
+                                  total_rate: 0,
+                                });
+                              },
+                            },
+                          ],
+                        );
+                      } else {
+                        const selectedSchool = schoolState.filter(
+                          item => item.udise === value,
+                        )[0];
+                        setAddInputField({
+                          ...addInputField,
+                          school: selectedSchool.school,
+                          udise: selectedSchool.udise,
+                          gp: selectedSchool.gp,
+                          cl_pp_student: parseInt(selectedSchool.pp),
+                          cl_1_student: parseInt(selectedSchool.i),
+                          cl_2_student: parseInt(selectedSchool.ii),
+                          cl_3_student: parseInt(selectedSchool.iii),
+                          cl_4_student: parseInt(selectedSchool.iv),
+                          cl_5_student: parseInt(selectedSchool.v),
+                          total_student:
+                            parseInt(selectedSchool.pp) +
+                            parseInt(selectedSchool.i) +
+                            parseInt(selectedSchool.ii) +
+                            parseInt(selectedSchool.iii) +
+                            parseInt(selectedSchool.iv) +
+                            parseInt(selectedSchool.v),
+                        });
+                      }
                     }
                   }}
+                  dropdownIconColor={THEME_COLOR}
                 >
                   <Picker.Item
                     style={{
@@ -1493,6 +1579,14 @@ const QuestionSection = () => {
                       key={ind}
                     />
                   ))}
+                  <Picker.Item
+                    style={{
+                      color: 'black',
+                      backgroundColor: 'white',
+                    }}
+                    label={'Other New School'}
+                    value={'Other'}
+                  />
                 </Picker>
               </View>
               <CustomTextInput
@@ -1620,7 +1714,7 @@ const QuestionSection = () => {
                 title={'Submit'}
                 onClick={() => {
                   setAddSchoolVisible(false);
-
+                  setPickerSchoolName('');
                   addNewSchool();
                 }}
               />
@@ -1628,8 +1722,25 @@ const QuestionSection = () => {
                 title={'Close'}
                 color={'purple'}
                 onClick={() => {
+                  setPickerSchoolName('');
                   setAddSchoolVisible(false);
                   setSelectShow(true);
+                  setAddInputField({
+                    id: docId,
+                    school: '',
+                    gp: '',
+                    udise: '',
+                    cl_pp_student: '',
+                    cl_1_student: '',
+                    cl_2_student: '',
+                    cl_3_student: '',
+                    cl_4_student: '',
+                    cl_5_student: '',
+                    payment: 'Due',
+                    paid: 0,
+                    total_student: 0,
+                    total_rate: 0,
+                  });
                 }}
               />
             </View>

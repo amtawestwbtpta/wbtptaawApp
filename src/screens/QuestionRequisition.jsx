@@ -723,7 +723,7 @@ const QuestionRequisition = () => {
                             selectable
                             style={[styles.dropDownText, { color: 'red' }]}
                           >
-                            Entry Done
+                            Entry Already Done
                           </Text>
                         ) : (
                           <Text

@@ -106,7 +106,7 @@ export default function ITReloaded() {
                     size={'medium'}
                     fontSize={responsiveFontSize(1.8)}
                     title={`${yearArray[index]}-${yearArray[index + 1]}`}
-                    color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
+                    color={ColorsArray[index]}
                     onClick={() => {
                       const selectedFinYear = `${yearArray[index]}-${yearArray[index + 1]}`;
                       setFinYear(selectedFinYear);
@@ -127,6 +127,8 @@ export default function ITReloaded() {
           contentContainerStyle={{
             gap: responsiveHeight(2),
           }}
+          showsVerticalScrollIndicator={false}
+          style={{ backgroundColor: 'white' }}
         >
           {user.circle === 'admin' && (
             <View
@@ -144,7 +146,7 @@ export default function ITReloaded() {
                 size={'medium'}
                 fontSize={responsiveFontSize(1.4)}
                 title={'Above Five Lakh'}
-                color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
+                color={'royalblue'}
                 onClick={() => {
                   const fData = filteredData.filter(
                     salary => salary?.AllGross >= 500000,
@@ -163,7 +165,7 @@ export default function ITReloaded() {
                 size={'medium'}
                 fontSize={responsiveFontSize(1.4)}
                 title={'Below Five Lakh'}
-                color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
+                color={'deeppink'}
                 onClick={() => {
                   const fData = filteredData.filter(
                     salary => salary?.AllGross <= 500000,
@@ -182,7 +184,7 @@ export default function ITReloaded() {
                 size={'medium'}
                 fontSize={responsiveFontSize(1.4)}
                 title={'Taxable Teachers'}
-                color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
+                color={'darkorange'}
                 onClick={() => {
                   const fData = filteredData.filter(
                     salary => salary?.NetTax !== 0,
@@ -244,7 +246,7 @@ export default function ITReloaded() {
               size={'medium'}
               fontSize={responsiveFontSize(1.4)}
               title={'Change Financial Year'}
-              color={ColorsArray[randBetween(0, ColorsArray.length - 1)]}
+              color={'blueviolet'}
               onClick={() => {
                 setShowYearSelection(true);
               }}

@@ -29,6 +29,8 @@ import {
 } from '../modules/calculatefunctions';
 import { getCollection } from '../firebase/firestoreHelper';
 import NavigationBarContainer from '../navigation/NavigationBarContainer';
+import { Picker } from '@react-native-picker/picker';
+import { showToast } from '../modules/Toaster';
 const Retirement = () => {
   const {
     state,
@@ -319,7 +321,43 @@ const Retirement = () => {
             </Text>
           </View>
         )}
-        <View
+        <View style={styles.pickerContainer}>
+          <Picker
+            style={styles.picker}
+            selectedValue={selectedYear}
+            onValueChange={value => {
+              if (value) {
+                handleChange(value);
+              } else {
+                setSelectedYear('');
+                showToast('error', 'Please select a valid year');
+              }
+            }}
+            dropdownIconColor={THEME_COLOR}
+          >
+            <Picker.Item
+              style={{
+                color: 'black',
+                backgroundColor: 'white',
+              }}
+              label="Select a Year"
+              value=""
+            />
+            {serviceArray.map((year, ind) => (
+              <Picker.Item
+                style={{
+                  color: 'black',
+                  backgroundColor: 'white',
+                }}
+                label={year}
+                value={year}
+                key={ind}
+                color="darkgreen"
+              />
+            ))}
+          </Picker>
+        </View>
+        {/* <View
           style={{
             justifyContent: 'space-evenly',
             alignItems: 'center',
@@ -381,7 +419,7 @@ const Retirement = () => {
                 </Text>
               </View>
             ))}
-        </View>
+        </View> */}
 
         {selectedYear ? (
           <View>
@@ -467,16 +505,16 @@ const Retirement = () => {
             <View style={styles.dataView}>
               <Text selectable style={styles.bankDataText}>
                 Total {moreFilteredData.length}{' '}
-                {moreFilteredData.length > 1 ? 'Teachers' : 'Teacher'} Joined on
-                Year {selectedYear}
+                {moreFilteredData.length > 1 ? 'Teachers' : 'Teacher'} will be
+                Retired on Year {selectedYear}
               </Text>
             </View>
             {monthText && (
               <View style={styles.dataView}>
                 <Text selectable style={styles.bankDataText}>
                   {filteredData.length}
-                  {filteredData.length > 1 ? ' Teachers' : ' Teacher'} Joined on{' '}
-                  {monthText}
+                  {filteredData.length > 1 ? ' Teachers' : ' Teacher'} will be
+                  Retired on {monthText}
                 </Text>
               </View>
             )}
@@ -670,5 +708,19 @@ const styles = StyleSheet.create({
     padding: 1,
     fontSize: responsiveFontSize(2),
     marginLeft: 5,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginVertical: responsiveHeight(2),
+    width: responsiveWidth(90),
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  picker: {
+    width: responsiveWidth(80),
+    borderRadius: 10,
   },
 });

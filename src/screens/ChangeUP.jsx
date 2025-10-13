@@ -30,10 +30,11 @@ import {
   updateDocument,
 } from '../firebase/firestoreHelper';
 import { showToast } from '../modules/Toaster';
+import { resetAndNavigate } from '../navigation/NavigationUtil';
 const ChangeUP = () => {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
-  const { state, setActiveTab } = useGlobalContext();
+  const { state, setActiveTab, setNavState, setState } = useGlobalContext();
   const user = state.USER;
   const [showLoder, setShowLoder] = useState(false);
   const [showUsername, setShowUsername] = useState(false);
@@ -141,7 +142,16 @@ const ChangeUP = () => {
           'You Will not be able to Login again, you have register again!',
         );
         setShowLoder(false);
-        navigation.navigate('SignOut');
+        setNavState(false);
+        setActiveTab(0);
+        setState({
+          USER: '',
+          TEACHER: '',
+          LOGGEDAT: '',
+          TOKEN: '',
+        });
+        await EncryptedStorage.clear();
+        resetAndNavigate('Login');
       } else {
         setShowLoder(false);
         showToast('error', 'Something Went Wrong!');

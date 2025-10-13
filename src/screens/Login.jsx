@@ -25,7 +25,7 @@ import {
 import { useGlobalContext } from '../context/Store';
 import bcrypt from 'react-native-bcrypt';
 import isaac from 'isaac';
-import { TelegramURL } from '../modules/constants';
+import { TelegramURL, WHATSAPPGROUPLINK } from '../modules/constants';
 import { showToast } from '../modules/Toaster';
 import { getDocumentByField } from '../firebase/firestoreHelper';
 import RNExitApp from 'react-native-exit-app';
@@ -94,7 +94,7 @@ const Login = () => {
           username,
         );
         const userRecord = JSON.stringify(record);
-        if (userRecord) {
+        if (record) {
           if (compare(inputField.password, record.password)) {
             if (!record.disabled) {
               try {
@@ -271,7 +271,7 @@ const Login = () => {
             Feeling Trouble?
           </Text>
           <TouchableOpacity
-            onPress={async () => await Linking.openURL(TelegramURL)}
+            onPress={async () => await Linking.openURL(WHATSAPPGROUPLINK)}
             style={{
               backgroundColor: 'blueviolet',
               padding: responsiveWidth(2),
