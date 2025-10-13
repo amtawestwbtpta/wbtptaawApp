@@ -334,6 +334,20 @@ const Retirement = () => {
               }
             }}
             dropdownIconColor={THEME_COLOR}
+            itemStyle={{
+              color: 'black',
+              backgroundColor: 'white',
+              fontSize: responsiveFontSize(1.5),
+              fontWeight: 'bold',
+              textAlign: 'center',
+              alignSelf: 'center',
+              width: responsiveWidth(80),
+              borderRadius: 10,
+              padding: 10,
+              borderBottomWidth: 1,
+              borderBottomColor: 'black',
+              elevation: 5,
+            }}
           >
             <Picker.Item
               style={{
@@ -528,116 +542,128 @@ const Retirement = () => {
               />
             )}
             {filteredData.length > 0 ? (
-              filteredData.map((el, index) => {
-                return (
-                  <View style={styles.dataView} key={index}>
-                    <View
-                      style={{
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text selectable style={styles.bankDataText}>
-                        {index + 1}) Teacher's Name: {el.tname} ({`${el.desig}`}
-                        )
-                      </Text>
-                      <Text selectable style={styles.bankDataText}>
-                        School: {el.school}
-                      </Text>
+              filteredData
+                .sort((a, b) => {
+                  a = a.tname.toLowerCase();
+                  b = b.tname.toLowerCase();
+                  if (a < b) {
+                    return -1;
+                  }
+                  if (a > b) {
+                    return 1;
+                  }
+                  return 0;
+                })
+                .map((el, index) => {
+                  return (
+                    <View style={styles.dataView} key={index}>
                       <View
                         style={{
-                          flexDirection: 'row',
-                          justifyContent: 'center',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
                           alignItems: 'center',
-                          alignSelf: 'center',
                         }}
                       >
                         <Text selectable style={styles.bankDataText}>
-                          Association:{' '}
+                          {index + 1}) Teacher's Name: {el.tname} (
+                          {`${el.desig}`})
                         </Text>
-                        <Text
-                          selectable
-                          style={[
-                            styles.bankDataText,
-                            {
-                              color:
-                                el.association === 'WBTPTA'
-                                  ? 'darkgreen'
-                                  : 'red',
-                            },
-                          ]}
-                        >
-                          {el.association}
+                        <Text selectable style={styles.bankDataText}>
+                          School: {el.school}
                         </Text>
-                      </View>
-                      {showAllDetails && (
-                        <TouchableOpacity
-                          onPress={() => makeCall(parseInt(el.phone))}
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            alignSelf: 'center',
+                          }}
                         >
                           <Text selectable style={styles.bankDataText}>
-                            Mobile: {el.phone}
+                            Association:{' '}
                           </Text>
-                        </TouchableOpacity>
-                      )}
-
-                      {showAllDetails && (
-                        <View>
-                          <Text selectable style={styles.bankDataText}>
-                            Service Life: {getRetirementLife(el.doj, el.dor)}
-                          </Text>
-                          <Text selectable style={styles.bankDataText}>
-                            Date of Joining: {el.doj}
-                          </Text>
-                          <Text selectable style={styles.bankDataText}>
-                            DOJ at This Post in This School: {el.dojnow}
-                          </Text>
-                          <Text selectable style={styles.bankDataText}>
-                            Date of Birth: {el.dob}
-                          </Text>
-                          <Text selectable style={styles.bankDataText}>
-                            Date of Retirement: {el.dor}
-                          </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignSelf: 'center',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                            }}
+                          <Text
+                            selectable
+                            style={[
+                              styles.bankDataText,
+                              {
+                                color:
+                                  el.association === 'WBTPTA'
+                                    ? 'darkgreen'
+                                    : 'red',
+                              },
+                            ]}
                           >
-                            <TouchableOpacity
-                              style={{ marginRight: responsiveWidth(3) }}
-                              onPress={() => {
-                                navigation.navigate('ViewDetails');
-                                setStateObject(el);
-                              }}
-                            >
-                              <AntDesign
-                                name="eye"
-                                size={30}
-                                color={'darkgreen'}
-                              />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => {
-                                navigation.navigate('EditDetails');
-                                setStateObject(el);
-                              }}
-                            >
-                              <FontAwesome
-                                name="edit"
-                                size={30}
-                                color={'chocolate'}
-                              />
-                            </TouchableOpacity>
-                          </View>
+                            {el.association}
+                          </Text>
                         </View>
-                      )}
+                        {showAllDetails && (
+                          <TouchableOpacity
+                            onPress={() => makeCall(parseInt(el.phone))}
+                          >
+                            <Text selectable style={styles.bankDataText}>
+                              Mobile: {el.phone}
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+
+                        {showAllDetails && (
+                          <View>
+                            <Text selectable style={styles.bankDataText}>
+                              Service Life: {getRetirementLife(el.doj, el.dor)}
+                            </Text>
+                            <Text selectable style={styles.bankDataText}>
+                              Date of Joining: {el.doj}
+                            </Text>
+                            <Text selectable style={styles.bankDataText}>
+                              DOJ at This Post in This School: {el.dojnow}
+                            </Text>
+                            <Text selectable style={styles.bankDataText}>
+                              Date of Birth: {el.dob}
+                            </Text>
+                            <Text selectable style={styles.bankDataText}>
+                              Date of Retirement: {el.dor}
+                            </Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignSelf: 'center',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <TouchableOpacity
+                                style={{ marginRight: responsiveWidth(3) }}
+                                onPress={() => {
+                                  navigation.navigate('ViewDetails');
+                                  setStateObject(el);
+                                }}
+                              >
+                                <AntDesign
+                                  name="eye"
+                                  size={30}
+                                  color={'darkgreen'}
+                                />
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  navigation.navigate('EditDetails');
+                                  setStateObject(el);
+                                }}
+                              >
+                                <FontAwesome
+                                  name="edit"
+                                  size={30}
+                                  color={'chocolate'}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                        )}
+                      </View>
                     </View>
-                  </View>
-                );
-              })
+                  );
+                })
             ) : (
               <Text selectable style={styles.bankDataText}>
                 No Teachers found for the selected Year.

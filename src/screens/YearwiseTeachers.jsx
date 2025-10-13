@@ -30,6 +30,8 @@ import {
 import { getCollection } from '../firebase/firestoreHelper';
 import NavigationContainer from '../navigation/NavigationBarContainer';
 import { DownloadWeb } from '../modules/constants';
+import { Picker } from '@react-native-picker/picker';
+import { showToast } from '../modules/Toaster';
 const YearwiseTeachers = () => {
   const {
     state,
@@ -326,7 +328,43 @@ const YearwiseTeachers = () => {
             </Text>
           </View>
         )}
-        <View
+        <View style={styles.pickerContainer}>
+          <Picker
+            style={styles.picker}
+            selectedValue={selectedYear}
+            onValueChange={value => {
+              if (value) {
+                handleChange(value);
+              } else {
+                setSelectedYear('');
+                showToast('error', 'Please select a valid year');
+              }
+            }}
+            dropdownIconColor={THEME_COLOR}
+          >
+            <Picker.Item
+              style={{
+                color: 'black',
+                backgroundColor: 'white',
+              }}
+              label="Select a Year"
+              value=""
+            />
+            {serviceArray.map((year, ind) => (
+              <Picker.Item
+                style={{
+                  color: 'black',
+                  backgroundColor: 'white',
+                }}
+                label={year}
+                value={year}
+                key={ind}
+                color="darkgreen"
+              />
+            ))}
+          </Picker>
+        </View>
+        {/* <View
           style={{
             justifyContent: 'space-evenly',
             alignItems: 'center',
@@ -388,7 +426,7 @@ const YearwiseTeachers = () => {
                 </Text>
               </View>
             ))}
-        </View>
+        </View> */}
 
         {selectedYear ? (
           <View>
@@ -497,85 +535,97 @@ const YearwiseTeachers = () => {
               />
             )}
             {filteredData.length > 0 ? (
-              filteredData.map((el, index) => {
-                return (
-                  <View style={styles.dataView} key={index}>
-                    <View
-                      style={{
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text selectable style={styles.bankDataText}>
-                        {index + 1}) Teacher's Name: {el.tname} ({`${el.desig}`}
-                        )
-                      </Text>
-                      <Text selectable style={styles.bankDataText}>
-                        School: {el.school}
-                      </Text>
-                      {showAllDetails && (
-                        <TouchableOpacity
-                          onPress={() => makeCall(parseInt(el.phone))}
-                        >
-                          <Text selectable style={styles.bankDataText}>
-                            Mobile: {el.phone}
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-
-                      {showAllDetails && (
-                        <View>
-                          <Text selectable style={styles.bankDataText}>
-                            Service Life: {getServiceLife(el.doj)}
-                          </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              alignSelf: 'center',
-                            }}
+              filteredData
+                .sort((a, b) => {
+                  a = a.tname.toLowerCase();
+                  b = b.tname.toLowerCase();
+                  if (a < b) {
+                    return -1;
+                  }
+                  if (a > b) {
+                    return 1;
+                  }
+                  return 0;
+                })
+                .map((el, index) => {
+                  return (
+                    <View style={styles.dataView} key={index}>
+                      <View
+                        style={{
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Text selectable style={styles.bankDataText}>
+                          {index + 1}) Teacher's Name: {el.tname} (
+                          {`${el.desig}`})
+                        </Text>
+                        <Text selectable style={styles.bankDataText}>
+                          School: {el.school}
+                        </Text>
+                        {showAllDetails && (
+                          <TouchableOpacity
+                            onPress={() => makeCall(parseInt(el.phone))}
                           >
                             <Text selectable style={styles.bankDataText}>
-                              Association:{' '}
+                              Mobile: {el.phone}
                             </Text>
-                            <Text
-                              selectable
-                              style={[
-                                styles.bankDataText,
-                                {
-                                  color:
-                                    el.association === 'WBTPTA'
-                                      ? 'darkgreen'
-                                      : 'red',
-                                },
-                              ]}
+                          </TouchableOpacity>
+                        )}
+
+                        {showAllDetails && (
+                          <View>
+                            <Text selectable style={styles.bankDataText}>
+                              Service Life: {getServiceLife(el.doj)}
+                            </Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                alignSelf: 'center',
+                              }}
                             >
-                              {el.association}
+                              <Text selectable style={styles.bankDataText}>
+                                Association:{' '}
+                              </Text>
+                              <Text
+                                selectable
+                                style={[
+                                  styles.bankDataText,
+                                  {
+                                    color:
+                                      el.association === 'WBTPTA'
+                                        ? 'darkgreen'
+                                        : 'red',
+                                  },
+                                ]}
+                              >
+                                {el.association}
+                              </Text>
+                            </View>
+                            <Text selectable style={styles.bankDataText}>
+                              Date of Joining: {el.doj}
                             </Text>
-                          </View>
-                          <Text selectable style={styles.bankDataText}>
-                            Date of Joining: {el.doj}
-                          </Text>
-                          <Text selectable style={styles.bankDataText}>
-                            DOJ at This Post in This School: {el.dojnow}
-                          </Text>
-                          <Text selectable style={styles.bankDataText}>
-                            Date of Birth: {el.dob}
-                          </Text>
-                          <Text selectable style={styles.bankDataText}>
-                            Date of Retirement: {el.dor}
-                          </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignSelf: 'center',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                            }}
-                          >
-                            {/* <View style={{marginRight: responsiveWidth(1)}}>
+                            <Text selectable style={styles.bankDataText}>
+                              DOJ at This Post in This School: {el.dojnow}
+                            </Text>
+                            <Text selectable style={styles.bankDataText}>
+                              Date of Birth: {el.dob}
+                            </Text>
+                            <Text selectable style={styles.bankDataText}>
+                              Date of Retirement: {el.dor}
+                            </Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignSelf: 'center',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              {/* <View style={{marginRight: responsiveWidth(1)}}>
                               <CustomButton
                                 title={'View'}
                                 size={'xsmall'}
@@ -597,38 +647,38 @@ const YearwiseTeachers = () => {
                                 setStateObject(el);
                               }}
                             /> */}
-                            <TouchableOpacity
-                              style={{ marginRight: responsiveWidth(3) }}
-                              onPress={() => {
-                                navigation.navigate('ViewDetails');
-                                setStateObject(el);
-                              }}
-                            >
-                              <AntDesign
-                                name="eye"
-                                size={30}
-                                color={'darkgreen'}
-                              />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => {
-                                navigation.navigate('EditDetails');
-                                setStateObject(el);
-                              }}
-                            >
-                              <FontAwesome
-                                name="edit"
-                                size={30}
-                                color={'chocolate'}
-                              />
-                            </TouchableOpacity>
+                              <TouchableOpacity
+                                style={{ marginRight: responsiveWidth(3) }}
+                                onPress={() => {
+                                  navigation.navigate('ViewDetails');
+                                  setStateObject(el);
+                                }}
+                              >
+                                <AntDesign
+                                  name="eye"
+                                  size={30}
+                                  color={'darkgreen'}
+                                />
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  navigation.navigate('EditDetails');
+                                  setStateObject(el);
+                                }}
+                              >
+                                <FontAwesome
+                                  name="edit"
+                                  size={30}
+                                  color={'chocolate'}
+                                />
+                              </TouchableOpacity>
+                            </View>
                           </View>
-                        </View>
-                      )}
+                        )}
+                      </View>
                     </View>
-                  </View>
-                );
-              })
+                  );
+                })
             ) : (
               <Text selectable style={styles.bankDataText}>
                 No Teachers found for the selected Year.
@@ -757,5 +807,19 @@ const styles = StyleSheet.create({
     padding: 1,
     fontSize: responsiveFontSize(2),
     marginLeft: 5,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginVertical: responsiveHeight(2),
+    width: responsiveWidth(90),
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  picker: {
+    width: responsiveWidth(80),
+    borderRadius: 10,
   },
 });
