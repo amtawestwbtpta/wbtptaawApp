@@ -12,9 +12,21 @@ import {
   where,
   writeBatch,
   limit,
+  orderBy,
 } from '@react-native-firebase/firestore';
 
-const db = getFirestore();
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+} from '@react-native-firebase/storage';
+
+import RNFS from 'react-native-fs';
+import { Buffer } from 'buffer';
+
+export const firestore = getFirestore();
 
 /**
  * Get single document with merged ID
@@ -24,7 +36,7 @@ const db = getFirestore();
  */
 export const getDocument = async (collectionName, documentId) => {
   try {
-    const docRef = doc(db, collectionName, documentId);
+    const docRef = doc(firestore, collectionName, documentId);
     const docSnap = await getDoc(docRef);
 
     return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null;
@@ -53,8 +65,8 @@ export const getDocumentByField = async (collectionName, field, value) => {
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
 
-    const doc = snapshot.docs[0];
-    return { id: doc.id, ...doc.data() };
+    const document = snapshot.docs[0];
+    return { id: document.id, ...document.data() };
   } catch (error) {
     console.error(
       `Firestore getDocumentByField error (${collectionName}/${field}/${value}):`,
@@ -72,7 +84,7 @@ export const getDocumentByField = async (collectionName, field, value) => {
  */
 export const getCollection = async (collectionName, conditions = []) => {
   try {
-    let ref = collection(db, collectionName);
+    let ref = collection(firestore, collectionName);
 
     // Apply query conditions if provided
     if (conditions.length > 0) {
@@ -100,7 +112,7 @@ export const getCollection = async (collectionName, conditions = []) => {
 export const setDocument = async (collectionName, documentId, data) => {
   console.log(collectionName, documentId, data);
   try {
-    const docRef = doc(db, collectionName, documentId);
+    const docRef = doc(firestore, collectionName, documentId);
     await setDoc(docRef, data);
   } catch (error) {
     console.error('Firestore setDocument error:', error);
@@ -116,7 +128,7 @@ export const setDocument = async (collectionName, documentId, data) => {
  */
 export const updateDocument = async (collectionName, documentId, updates) => {
   try {
-    const docRef = doc(db, collectionName, documentId);
+    const docRef = doc(firestore, collectionName, documentId);
     await updateDoc(docRef, updates);
   } catch (error) {
     console.error('Firestore updateDocument error:', error);
@@ -131,7 +143,7 @@ export const updateDocument = async (collectionName, documentId, updates) => {
  */
 export const deleteDocument = async (collectionName, documentId) => {
   try {
-    const docRef = doc(db, collectionName, documentId);
+    const docRef = doc(firestore, collectionName, documentId);
     await deleteDoc(docRef);
   } catch (error) {
     console.error('Firestore deleteDocument error:', error);
@@ -140,9 +152,9 @@ export const deleteDocument = async (collectionName, documentId) => {
 };
 
 export const batchWrite = async operations => {
-  const batch = writeBatch(db);
+  const batch = writeBatch(firestore);
   operations.forEach(({ type, collection, id, data }) => {
-    const docRef = doc(db, collection, id);
+    const docRef = doc(firestore, collection, id);
     if (type === 'delete') batch.delete(docRef);
     if (type === 'update') batch.update(docRef, data);
     if (type === 'set') batch.set(docRef, data);
@@ -158,15 +170,14 @@ export const batchWrite = async operations => {
  */
 export const deleteMatchingDocuments = async (collectionName, conditions) => {
   try {
-    const db = getFirestore();
-    const colRef = collection(db, collectionName);
+    const colRef = collection(firestore, collectionName);
     const q = query(colRef, ...conditions.map(cond => where(...cond)));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) return 0;
 
-    const batch = writeBatch(db);
-    snapshot.forEach(doc => batch.delete(doc.ref));
+    const batch = writeBatch(firestore);
+    snapshot.forEach(document => batch.delete(document.ref));
     await batch.commit();
 
     return snapshot.size;
@@ -182,7 +193,7 @@ export const queryDocuments = async (
   sortOptions = null,
   convertTimestamps = false,
 ) => {
-  let ref = collection(db, collectionName);
+  let ref = collection(firestore, collectionName);
 
   // Apply query conditions
   if (conditions.length > 0) {
@@ -200,8 +211,8 @@ export const queryDocuments = async (
 
   const snapshot = await getDocs(ref);
 
-  return snapshot.docs.map(doc => {
-    const data = doc.data();
+  return snapshot.docs.map(document => {
+    const data = document.data();
 
     // Convert Timestamps to Dates
     if (convertTimestamps) {
@@ -215,55 +226,199 @@ export const queryDocuments = async (
     return { id: doc.id, ...data };
   });
 };
-export const deleteMessagesInChat = async chatId => {
-  const messagesRef = collection(db, 'chats', chatId, 'messages');
-  const batchSize = 500; // Firestore batch limit
 
+/**
+ * Updates the 'convenor' field for multiple documents in a collection.
+ * @param {string} collectionName - Firestore collection name
+ * @param {Array<{ id: string }>} docs - Array of documents (each must have an `id`)
+ * @param {'taw' | 'admin'} convenorValue - The new convenor value
+ */
+export const updateConvenorBatch = async (
+  collectionName,
+  docs,
+  convenorValue,
+) => {
   try {
-    const querySnapshot = await getDocs(messagesRef);
+    const batch = writeBatch(firestore);
 
-    if (querySnapshot.empty) return;
+    for (const item of docs) {
+      if (!item.id) continue;
+      const docRef = doc(firestore, collectionName, item.id);
+      const snapshot = await getDoc(docRef);
 
-    // Process in chunks of 500
-    for (let i = 0; i < querySnapshot.docs.length; i += batchSize) {
-      const batch = writeBatch(db);
-      const chunk = querySnapshot.docs.slice(i, i + batchSize);
-
-      chunk.forEach(doc => {
-        batch.delete(doc.ref);
-      });
-
-      await batch.commit();
-      console.log(
-        `Deleted ${chunk.length} messages (batch ${i / batchSize + 1})`,
-      );
+      if (snapshot.exists()) {
+        batch.update(docRef, { convenor: convenorValue });
+      } else {
+        console.warn(`⚠️ Skipping missing doc: ${item.id}`);
+      }
     }
 
-    console.log(
-      `Total ${querySnapshot.size} messages deleted from chat ${chatId}`,
-    );
+    await batch.commit();
+    console.log('✅ Batch update completed');
   } catch (error) {
-    console.error(`Error deleting messages in chat ${chatId}:`, error);
+    console.log(error);
+  }
+};
+
+/**
+ * Safely updates a specific field for multiple documents in a Firestore collection.
+ * It only updates existing documents (skips missing ones).
+ *
+ * @param {string} collectionName - Firestore collection name
+ * @param {Array<{ id: string }>} docs - Array of objects (each must have an `id`)
+ * @param {string} key - The field name to update
+ * @param {any} value - The new value to set for the field
+ */
+export const safeBatchUpdateField = async (
+  collectionName,
+  docs,
+  key,
+  value,
+) => {
+  try {
+    if (!collectionName || typeof collectionName !== 'string') {
+      throw new Error('❌ Invalid collection name.');
+    }
+    if (!Array.isArray(docs) || docs.length === 0) {
+      throw new Error('❌ docs must be a non-empty array.');
+    }
+    if (!key || typeof key !== 'string') {
+      throw new Error('❌ key must be a valid field name string.');
+    }
+
+    const batch = writeBatch(firestore);
+    const validDocs = [];
+
+    for (const item of docs) {
+      if (!item.id) {
+        console.warn('⚠️ Skipping item without id:', item);
+        continue;
+      }
+
+      const docRef = doc(firestore, collectionName, item.id);
+      const snapshot = await getDoc(docRef);
+
+      if (snapshot.exists()) {
+        batch.update(docRef, { [key]: value });
+        validDocs.push(item.id);
+      } else {
+        console.warn(`⚠️ Skipping missing document: ${item.id}`);
+      }
+    }
+
+    if (validDocs.length > 0) {
+      await batch.commit();
+      console.log(
+        `✅ Updated ${validDocs.length} documents: set "${key}" =`,
+        value,
+      );
+    } else {
+      console.warn('⚠️ No valid documents found to update.');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * Upload local file (file:// or content:// via fileCopyUri) to Firebase Storage
+ */
+const resolveFilePath = async (uri, name) => {
+  if (uri.startsWith('content://')) {
+    // Copy content URI into app's cache dir
+    const destPath = `${RNFS.CachesDirectoryPath}/${Date.now()}_${name}`;
+    try {
+      await RNFS.copyFile(uri, destPath);
+      return destPath;
+    } catch (err) {
+      console.warn('⚠️ RNFS.copyFile failed, fallback to blob fetch', err);
+      // Fallback: try fetching content URI as blob and writing manually
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const arrayBuffer = await blob.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      await RNFS.writeFile(destPath, buffer.toString('base64'), 'base64');
+      return destPath;
+    }
+  } else if (uri.startsWith('file://')) {
+    return uri.replace('file://', '');
+  } else {
+    throw new Error(`Unsupported URI format: ${uri}`);
+  }
+};
+
+/**
+ * Upload file to Firebase Storage (modular API)
+ * @param {Object} file - The file object returned from DocumentPicker
+ * @param {string} fileName - The Name of the file to be uploaded
+ * @param {string} folderPath - Folder path in Firebase Storage (e.g., "uploads/")
+ * @param {function(number):void} onProgress - Optional callback for upload progress (0–100)
+ * @returns {Promise<string>} downloadURL
+ */
+
+/**
+ * Upload file (content:// or file://) to Firebase Storage (modular API)
+ */
+export const uploadFileToStorage = async (
+  file,
+  fileName,
+  folderPath = 'uploads',
+  onProgress,
+) => {
+  try {
+    const storage = getStorage();
+    const storageRef = ref(storage, `${folderPath}/${fileName}`);
+
+    // ✅ Resolve safe file path
+    const safePath = await resolveFilePath(file, fileName);
+
+    // ✅ Read as base64 and convert to Buffer
+    const base64Data = await RNFS.readFile(safePath, 'base64');
+    const blob = Buffer.from(base64Data, 'base64');
+
+    // ✅ Upload to Firebase Storage
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        snapshot => {
+          if (onProgress) {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            onProgress(Math.round(progress));
+          }
+        },
+        error => {
+          console.error('❌ Upload failed:', error);
+          reject(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log('✅ Uploaded:', downloadURL);
+          resolve(downloadURL);
+        },
+      );
+    });
+  } catch (error) {
+    console.error('❌ Error uploading file:', error);
     throw error;
   }
 };
 
-export const delChats = async user => {
-  const otherMembers = members.filter(el => el.empid !== user.empid);
-
-  // Generate all unique chat collection names
-  const chatCollections = [
-    ...otherMembers.map(el => `${user.empid}-${el.empid}`),
-    ...otherMembers.map(el => `${el.empid}-${user.empid}`),
-  ];
-
-  // Use Set to remove duplicates
-  const uniqueChats = [...new Set(chatCollections)];
-
-  console.log(`Deleting chats for user ${user.empid}:`, uniqueChats);
-
-  // Delete messages in all relevant chat collections
-  await Promise.all(uniqueChats.map(chatId => deleteMessagesInChat(chatId)));
-
-  console.log(`All chats deleted for user ${user.empid}`);
+/**
+ * Delete file from Firebase Storage
+ * @param {string} storagePath - Path to the file in Firebase Storage (e.g., "uploads/169234234_file.pdf")
+ */
+export const deleteFileFromStorage = async storagePath => {
+  console.log(storagePath);
+  try {
+    const storage = getStorage();
+    const fileRef = ref(storage, storagePath);
+    await deleteObject(fileRef);
+    console.log('✅ File deleted successfully:', storagePath);
+  } catch (error) {
+    console.error('❌ Error deleting file:', error);
+    throw error;
+  }
 };

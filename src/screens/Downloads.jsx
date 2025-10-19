@@ -11,7 +11,6 @@ import {
   Linking,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import storage from '@react-native-firebase/storage';
 import { THEME_COLOR } from '../utils/Colors';
 import CustomButton from '../components/CustomButton';
 import { useIsFocused } from '@react-navigation/native';
@@ -32,15 +31,20 @@ import { useGlobalContext } from '../context/Store';
 import { AndroidAppLink } from '../modules/constants';
 import {
   deleteDocument,
+  deleteFileFromStorage,
   getCollection,
   setDocument,
   updateDocument,
+  uploadFileToStorage,
 } from '../firebase/firestoreHelper';
 import { showToast } from '../modules/Toaster';
 import {
   deleteFileFromGithub,
   uploadFileToGithub,
 } from '../modules/gitFileHndler';
+import { getFilenameWithoutExtension } from '../modules/calculatefunctions';
+import UploadProgressBar from '../components/UploadProgressBar';
+
 const Downloads = () => {
   const isFocused = useIsFocused();
 
@@ -58,6 +62,8 @@ const Downloads = () => {
   const [documentUri, setDocumentUri] = useState('');
   const [uploadedFileName, setUploadedFileName] = useState('');
   const [originalFileName, setOriginalFileName] = useState('');
+  const [showUploadBar, setShowUploadBar] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [editFileName, setEditFileName] = useState('');
   const [editFileId, setEditFileId] = useState('');
   const [firstData, setFirstData] = useState(0);
@@ -86,48 +92,61 @@ const Downloads = () => {
       });
   };
   const uploadFile = async () => {
-    const githubUrl = await uploadFileToGithub(
-      pathToFile,
-      documentName,
-      'files',
-    );
     setShowLoader(true);
-    const reference = storage().ref(`/files/${documentName}`);
-    const pathToFile = documentUri;
+    let githubUrl = '';
+    try {
+      githubUrl = await uploadFileToGithub(documentUri, documentName, 'files');
+    } catch (error) {
+      console.log(error);
+    }
 
-    // uploads file
-    await reference
-      .putFile(pathToFile)
-      .then(task => console.log(task))
-      .catch(e => console.log(e));
-    let url = await storage().ref(`/files/${documentName}`).getDownloadURL();
-    await setDocument('downloads', docId, {
-      id: docId,
-      date: Date.now(),
-      addedBy: user.tname,
-      url: url,
-      githubUrl,
-      fileName: uploadedFileName,
-      fileType: fileType,
-      originalFileName: originalFileName,
-    })
-      .then(async () => {
-        setShowLoader(false);
-        showToast('success', 'File Uploaded Successfully!');
-        getData();
-        setFileType('');
-        setDocumentName('');
-        setDocumentUri('');
-        setAddFile(true);
-        setUploadedFileName('');
-        setOriginalFileName('');
+    try {
+      const url = await uploadFileToStorage(
+        documentUri,
+        documentName,
+        'files',
+        p => {
+          setProgress(p);
+          setShowUploadBar(true);
+        },
+      );
+      await setDocument('downloads', docId, {
+        id: docId,
+        date: Date.now(),
+        addedBy: user.tname,
+        url: url,
+        githubUrl,
+        fileName: uploadedFileName,
+        originalFileName: originalFileName,
+        fileType: fileType,
       })
-      .catch(e => {
-        setShowLoader(false);
-        showToast('error', 'File Addition Failed!');
-        setVisible(false);
-        console.log(e);
-      });
+        .then(async () => {
+          setShowLoader(false);
+          showToast('success', 'File Uploaded Successfully!');
+          getData();
+          setFileType('');
+          setDocumentName('');
+          setAddFile(true);
+          setDocumentUri('');
+          setUploadedFileName('');
+          setAddFile(true);
+          setShowUploadBar(false);
+          setProgress(0);
+          setVisible(false);
+          setOriginalFileName('');
+        })
+        .catch(e => {
+          setShowLoader(false);
+          showToast('error', 'File Addition Failed!');
+          setVisible(false);
+          console.log(e);
+        });
+    } catch (e) {
+      setShowLoader(false);
+      showToast('error', 'File Addition Failed!');
+      setVisible(false);
+      console.log(e);
+    }
   };
   const updateData = async () => {
     setShowLoader(true);
@@ -168,42 +187,49 @@ const Downloads = () => {
   };
   const delFile = async item => {
     setShowLoader(true);
+    const isDelFromGithub = await deleteFileFromGithub(
+      item.originalFileName,
+      'files',
+    );
     try {
-      const isDelFromGithub = await deleteFileFromGithub(
-        item.originalFileName,
-        'files',
-      );
       if (isDelFromGithub) {
         showToast('success', 'File deleted successfully From Github!');
       } else {
         showToast('error', 'Error Deleting File From Github!');
       }
-      await storage()
-        .ref('/files/' + item.originalFileName)
-        .delete()
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      await deleteFileFromStorage('/files/' + item.originalFileName)
         .then(async () => {
-          await deleteDocument('downloads', item.id)
-            .then(() => {
-              setShowLoader(false);
-              showToast('success', 'File Deleted Successfully!');
-              getData();
-            })
-            .catch(e => console.log(e));
+          setShowLoader(false);
+          showToast('success', 'File Deleted Successfully Storage!');
         })
         .catch(e => {
           setShowLoader(false);
-          showToast('error', 'File Deletation Failed!');
+          showToast('error', 'File Deletation from Storage Failed!');
           console.log(e);
         });
     } catch (error) {
       console.log(error);
     }
+    await deleteDocument('downloads', item.id)
+      .then(async () => {
+        showToast('success', 'File Deleted Successfully from Database!');
+        setShowLoader(false);
+        getData();
+      })
+      .catch(e => {
+        setShowLoader(false);
+        showToast('error', 'File Deletation from Database Failed!');
+        console.log(e);
+      });
   };
 
   useEffect(() => {
     getData();
   }, [isFocused]);
-  useEffect(() => {}, [uploadedFileName]);
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -338,125 +364,127 @@ const Downloads = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            {filteredData.length > 0 ? (
-              filteredData.slice(firstData, visibleItems).map((el, ind) => {
-                return (
-                  <ScrollView key={ind}>
-                    <View
-                      style={[
-                        styles.itemView,
-                        {
-                          alignItems: 'center',
-                          justifyContent: 'flex-start',
-                        },
-                      ]}
-                    >
-                      <Text selectable style={styles.label}>
-                        {`${ind + 2}) ${el.fileName}`}
-                      </Text>
-                      <Text selectable style={styles.label}>
-                        Format:{' '}
-                        {el.fileType === 'application/pdf'
-                          ? 'PDF'
-                          : el.fileType === 'application/msword'
-                            ? 'WORD'
-                            : el.fileType ===
-                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            {filteredData.length > 0
+              ? filteredData.slice(firstData, visibleItems).map((el, ind) => {
+                  return (
+                    <ScrollView key={ind}>
+                      <View
+                        style={[
+                          styles.itemView,
+                          {
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                          },
+                        ]}
+                      >
+                        <Text selectable style={styles.label}>
+                          {`${ind + 2}) ${el.fileName}`}
+                        </Text>
+                        <Text selectable style={styles.label}>
+                          Format:{' '}
+                          {el.fileType === 'application/pdf'
+                            ? 'PDF'
+                            : el.fileType === 'application/msword'
                               ? 'WORD'
                               : el.fileType ===
-                                  'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-                                ? 'POWERPOINT'
-                                : el.fileType === 'application/vnd.ms-excel'
-                                  ? 'EXCEL'
-                                  : el.fileType ===
-                                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                ? 'WORD'
+                                : el.fileType ===
+                                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                                  ? 'POWERPOINT'
+                                  : el.fileType === 'application/vnd.ms-excel'
                                     ? 'EXCEL'
                                     : el.fileType ===
-                                        'application/vnd.ms-excel.sheet.macroEnabled.12'
+                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                                       ? 'EXCEL'
                                       : el.fileType ===
-                                          'application/vnd.ms-powerpoint'
+                                          'application/vnd.ms-excel.sheet.macroEnabled.12'
                                         ? 'EXCEL'
-                                        : el.fileType === 'application/zip'
-                                          ? 'ZIP'
-                                          : el.fileType ===
-                                              'application/vnd.rar'
-                                            ? 'RAR'
-                                            : el.fileType === 'text/csv'
-                                              ? 'CSV'
-                                              : el.fileType ===
-                                                  'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-                                                ? 'POWERPOINT'
-                                                : ''}
-                      </Text>
+                                        : el.fileType ===
+                                            'application/vnd.ms-powerpoint'
+                                          ? 'EXCEL'
+                                          : el.fileType === 'application/zip'
+                                            ? 'ZIP'
+                                            : el.fileType ===
+                                                'application/vnd.rar'
+                                              ? 'RAR'
+                                              : el.fileType === 'text/csv'
+                                                ? 'CSV'
+                                                : el.fileType ===
+                                                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                                                  ? 'POWERPOINT'
+                                                  : ''}
+                        </Text>
 
-                      <View
-                        style={{
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <TouchableOpacity
-                          onPress={() =>
-                            downloadFile(el.githubUrl, el.fileName)
-                          }
+                        <View
+                          style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            alignSelf: 'center',
+                            flexDirection: 'row',
+                          }}
                         >
-                          <Text
-                            selectable
-                            style={[styles.label, { color: 'purple' }]}
+                          <TouchableOpacity
+                            onPress={() =>
+                              downloadFile(
+                                el.githubUrl ? el.githubUrl : el.url,
+                                el.originalFileName,
+                              )
+                            }
                           >
-                            Download
-                          </Text>
-                        </TouchableOpacity>
-                        {user.circle == 'admin' && (
-                          <View
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              alignSelf: 'center',
-                              flexDirection: 'row',
-                            }}
-                          >
-                            <TouchableOpacity
-                              style={{ paddingLeft: responsiveWidth(5) }}
-                              onPress={() => showConfirmDialog(el)}
+                            <Text
+                              selectable
+                              style={[styles.label, { color: 'purple' }]}
                             >
-                              <Text
-                                selectable
-                                style={[styles.label, { color: 'red' }]}
-                              >
-                                Delete
-                              </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              style={{ paddingLeft: responsiveWidth(5) }}
-                              onPress={() => {
-                                setVisible(true);
-                                setEditFileName(el.fileName);
-                                setEditFileId(el.id);
+                              Download
+                            </Text>
+                          </TouchableOpacity>
+                          {user.circle == 'admin' && (
+                            <View
+                              style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                alignSelf: 'center',
+                                flexDirection: 'row',
                               }}
                             >
-                              <Text
-                                selectable
-                                style={[styles.label, { color: 'blueviolet' }]}
+                              <TouchableOpacity
+                                style={{ paddingLeft: responsiveWidth(5) }}
+                                onPress={() => showConfirmDialog(el)}
                               >
-                                Edit File Name
-                              </Text>
-                            </TouchableOpacity>
-                          </View>
-                        )}
+                                <Text
+                                  selectable
+                                  style={[styles.label, { color: 'red' }]}
+                                >
+                                  Delete
+                                </Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={{ paddingLeft: responsiveWidth(5) }}
+                                onPress={() => {
+                                  setVisible(true);
+                                  setEditFileName(el.fileName);
+                                  setEditFileId(el.id);
+                                }}
+                              >
+                                <Text
+                                  selectable
+                                  style={[
+                                    styles.label,
+                                    { color: 'blueviolet' },
+                                  ]}
+                                >
+                                  Edit File Name
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          )}
+                        </View>
                       </View>
-                    </View>
-                  </ScrollView>
-                );
-              })
-            ) : (
-              <Text selectable style={styles.label}>
-                File Not Found
-              </Text>
-            )}
+                    </ScrollView>
+                  );
+                })
+              : null}
             <View
               style={{
                 flexDirection: 'row',
@@ -502,19 +530,13 @@ const Downloads = () => {
                   presentationStyle: 'fullScreen',
                   type: [types.allFiles],
                 });
-                let fileCopyUri = res.uri;
-                const filename = res.name;
                 setFileType(res.type);
-                setDocumentName(filename);
-                setOriginalFileName(filename);
-                setDocumentUri(fileCopyUri);
-                setUploadedFileName(fileName);
+                setDocumentName(res.name);
+                setUploadedFileName(getFilenameWithoutExtension(res.name));
+                setOriginalFileName(res.name);
+                setDocumentUri(res.uri);
               } catch (e) {
-                if (DocumentPicker.isCancel(e)) {
-                  console.log('User Cancelled The Upload', e);
-                } else {
-                  console.log(e);
-                }
+                console.log(e);
               }
             }}
           >
@@ -565,19 +587,15 @@ const Downloads = () => {
                         presentationStyle: 'fullScreen',
                         type: [types.allFiles],
                       });
-                      let fileCopyUri = res.uri;
-                      const filename = res.name;
                       setFileType(res.type);
-                      setDocumentName(filename);
-                      setOriginalFileName(filename);
-                      setDocumentUri(fileCopyUri);
-                      setUploadedFileName(fileName);
+                      setDocumentName(res.name);
+                      setUploadedFileName(
+                        getFilenameWithoutExtension(res.name),
+                      );
+                      setOriginalFileName(res.name);
+                      setDocumentUri(res.uri);
                     } catch (e) {
-                      if (DocumentPicker.isCancel(e)) {
-                        console.log('User Cancelled The Upload', e);
-                      } else {
-                        console.log(e);
-                      }
+                      console.log(e);
                     }
                   }}
                 >
@@ -633,11 +651,16 @@ const Downloads = () => {
                   onClick={() => {
                     setFileType('');
                     setDocumentName('');
-                    setDocumentUri('');
                     setAddFile(true);
+                    setDocumentUri('');
                     setUploadedFileName('');
                     setOriginalFileName('');
                   }}
+                />
+                <UploadProgressBar
+                  visible={showUploadBar}
+                  progress={progress}
+                  message={'Uploading File To Storage...'}
                 />
               </View>
             )}

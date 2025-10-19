@@ -477,6 +477,14 @@ export function dateObjToDateFormat(date) {
   let year = currentDate.getFullYear();
   return `${day}-${month}-${year}`;
 }
+export const DateValueToSring = dateValue => {
+  let date = new Date(dateValue);
+  return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()} At ${
+    date.getHours() > 12 ? date.getHours() - 12 : date.getHours()
+  }:${date.getMinutes()}:${date.getSeconds()} ${
+    date.getHours() > 12 ? 'PM' : 'AM'
+  }`;
+};
 export const todayInString = () => {
   const date = new Date();
   let day = date.getDate();
@@ -535,6 +543,10 @@ export const generateID = () => {
   }
 
   return randomCode;
+};
+export const validateEmployeeID = id => {
+  const pattern = /^[A-Z]{4}\d{4}$/;
+  return pattern.test(id.toUpperCase());
 };
 
 export function avoidNaN(val) {
@@ -691,3 +703,10 @@ export const readExcelData = async fileName => {
     console.log('Excel data fetch completed.');
   }
 };
+export function getFilenameWithoutExtension(filename) {
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex === -1) {
+    return filename; // No extension found
+  }
+  return filename.substring(0, lastDotIndex);
+}

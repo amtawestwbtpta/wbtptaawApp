@@ -18,13 +18,33 @@ export const viewGithubFiles = async repoName => {
     return files;
   }
 };
-
+const resolveFilePath = async (uri, name) => {
+  if (uri.startsWith('content://')) {
+    // Copy content URI into app's cache dir
+    const destPath = `${RNFS.CachesDirectoryPath}/${Date.now()}_${name}`;
+    try {
+      await RNFS.copyFile(uri, destPath);
+      return destPath;
+    } catch (err) {
+      console.warn('⚠️ RNFS.copyFile failed, fallback to blob fetch', err);
+      // Fallback: try fetching content URI as blob and writing manually
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const arrayBuffer = await blob.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      await RNFS.writeFile(destPath, buffer.toString('base64'), 'base64');
+      return destPath;
+    }
+  } else if (uri.startsWith('file://')) {
+    return uri.replace('file://', '');
+  } else {
+    throw new Error(`Unsupported URI format: ${uri}`);
+  }
+};
 export const uploadFileToGithub = async (uploadFile, fileName, repoName) => {
   // Suppose uploadFile.uri looks like "file:///storage/emulated/0/Download/test.pdf"
-  const filePath = uploadFile.startsWith('file://')
-    ? uploadFile.replace('file://', '')
-    : uploadFile.replace('content://', '');
-
+  const filePath = await resolveFilePath(uploadFile, fileName);
+  console.log('filePath', filePath);
   // Read the file as base64
   const content = await RNFS.readFile(filePath, 'base64');
 
